@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.shaker.home.HomePage
 import com.example.shaker.ui.theme.ShakerTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,12 +21,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             ShakerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
+                    HomePage(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
-            }v
+            }
         }
     }
 }
