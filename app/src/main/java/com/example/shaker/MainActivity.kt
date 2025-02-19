@@ -20,11 +20,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ShakerTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    HomePage(
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                HomePage(
+                    modifier = Modifier
+                )
             }
         }
     }
