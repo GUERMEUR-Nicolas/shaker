@@ -5,6 +5,7 @@ package com.example.shaker.home
 import android.view.animation.Transformation
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -23,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerIcon.Companion.Text
@@ -41,10 +44,13 @@ import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Composable
 fun HomePage(modifier: Modifier = Modifier) {
-    Surface(modifier = modifier.fillMaxWidth()) {
-        Row() {
-            Sidebar()
-            MainContent()
+    val fillH = modifier.fillMaxHeight()
+    Surface(modifier = modifier.fillMaxSize()/*.background(Color.Gray)*/) {
+        Row(verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.SpaceAround,
+            modifier = modifier.fillMaxSize()/*.background(Color.Green)*/) {
+            MainContent(modifier = fillH.weight(5f,false))
+            Sidebar(modifier = fillH.weight(1f,false))
         }
     }
 }
@@ -53,24 +59,26 @@ fun HomePage(modifier: Modifier = Modifier) {
 @Composable
 private fun MainContent(modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(vertical = 50.dp),
-        verticalArrangement = Arrangement.SpaceAround,
+        modifier =  modifier
+            .padding(vertical = 50.dp)/*.background(Color.Blue)*/,
+        verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(text = "SHAKER",
+            fontSize = 48.sp,
+            modifier = Modifier.weight(.5f),
+            textAlign = TextAlign.Center)
         TopBar(
             currentMoney = "123292I292930",
             moneyPerS = "1628",
-            modifier = modifier.fillMaxWidth()
+            modifier = Modifier.weight(1f).padding(horizontal = 10.dp)/*.background(Color.Yellow)*/.fillMaxWidth()
         )
-        ShakerImage(modifier = modifier.fillMaxWidth())
+        ShakerImage(modifier = Modifier.weight(3f))
         MoneyText(
             str = R.string.money_on_shake,
             value = "12",
             size = 16.sp,
-            modifier = modifier.fillMaxWidth()
-            //.padding(top = 10.dp)
+            modifier = Modifier.weight(1f).padding(top = 10.dp)//.fillMaxWidth()
         )
     }
 }
@@ -81,14 +89,14 @@ fun MoneyText(@StringRes str: Int, value: String, size: TextUnit, modifier: Modi
         text = stringResource(str, value),
         fontSize = size,
         textAlign = TextAlign.Center,
-        modifier = modifier
+        modifier = modifier/*.background(Color.Gray)*/
     )
 }
 
 @Composable
 fun TopBar(currentMoney: String, moneyPerS: String, modifier: Modifier) {
     Column(
-        modifier = modifier,
+        modifier = modifier.padding(all = 10.dp)/*.background(Color.Red)*/,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom
     ) {
@@ -96,13 +104,13 @@ fun TopBar(currentMoney: String, moneyPerS: String, modifier: Modifier) {
             str = R.string.current_money,
             value = currentMoney,
             size = 30.sp,
-            modifier = modifier
+            modifier = Modifier
         )
         MoneyText(
             str = R.string.money_per_s,
             value = moneyPerS,
             size = 20.sp,
-            modifier = modifier
+            modifier = Modifier
         )
     }
 }
@@ -113,16 +121,16 @@ fun ShakerImage(rotation: Float = 22f, modifier: Modifier = Modifier) {
         painter = painterResource(R.drawable.placeholder),
         alignment = Alignment.Center,
         contentScale = ContentScale.FillWidth,
+        contentDescription = null,
         modifier = modifier
-            //.fillMaxSize()
             .padding(all = 75.dp)
+            .fillMaxWidth()
             .graphicsLayer(transformOrigin = TransformOrigin.Center)
-            .rotate(rotation),
-        contentDescription = null
+            .rotate(rotation)/*.background(Color.Black)*/
     )
 }
 
-@Preview(widthDp = 450)
+@Preview(widthDp = 480)
 @Composable
 fun HomePagePreview() {
     ShakerTheme {
