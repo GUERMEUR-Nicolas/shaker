@@ -32,14 +32,12 @@ import androidx.compose.ui.unit.sp
 import com.example.shaker.ui.theme.ShakerTheme
 
 @Composable
-fun Home(modifier: Modifier = Modifier) {
-	val fillH = modifier.fillMaxHeight()
+fun HomePage(modifier: Modifier = Modifier) {
 	Surface(modifier = modifier.fillMaxSize()/*.background(Color.Gray)*/) {
 		Row(verticalAlignment = Alignment.Top,
 			horizontalArrangement = Arrangement.SpaceAround,
 			modifier = modifier.fillMaxSize()/*.background(Color.Green)*/) {
 			MainContent(Modifier)
-			//Sidebar(modifier = fillH.weight(1f,false))
 		}
 	}
 }
@@ -107,7 +105,7 @@ fun TopBar(currentMoney: String, moneyPerS: String, modifier: Modifier) {
 @Composable
 fun ShakerImage(rotation: Float = 22f, modifier: Modifier = Modifier) {
 	Image(
-		painter = painterResource(R.drawable.placeholder),
+		painter = painterResource(R.drawable.placeholder_0),
 		alignment = Alignment.Center,
 		contentScale = ContentScale.FillWidth,
 		contentDescription = null,
@@ -123,7 +121,7 @@ fun ShakerImage(rotation: Float = 22f, modifier: Modifier = Modifier) {
 @Composable
 fun HomePagePreview() {
 	ShakerTheme {
-		Home()
+		HomePage()
 	}
 }
 
