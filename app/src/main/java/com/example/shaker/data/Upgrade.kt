@@ -8,7 +8,9 @@ import com.example.shaker.R
 class Upgrade(
 	@DrawableRes val imageResourceId: Int,
 	@StringRes val name: Int,
-	val id: Int
+	val id: Int,
+	var amount: Int = 0,
+	val price: Int = 1,
 )
 
 val upgrades = listOf(

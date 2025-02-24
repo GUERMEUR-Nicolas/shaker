@@ -3,7 +3,6 @@ package com.example.shaker
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,32 +10,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.zIndex
 import com.example.shaker.home.HomePage
 import com.example.shaker.home.MainViewModel
 import com.example.shaker.home.UpgradeSidebar
 import com.example.shaker.home.UpgradePage
 import com.example.shaker.ui.theme.ShakerTheme
 import androidx.activity.viewModels
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -46,7 +32,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.shaker.data.upgrades
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
 class MainActivity : ComponentActivity() {
@@ -61,8 +46,6 @@ class MainActivity : ComponentActivity() {
 					TabItem("home", "screen_0"),
 					TabItem("upgrade", "screen_1")
 				)
-				//val align = listOf(Alignment.CenterEnd, Alignment.CenterStart)
-				//var selectedTabItem: Int by remember { mutableStateOf(0) }
 				val pagerState_H = rememberPagerState(
 					initialPage=0
 				) { listTabItem.size } // Horizontal pages
@@ -110,7 +93,6 @@ class MainActivity : ComponentActivity() {
 							}
 						},
 						modifier = Modifier
-							//.zIndex(1f)
 							.fillMaxWidth(.2f)
 							.onGloballyPositioned { coordinates ->
 								sidebarWidthPx = coordinates.size.width

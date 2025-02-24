@@ -54,7 +54,8 @@ private fun MainContent(modifier: Modifier = Modifier) {
 		Text(text = "SHAKER",
 			fontSize = 48.sp,
 			modifier = Modifier.weight(.5f),
-			textAlign = TextAlign.Center)
+			textAlign = TextAlign.Center
+		)
 		TopBar(
 			currentMoney = "123292I292930",
 			moneyPerS = "1628",
