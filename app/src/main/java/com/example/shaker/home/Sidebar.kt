@@ -1,7 +1,5 @@
 package com.example.shaker.home
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,84 +33,84 @@ import com.example.shaker.data.upgrades
 
 @Composable
 fun Sidebar(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier//.background(Color.Gray),
-    )
-    {
-        UpgradeMainIcon(Modifier)
-        Box(Modifier.fillMaxSize()/*.background(Color.Blue)*/) {
-            LazyColumn(
-                userScrollEnabled = false,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top,
-                modifier = Modifier.padding(all= 5.dp)//.background(Color.Red)//.fillMaxWidth()
-            ) {
-                items(upgrades) { item ->
-                    UpgradeItem(
-                        item, Modifier
-                            .padding(vertical = 1.dp)
-                            .fillMaxWidth()
-                            //.background(Color.Blue)
-                    )
-                }
-            }
-        }
-    }
+	Column(
+		modifier = modifier//.background(Color.Gray),
+	)
+	{
+		UpgradeMainIcon(Modifier)
+		Box(Modifier.fillMaxSize()/*.background(Color.Blue)*/) {
+			LazyColumn(
+				userScrollEnabled = false,
+				horizontalAlignment = Alignment.CenterHorizontally,
+				verticalArrangement = Arrangement.Top,
+				modifier = Modifier.padding(all= 5.dp)//.background(Color.Red)//.fillMaxWidth()
+			) {
+				items(upgrades) { item ->
+					UpgradeItem(
+						item, Modifier
+							.padding(vertical = 1.dp)
+							.fillMaxWidth()
+							//.background(Color.Blue)
+					)
+				}
+			}
+		}
+	}
 
 }
 
 @Composable
 private fun UpgradeMainIcon(modifier: Modifier = Modifier) {
-    Surface(modifier
-        .fillMaxWidth()
-        .background(Color.Red)) {
-        Text(
-            text = stringResource(R.string.upgrade_name).substring(0,2).uppercase(),
-            textAlign = TextAlign.Center,
-            fontSize = 45.sp,
-            modifier = modifier
-                .padding(horizontal = 5.dp)
-                //.background(Color.Yellow)
-        )
-        //UpgradeItem(Upgrade(R.drawable.placeholder, R.string.upgrade_name), modifier, showName = false)
-    }
+	Surface(modifier
+		.fillMaxWidth()
+		.background(Color.Red)) {
+		Text(
+			text = stringResource(R.string.upgrade_name).substring(0,2).uppercase(),
+			textAlign = TextAlign.Center,
+			fontSize = 45.sp,
+			modifier = modifier
+				.padding(horizontal = 5.dp)
+				//.background(Color.Yellow)
+		)
+		//UpgradeItem(Upgrade(R.drawable.placeholder, R.string.upgrade_name), modifier, showName = false)
+	}
 }
 
 @Composable
 private fun UpgradeItem(upgrade: Upgrade, modifier: Modifier = Modifier, showName: Boolean = true) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Top,
-    ) {
-        Image(
-            painter = painterResource(upgrade.imageResourceId),
-            alignment = Alignment.Center,
-            contentScale = ContentScale.FillWidth,
-            modifier = modifier
-                .padding(all = 5.dp)
-                .graphicsLayer(transformOrigin = TransformOrigin.Center),
-            contentDescription = null
-        )
-        if (showName) {
-            Text(
-                text = stringResource(upgrade.name),
-                textAlign = TextAlign.Center,
-                fontSize = 10.sp,
-                modifier = modifier.padding(horizontal = 5.dp)
-            )
-        }
-    }
+	Column(
+		modifier = modifier,
+		verticalArrangement = Arrangement.Top,
+	) {
+		Image(
+			painter = painterResource(upgrade.imageResourceId),
+			alignment = Alignment.Center,
+			contentScale = ContentScale.FillWidth,
+			modifier = modifier
+				.padding(all = 5.dp)
+				.graphicsLayer(transformOrigin = TransformOrigin.Center),
+			contentDescription = null
+		)
+		if (showName) {
+			Text(
+				text = stringResource(upgrade.name),
+				textAlign = TextAlign.Center,
+				fontSize = 10.sp,
+				modifier = modifier.padding(horizontal = 5.dp)
+			)
+		}
+	}
 }
 
 @Preview
 @Composable
 private fun IconPreview() {
-    UpgradeItem(upgrades[0])
+	UpgradeItem(upgrades[0])
 }
 
 
 @Preview(widthDp = 70)
 @Composable
 private fun SidebarPreview() {
-    Sidebar(Modifier.fillMaxHeight())
+	Sidebar(Modifier.fillMaxHeight())
 }
