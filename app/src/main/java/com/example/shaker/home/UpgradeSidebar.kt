@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -24,7 +23,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.shaker.R
@@ -33,11 +31,14 @@ import com.example.shaker.data.upgrades
 
 
 @Composable
-fun Sidebar(onUpgradeClick: (Int) -> Unit, modifier: Modifier = Modifier) {
+fun UpgradeSidebar(
+	selectedUpgradeId: Int,
+	onUpgradeClick: (Int) -> Unit,
+	modifier: Modifier = Modifier
+) {
 	Column(
 		modifier = modifier
-	)
-	{
+	) {
 		UpgradeMainIcon(Modifier)
 		Box(Modifier.fillMaxSize()) {
 			LazyColumn(
@@ -47,24 +48,14 @@ fun Sidebar(onUpgradeClick: (Int) -> Unit, modifier: Modifier = Modifier) {
 				modifier = Modifier.padding(all= 5.dp)
 			) {
 				items(upgrades) { upgrade ->
-					/*if(upgrade.selected){
-						UpgradeItem(
-							upgrade,
-							onUpgradeClick = onUpgradeClick,
-							Modifier
-								.padding(vertical = 1.dp)
-								.fillMaxWidth()
-								.background(Color.Cyan)
-						)
-					} else {*/
-						UpgradeItem(
-							upgrade,
-							onUpgradeClick = onUpgradeClick,
-							Modifier
-								.padding(vertical = 1.dp)
-								.fillMaxWidth()
-						)
-					//}
+					UpgradeItem(
+						upgrade = upgrade,
+						isSelected = upgrade.id == selectedUpgradeId,
+						onUpgradeClick = onUpgradeClick,
+						Modifier
+							.padding(vertical = 1.dp)
+							.fillMaxWidth()
+					)
 				}
 			}
 		}
@@ -83,16 +74,16 @@ private fun UpgradeMainIcon(modifier: Modifier = Modifier) {
 			fontSize = 45.sp,
 			modifier = modifier
 				.padding(horizontal = 5.dp)
-				//.background(Color.Yellow)
 		)
-		//UpgradeItem(Upgrade(R.drawable.placeholder, R.string.upgrade_name), modifier, showName = false)
 	}
 }
 
 @Composable
-private fun UpgradeItem(upgrade: Upgrade, onUpgradeClick: (Int) -> Unit, modifier: Modifier = Modifier, showName: Boolean = true) {
+private fun UpgradeItem(upgrade: Upgrade, isSelected: Boolean, onUpgradeClick: (Int) -> Unit, modifier: Modifier = Modifier, showName: Boolean = true) {
 	Column(
-		modifier = modifier.clickable {onUpgradeClick(upgrade.id)},
+		modifier = modifier
+			.clickable {onUpgradeClick(upgrade.id)}
+			.background(if (isSelected) Color.Green else Color.White),
 		verticalArrangement = Arrangement.Top,
 	) {
 		Image(
@@ -115,15 +106,15 @@ private fun UpgradeItem(upgrade: Upgrade, onUpgradeClick: (Int) -> Unit, modifie
 	}
 }
 
-@Preview
+/*@Preview
 @Composable
 private fun IconPreview() {
 	UpgradeItem(upgrades[0], { })
-}
+}*/
 
 
-@Preview(widthDp = 70)
+/*@Preview(widthDp = 70)
 @Composable
 private fun SidebarPreview() {
-	Sidebar({}, Modifier.fillMaxHeight())
-}
+	Sidebar({}, 0, Modifier.fillMaxHeight())
+}*/

@@ -15,6 +15,5 @@ class MainViewModel : ViewModel() {
 		viewModelScope.launch {
 			_selectedUpgradeId.emit(upgradeId)
 		}
-		println("Selected upgrade: $upgradeId")
 	}
 }

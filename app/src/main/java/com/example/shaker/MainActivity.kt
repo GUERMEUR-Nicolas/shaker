@@ -21,10 +21,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.zIndex
 import com.example.shaker.home.HomePage
 import com.example.shaker.home.MainViewModel
-import com.example.shaker.home.Sidebar
+import com.example.shaker.home.UpgradeSidebar
 import com.example.shaker.home.UpgradePage
 import com.example.shaker.ui.theme.ShakerTheme
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
+import com.example.shaker.data.upgrades
+import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
 class MainActivity : ComponentActivity() {
@@ -32,44 +54,69 @@ class MainActivity : ComponentActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		enableEdgeToEdge()
+		//enableEdgeToEdge()
 		setContent {
 			ShakerTheme(darkTheme = false) {
 				val listTabItem = listOf(
 					TabItem("home", "screen_0"),
 					TabItem("upgrade", "screen_1")
 				)
-				val align = listOf(Alignment.CenterEnd, Alignment.CenterStart)
+				//val align = listOf(Alignment.CenterEnd, Alignment.CenterStart)
+				//var selectedTabItem: Int by remember { mutableStateOf(0) }
+				val pagerState_H = rememberPagerState(
+					initialPage=0
+				) { listTabItem.size } // Horizontal pages
+				val pagerState_V = rememberPagerState(
+					initialPage=viewModel.selectedUpgradeId.value
+				) { upgrades.size } // Vertical pages
+				val coroutineScope = rememberCoroutineScope() // scroll to page
+				val selectedUpgradeId by viewModel.selectedUpgradeId.collectAsState()
 				var selectedTabItem: Int by remember { mutableStateOf(0) }
-				var selectedUpgradeItem: Int by remember { mutableStateOf(0) }
-				val pagerState = rememberPagerState(initialPage=0) { listTabItem.size }
 
-				LaunchedEffect(pagerState.currentPage){
-					selectedTabItem = pagerState.currentPage
-				}
+				val density = LocalDensity.current
+				val configuration = LocalConfiguration.current
+				var sidebarWidthPx by remember { mutableStateOf(0) }
+				val sidebarWidthDp = with(density) { sidebarWidthPx.toDp() }
 
-				Box(){
+				val offset = -(configuration.screenWidthDp.dp - sidebarWidthDp) * (pagerState_H.currentPage + pagerState_H.currentPageOffsetFraction)
+
+				Box(modifier = Modifier.fillMaxSize()){
 					HorizontalPager(
-						state = pagerState,
-						Modifier.fillMaxSize()
-					){ _ ->
-						when (selectedTabItem) {
+						state = pagerState_H,
+						beyondBoundsPageCount = 1,
+						key = { page -> page },
+						modifier = Modifier.fillMaxSize()
+					) { page ->
+						selectedTabItem = page
+						when (page) {
 							0 -> HomePage(Modifier.fillMaxWidth(0.8f))
 							1 -> UpgradePage(
-								viewModel.selectedUpgradeId.value,
+								pagerState_V,
+								{ upgradeId ->
+									viewModel.selectUpgrade(upgradeId)
+								},
 								Modifier
 							)
+
 							else -> Text("Unknown Screen")
 						}
 					}
-					Sidebar(
+					UpgradeSidebar(
+						selectedUpgradeId = selectedUpgradeId,
 						onUpgradeClick = { upgradeId ->
 							viewModel.selectUpgrade(upgradeId)
+							coroutineScope.launch {
+								pagerState_V.animateScrollToPage(upgradeId)
+							}
 						},
-						Modifier
-							.zIndex(1f)
+						modifier = Modifier
+							//.zIndex(1f)
 							.fillMaxWidth(.2f)
-							.align(align[selectedTabItem])
+							.onGloballyPositioned { coordinates ->
+								sidebarWidthPx = coordinates.size.width
+							}
+							.offset { IntOffset(offset.roundToPx(), 0) }
+							.align(Alignment.CenterEnd)
 					)
 				}
 			}
