@@ -33,13 +33,10 @@ import com.example.shaker.ui.theme.ShakerTheme
 
 @Composable
 fun HomePage(modifier: Modifier = Modifier) {
-	Surface(modifier = modifier.fillMaxSize()/*.background(Color.Gray)*/) {
-		Row(verticalAlignment = Alignment.Top,
-			horizontalArrangement = Arrangement.SpaceAround,
-			modifier = modifier.fillMaxSize()/*.background(Color.Green)*/) {
-			MainContent(Modifier)
-		}
-	}
+fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
+    Surface(modifier = modifier.fillMaxSize()/*.background(Color.Gray)*/) {
+        MainContent(Modifier)
+    }
 }
 
 
