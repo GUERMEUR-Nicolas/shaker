@@ -35,47 +35,47 @@ import com.example.shaker.ui.theme.ShakerTheme
 fun HomePage(modifier: Modifier = Modifier) {
 fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
     Surface(modifier = modifier.fillMaxSize()/*.background(Color.Gray)*/) {
-        MainContent(Modifier)
+        Column(
+            modifier = modifier
+                .padding(vertical = 50.dp)/*.background(Color.Blue)*/,
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "SHAKER",
+                fontSize = 48.sp,
+                modifier = Modifier.weight(.5f),
+                textAlign = TextAlign.Center
+            )
+            TopBar(
+                currentMoney = "123292I292930",
+                moneyPerS = "1628",
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 10.dp)/*.background(Color.Yellow)*/
+                    .fillMaxWidth()
+            )
+            ShakerImage(modifier = Modifier.weight(3f))
+            MoneyText(
+                str = R.string.money_on_shake,
+                value = "12",
+                size = 16.sp,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(top = 10.dp)//.fillMaxWidth()
+            )
+        }
     }
-}
-
-
-@Composable
-private fun MainContent(modifier: Modifier = Modifier) {
-	Column(
-		modifier =  modifier
-			.padding(vertical = 50.dp)/*.background(Color.Blue)*/,
-		verticalArrangement = Arrangement.SpaceBetween,
-		horizontalAlignment = Alignment.CenterHorizontally
-	) {
-		Text(text = "SHAKER",
-			fontSize = 48.sp,
-			modifier = Modifier.weight(.5f),
-			textAlign = TextAlign.Center
-		)
-		TopBar(
-			currentMoney = "123292I292930",
-			moneyPerS = "1628",
-			modifier = Modifier.weight(1f).padding(horizontal = 10.dp)/*.background(Color.Yellow)*/.fillMaxWidth()
-		)
-		ShakerImage(modifier = Modifier.weight(3f))
-		MoneyText(
-			str = R.string.money_on_shake,
-			value = "12",
-			size = 16.sp,
-			modifier = Modifier.weight(1f).padding(top = 10.dp)//.fillMaxWidth()
-		)
-	}
 }
 
 @Composable
 fun MoneyText(@StringRes str: Int, value: String, size: TextUnit, modifier: Modifier) {
-	Text(
-		text = stringResource(str, value),
-		fontSize = size,
-		textAlign = TextAlign.Center,
-		modifier = modifier/*.background(Color.Gray)*/
-	)
+    Text(
+        text = stringResource(str, value),
+        fontSize = size,
+        textAlign = TextAlign.Center,
+        modifier = modifier/*.background(Color.Gray)*/
+    )
 }
 
 @Composable
