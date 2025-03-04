@@ -2,6 +2,9 @@ package com.example.shaker.data
 
 //(currently not scaling at all) wrapper class with overloaded operators instead we change implementation from a simple long to work with powers of 10,255, or other stuff like that
 class ScalingInt {
+    override fun toString(): String {
+        return ValueAsString()
+    }
     private var value: Long = 0
     fun ValueAsString(): String {
         return value.toString()
