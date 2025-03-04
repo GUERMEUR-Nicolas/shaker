@@ -25,8 +25,9 @@ class MainActivity : ComponentActivity() {
 				CenterSidebarPager(viewModel,gameplayState)
 				LaunchedEffect(Unit) {
 					while (true) {
-						delay(160L) // Delay for 1 second
-						gameplayState.Increment(160L / 1000f)
+						val cycleDuration = 500L
+						delay(cycleDuration)
+						gameplayState.Increment(1f)
 					}
 				}
 			}
