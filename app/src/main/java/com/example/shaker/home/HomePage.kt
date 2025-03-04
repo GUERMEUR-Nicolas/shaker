@@ -105,7 +105,7 @@ fun TopBar(gameplayState: GameplayViewModel, modifier: Modifier) {
 @Composable
 fun PerSecondText(perSecond: ScalingInt, sp: TextUnit, modifier: Modifier) {
     MoneyText(
-        str = R.string.money_per_s,
+        str = R.string.money_per_cycle,
         value = perSecond.ValueAsString(),
         size = sp,
         modifier = modifier

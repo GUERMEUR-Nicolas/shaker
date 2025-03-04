@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.shaker.R
 import com.example.shaker.data.Recipe
-import com.example.shaker.data.recipes
+import com.example.shaker.data.allRecipes
 import com.example.shaker.ui.GameplayViewModel
 import kotlinx.coroutines.launch
 
@@ -95,7 +95,7 @@ fun UpgradeSidebar(
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier.padding(all = 5.dp)
             ) {
-                items(recipes) { upgrade ->
+                items(allRecipes) { upgrade ->
                     RecipeItem(
                         upgrade = upgrade,
                         gameState = gameState,

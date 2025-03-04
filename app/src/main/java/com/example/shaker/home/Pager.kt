@@ -18,7 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.shaker.TabItem
-import com.example.shaker.data.recipes
+import com.example.shaker.data.allRecipes
 import com.example.shaker.ui.GameplayViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -34,7 +34,7 @@ public fun CenterSidebarPager(viewModel: MainViewModel, gameplayState: GameplayV
     ) { listTabItem.size } // Horizontal pages
     val pagerState_V: PagerState = rememberPagerState(
         initialPage = viewModel.selectedUpgradeId.value
-    ) { recipes.size } // Vertical pages
+    ) { allRecipes.size } // Vertical pages
 
     Box(modifier = Modifier.fillMaxSize()) {
         CurrentPage(viewModel, gameplayState, pagerState_H, pagerState_V)

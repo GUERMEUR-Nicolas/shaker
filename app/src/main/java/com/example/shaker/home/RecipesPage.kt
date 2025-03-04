@@ -2,7 +2,6 @@ package com.example.shaker.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,7 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import com.example.shaker.data.Recipe
-import com.example.shaker.data.recipes
+import com.example.shaker.data.allRecipes
 import com.example.shaker.ui.GameplayViewModel
 
 
@@ -49,7 +48,7 @@ fun UpgradePage(
     LaunchedEffect(pagerState.currentPage) { onUpgradeChange(pagerState.currentPage) }
     val fling = PagerDefaults.flingBehavior(
         state = pagerState,
-        pagerSnapDistance = PagerSnapDistance.atMost(recipes.size / 4)
+        pagerSnapDistance = PagerSnapDistance.atMost(allRecipes.size / 4)
     )
     VerticalPager(
         state = pagerState,
@@ -66,7 +65,7 @@ fun CurrentUpgrade(
     gameState: GameplayViewModel,
     modifier: Modifier = Modifier
 ) {
-    val recipe = recipes[upgradeId]
+    val recipe = allRecipes[upgradeId]
     Box(modifier.fillMaxSize()) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -75,7 +74,7 @@ fun CurrentUpgrade(
                 .fillMaxHeight()
                 .align(Alignment.CenterEnd),
         ) {
-            RecipeInfo(recipe, gameState = gameState, 40.sp,true, modifier)
+            RecipeInfo(recipe, gameState = gameState, 40.sp, true, modifier)
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
                 modifier = modifier.fillMaxWidth()
