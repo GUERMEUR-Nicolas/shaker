@@ -3,15 +3,20 @@ package com.example.shaker.data
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.example.shaker.R
+import kotlin.math.pow
 
 class Recipe(
 	@DrawableRes val imageResourceId: Int,
 	@StringRes val name: Int,
 	val id: Int,
-	var amount: ScalingInt = ScalingInt(0),
+	var generating: ScalingInt = ScalingInt(0),
 	val basePrice: ScalingInt = ScalingInt(1),
 	val scalingFactor: Double = 1.15
-)
+){
+	public fun GetCost(level: Long): ScalingInt {
+		return this.basePrice * (this.scalingFactor).pow(level.toDouble())
+	}
+}
 //TODO move this to the viewmodel
 val allRecipes = listOf(
 	Recipe(imageResourceId = R.drawable.placeholder_0, basePrice = ScalingInt(1),generating = ScalingInt(1), name =R.string.recipe_name, id =0),

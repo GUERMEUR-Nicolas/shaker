@@ -44,7 +44,6 @@ fun UpgradePage(
     gameState: GameplayViewModel,
     modifier: Modifier = Modifier
 ) {
-    val recipesState = gameState.recipes.collectAsState()//To ensure recomposition on the recipes changes
     LaunchedEffect(pagerState.currentPage) { onUpgradeChange(pagerState.currentPage) }
     val fling = PagerDefaults.flingBehavior(
         state = pagerState,
@@ -87,30 +86,39 @@ fun CurrentUpgrade(
 }
 
 @Composable
-fun BuyButton(recipe: Recipe, amount: Long, gameplayViewModel: GameplayViewModel) {
+fun BuyButton(recipe: Recipe, amountToBuy: Long, gameplayViewModel: GameplayViewModel) {
+    var recipes = gameplayViewModel.recipes.collectAsState()
+    var money = gameplayViewModel.moneyState.collectAsState()
     Button(
-        onClick = { gameplayViewModel.ForceBuy(recipe, amount) },
-        Modifier.clickable { gameplayViewModel.canBuy(recipe, amount) }
+        onClick = { gameplayViewModel.ForceBuy(recipe, amountToBuy) },
+        enabled = recipes.value.canBuy(recipe, amountToBuy, money.value.current)
     ) {
         Text(
-            "Buy $amount (" + (gameplayViewModel.GetNextCost(
+            "Buy $amountToBuy (" + (recipes.value.GetNextCost(
                 recipe,
-                amount
+                amountToBuy
             )).ValueAsString() + ")"
         )
     }
 }
 
 @Composable
-fun RecipeInfo(recipe: Recipe, gameState: GameplayViewModel, spBase : TextUnit, showName: Boolean, modifier: Modifier) {
+fun RecipeInfo(
+    recipe: Recipe,
+    gameState: GameplayViewModel,
+    spBase: TextUnit,
+    showName: Boolean,
+    modifier: Modifier
+) {
+    val recipes = gameState.recipes.collectAsState()
     if (showName) {
         Text(
             fontSize = spBase,
-            text = stringResource(recipe.name) + " (" + gameState.GetRecipeAmount(recipe) + ")",
+            text = stringResource(recipe.name) + " (" + recipes.value.GetRecipeAmount(recipe) + ")",
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
         )
-        PerSecondText(recipe.amount, spBase*.8f, modifier.fillMaxWidth())
+        PerSecondText(recipe.generating, spBase * .8f, modifier.fillMaxWidth())
     }
     Image(
         painter = painterResource(recipe.imageResourceId),
