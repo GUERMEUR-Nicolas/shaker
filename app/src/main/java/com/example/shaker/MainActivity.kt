@@ -23,17 +23,19 @@ class MainActivity : ComponentActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		sensor.Initialize(context = this, listener = ShakeListener(shakeMin = R.integer.minShakeIntensity.toFloat()) { intensity ->
+		val shakeDelay : Long = resources.getInteger(R.integer.shakeDelayMilli).toLong()
+		sensor.Initialize(context = this, listener = ShakeListener(shakeMin = resources.getInteger(R.integer.minShakeIntensity).toFloat()) { intensity ->
 			//TODO integrate intensity
-			gameplayState.OnShaked()
+			gameplayState.OnShaked(shakeDelay)
 		})
 		//enableEdgeToEdge()
+		val delay : Long = resources.getInteger(R.integer.cycleDelayMilli).toLong()
 		setContent {
 			ShakerTheme(darkTheme = false) {
 				CenterSidebarPager(viewModel,gameplayState)
 				LaunchedEffect(Unit) {
 					while (true) {
-						delay(R.integer.cycleDelayMilli.toLong())
+						delay(delay)
 						gameplayState.Increment(1f)
 					}
 				}

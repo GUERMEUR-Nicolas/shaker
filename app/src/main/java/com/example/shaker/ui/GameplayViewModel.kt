@@ -1,5 +1,6 @@
 package com.example.shaker.ui
 
+import android.content.res.Resources
 import androidx.lifecycle.ViewModel
 import com.example.shaker.R
 import com.example.shaker.data.Recipe
@@ -46,9 +47,9 @@ class GameplayViewModel : ViewModel() {
     }
 
     var lastShake: Long = 0L
-    public fun OnShaked() {
+    public fun OnShaked(delay : Long) {
         val current = System.currentTimeMillis()
-        if ((current - lastShake) > R.integer.shakeDelayMilli) {
+        if ((current - lastShake) > delay) {
             lastShake = current
             Increment(_moneyState.value.perShake)
         }
