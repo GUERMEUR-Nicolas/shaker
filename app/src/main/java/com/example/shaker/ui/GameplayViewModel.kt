@@ -25,12 +25,13 @@ class GameplayViewModel : ViewModel() {
 
     public fun ForceBuy(recipe: Recipe, amount: Long) {
         val id = recipe.id
-        _recipes.value = _recipes.value.copy(
-            map = _recipes.value.IncrementedMap(id, amount)
-        )
         _moneyState.value = _moneyState.value.copy(
             perSecond = _moneyState.value.perSecond + recipe.generating * amount,
             current = _moneyState.value.current - _recipes.value.GetNextCost(recipe,amount)
+        )
+        //We increment the recipe count after we effectively bought it, other ways, we'd pay one level ahead
+        _recipes.value = _recipes.value.copy(
+            map = _recipes.value.IncrementedMap(id, amount)
         )
     }
 
