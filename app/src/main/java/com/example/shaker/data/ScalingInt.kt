@@ -5,12 +5,17 @@ class ScalingInt {
     override fun toString(): String {
         return ValueAsString()
     }
-    private var value: Long = 0
+    private var value: ULong = 0UL
     fun ValueAsString(): String {
         return value.toString()
     }
-
-    constructor(value: Long) {
+    constructor(value: Int) {
+        this.value = value.toULong()
+    }
+    //constructor(value: Long) {
+    //    this.value = value.toULong()
+    //}
+    constructor(value: ULong) {
         this.value = value
     }
 
@@ -27,20 +32,20 @@ class ScalingInt {
     operator fun times(other: ScalingInt): ScalingInt {
         return ScalingInt(this.value * other.value)
     }
-    operator fun times(other: Long): ScalingInt {
+    operator fun times(other: ULong): ScalingInt {
         return ScalingInt(this.value * other)
     }
+    operator fun times(other: Long): ScalingInt {
+        return this * other.toULong()
+    }
     operator fun times(factor: Float) : ScalingInt{
-        return ScalingInt((this.value * factor).toLong())
+       return this * factor.toULong()
     }
     operator fun times(factor: Double) : ScalingInt{
-        return ScalingInt((this.value * factor).toLong())
+        return this * factor.toULong()
     }
 
     operator fun compareTo(getNextCost: ScalingInt): Int {
         return this.value.compareTo(getNextCost.value)
     }
-    //fun ValueAsLong() : Long{
-    //    return value;
-    //}
 }
