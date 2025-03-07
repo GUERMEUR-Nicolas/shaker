@@ -1,6 +1,7 @@
 package com.example.shaker.ui
 
 import androidx.lifecycle.ViewModel
+import com.example.shaker.R
 import com.example.shaker.data.Recipe
 import com.example.shaker.data.ScalingInt
 import com.example.shaker.ui.GameplayStates.MoneyState
@@ -22,12 +23,11 @@ class GameplayViewModel : ViewModel() {
     }
 
 
-
     public fun ForceBuy(recipe: Recipe, amount: Long) {
         val id = recipe.id
         _moneyState.value = _moneyState.value.copy(
             perSecond = _moneyState.value.perSecond + recipe.generating * amount,
-            current = _moneyState.value.current - _recipes.value.GetNextCost(recipe,amount)
+            current = _moneyState.value.current - _recipes.value.GetNextCost(recipe, amount)
         )
         //We increment the recipe count after we effectively bought it, other ways, we'd pay one level ahead
         _recipes.value = _recipes.value.copy(
@@ -45,8 +45,13 @@ class GameplayViewModel : ViewModel() {
         Increment(_moneyState.value.perSecond * numberOfCycle)
     }
 
+    var lastShake: Long = 0L
     public fun OnShaked() {
-        Increment(_moneyState.value.perShake)
+        val current = System.currentTimeMillis()
+        if ((current - lastShake) > R.integer.shakeDelayMilli) {
+            lastShake = current
+            Increment(_moneyState.value.perShake)
+        }
     }
 
 
