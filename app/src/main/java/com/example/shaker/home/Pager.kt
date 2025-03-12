@@ -3,12 +3,14 @@
 package com.example.shaker.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.example.shaker.TabItem
 import com.example.shaker.data.allRecipes
 import com.example.shaker.ui.GameplayViewModel
@@ -60,9 +63,9 @@ fun CurrentPage(
 
     HorizontalPager(
         state = pagerState_H,
-        beyondBoundsPageCount = 1,
+        beyondViewportPageCount = 1,
         key = { page -> page },
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().background(Color(0xFF454078))
     ) { page ->
         selectedTabItem = page
         when (page) {
@@ -73,7 +76,7 @@ fun CurrentPage(
                     viewModel.selectUpgrade(upgradeId)
                 },
                 gameplayState,
-                Modifier
+                Modifier.background(Color(0xFF454078))
             )
 
             else -> Text("Unknown Screen")

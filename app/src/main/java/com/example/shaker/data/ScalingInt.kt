@@ -5,6 +5,12 @@ class ScalingInt {
     override fun toString(): String {
         return ValueAsString()
     }
+	fun toLong(): Long {
+		return ValueAsLong()
+	}
+	fun toInt(): Int {
+		return ValueAsLong().toInt()
+	}
     private var value: Long = 0
     fun ValueAsString(): String {
         return value.toString()
@@ -40,7 +46,7 @@ class ScalingInt {
     operator fun compareTo(getNextCost: ScalingInt): Int {
         return this.value.compareTo(getNextCost.value)
     }
-    //fun ValueAsLong() : Long{
-    //    return value;
-    //}
+    fun ValueAsLong() : Long{
+        return value;
+    }
 }

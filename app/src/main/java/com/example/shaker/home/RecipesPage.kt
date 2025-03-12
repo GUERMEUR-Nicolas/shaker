@@ -2,6 +2,7 @@ package com.example.shaker.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,8 +26,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
@@ -69,11 +72,11 @@ fun CurrentUpgrade(
         Column(
             verticalArrangement = Arrangement.Center,
             modifier = modifier
-                .fillMaxWidth(0.8f)
-                .fillMaxHeight()
-                .align(Alignment.CenterEnd),
+				.fillMaxWidth(0.8f)
+				.fillMaxHeight()
+				.align(Alignment.CenterEnd),
         ) {
-            RecipeInfo(recipe, gameState = gameState, 40.sp, true, modifier)
+            RecipeInfo(recipe, gameState = gameState, 40.sp, true, false, modifier)
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
                 modifier = modifier.fillMaxWidth()
@@ -108,6 +111,7 @@ fun RecipeInfo(
     gameState: GameplayViewModel,
     spBase: TextUnit,
     showName: Boolean,
+	inSidebar: Boolean,
     modifier: Modifier
 ) {
     val recipes = gameState.recipes.collectAsState()
@@ -115,38 +119,24 @@ fun RecipeInfo(
         Text(
             fontSize = spBase,
             text = stringResource(recipe.name) + " (" + recipes.value.GetRecipeAmount(recipe) + ")",
+			color = if(inSidebar) Color.Black else Color.White,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
         )
-        PerSecondText(recipe.generating, spBase * .8f, modifier.fillMaxWidth())
+		if(!inSidebar) {
+			PerSecondText(recipe.generating, spBase * .8f, modifier.fillMaxWidth())
+		}
     }
     Image(
         painter = painterResource(recipe.imageResourceId),
         alignment = Alignment.Center,
         contentScale = ContentScale.FillWidth,
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(all = 5.dp)
-            .graphicsLayer(transformOrigin = TransformOrigin.Center),
+			.fillMaxWidth()
+			.padding(all = 5.dp)
+			.graphicsLayer(transformOrigin = TransformOrigin.Center),
         contentDescription = null
     )
-    /*if (showName) {
-        Text(
-            text = stringResource(upgrade.name),
-            textAlign = TextAlign.Center,
-            fontSize = 10.sp,
-            modifier = modifier.padding(horizontal = 5.dp)
-        )
-    }
-    Image(
-        painter = painterResource(upgrade.imageResourceId),
-        alignment = Alignment.Center,
-        contentScale = ContentScale.FillWidth,
-        modifier = modifier
-            .padding(all = 5.dp)
-            .graphicsLayer(transformOrigin = TransformOrigin.Center),
-        contentDescription = null
-    )*/
 }
 /*
 @Preview

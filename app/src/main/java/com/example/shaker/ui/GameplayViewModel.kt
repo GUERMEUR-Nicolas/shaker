@@ -30,12 +30,14 @@ class GameplayViewModel : ViewModel() {
         )
         _moneyState.value = _moneyState.value.copy(
             perSecond = _moneyState.value.perSecond + recipe.generating * amount,
+			previous = _moneyState.value.current,
             current = _moneyState.value.current - _recipes.value.GetNextCost(recipe,amount)
         )
     }
 
     public fun Increment(value: ScalingInt) {
         _moneyState.value = _moneyState.value.copy(
+			previous = _moneyState.value.current,
             current = _moneyState.value.current + value
         )
     }
@@ -48,5 +50,10 @@ class GameplayViewModel : ViewModel() {
         Increment(_moneyState.value.perShake)
     }
 
-
+	public fun TimesTen(){
+		_moneyState.value = _moneyState.value.copy(
+			previous = _moneyState.value.current,
+			current = _moneyState.value.current * 10
+		)
+	}
 }
