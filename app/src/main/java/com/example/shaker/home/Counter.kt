@@ -83,8 +83,8 @@ fun FlipClockCounter(state: State<MoneyState>, modifier: Modifier = Modifier) {
 	val numberName = conwayGuyName(exponent.roundToLong())
 
 	Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-		Box(modifier = Modifier.border(5.dp, Color(0xFF444444), CutCornerShape(0.dp))) {
-			Row(modifier = Modifier.fillMaxSize()) {
+		Box(modifier = Modifier/*.border(5.dp, Color(0xFF444444), CutCornerShape(0.dp))*/) {
+			Row(modifier = Modifier) {
 				formattedNewNumber.forEachIndexed { index, newDigitChar ->
 					val oldDigit = formattedOldNumber[index]
 					FlipDigit(
@@ -94,7 +94,7 @@ fun FlipClockCounter(state: State<MoneyState>, modifier: Modifier = Modifier) {
 				}
 			}
 		}
-		Box(modifier = Modifier.border(5.dp, Color(0xFF444444), CutCornerShape(0.dp))) {
+		Box(modifier = Modifier/*.border(5.dp, Color(0xFF444444), CutCornerShape(0.dp))*/) {
 			Text(
 				text = numberName,
 				style = TextStyle(

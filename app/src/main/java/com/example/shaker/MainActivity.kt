@@ -47,29 +47,21 @@ class MainActivity : ComponentActivity() {
 fun AppPreviewLight(){
 	val viewModel = MainViewModel()
 	val gameplayState = GameplayViewModel()
+	gameplayState.Increment(999f)
+	gameplayState.Increment(2f)
 	AppTheme(darkTheme = false) {
 		CenterSidebarPager(viewModel,gameplayState)
-		LaunchedEffect(Unit) {
-			while (true) {
-				delay(160L) // Delay for 1 second
-				gameplayState.Increment(160L / 1000f)
-			}
-		}
 	}
 }
-/*@Preview(widthDp = 380, heightDp = 680)
+@Preview(widthDp = 380, heightDp = 680)
 @Composable
 fun AppPreviewDark(){
 	val viewModel = MainViewModel()
 	val gameplayState = GameplayViewModel()
+	gameplayState.Increment(999f)
+	gameplayState.Increment(2f)
 	AppTheme(darkTheme = true) {
 		CenterSidebarPager(viewModel,gameplayState)
-		LaunchedEffect(Unit) {
-			while (true) {
-				delay(160L) // Delay for 1 second
-				gameplayState.Increment(160L / 1000f)
-			}
-		}
 	}
-}*/
+}
 data class TabItem(val name:String, val screen: String)

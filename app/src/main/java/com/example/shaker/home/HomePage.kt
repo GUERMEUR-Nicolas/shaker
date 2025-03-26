@@ -7,6 +7,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -56,20 +57,25 @@ import kotlin.math.pow
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
+	var st = if (gameplayState.moneyState.collectAsState().value.current.toLong() >= 1000) 1 else 0
+	val bgs = when {
+		isSystemInDarkTheme() -> arrayOf(R.drawable.p0n, R.drawable.p1n) // TODO: use darkTheme from AppTheme
+		else -> arrayOf(R.drawable.p0j, R.drawable.p1j)
+	}
     Surface(
 		modifier = modifier.fillMaxSize()) {
 		Box(modifier = Modifier
 			.fillMaxSize()
-			.background(Color(0xFF454078))
-			.border(10.dp, Color(0xFF8AF4E9), BackLines(false))
-			.border(8.dp, Color.Red, BackLines(true))
+			//.background(Color(0xFF454078))
+			//.border(10.dp, Color(0xFF8AF4E9), BackLines(false))
+			//.border(8.dp, Color.Red, BackLines(true))
 		)
-		/*Image(
-			painter = painterResource(id = R.drawable.bg),
+		Image(
+			painter = painterResource(id = bgs[st]),
 			contentDescription = "background",
 			modifier = Modifier.fillMaxSize(),
 			contentScale = ContentScale.FillBounds
-		)*/
+		)
         Column(
             modifier = modifier
                 .padding(vertical = 50.dp),
