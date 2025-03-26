@@ -1,6 +1,7 @@
 package com.example.shaker
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.example.shaker.home.MainViewModel
@@ -17,16 +18,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.compose.AppTheme
 import com.example.shaker.home.CenterSidebarPager
+import com.example.shaker.home.Accelerometer
+import com.example.shaker.home.ShakeListener
 import com.example.shaker.ui.GameplayViewModel
 import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
 	private val viewModel: MainViewModel by viewModels()
 	private val gameplayState: GameplayViewModel by viewModels()
+	private val sensor : Accelerometer = Accelerometer()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		val shakeDelay : Long = resources.getInteger(R.integer.shakeDelayMilli).toLong()
+		sensor.Initialize(context = this, listener = ShakeListener(shakeMin = resources.getInteger(R.integer.minShakeIntensity).toFloat()) { intensity ->
+			//TODO integrate intensity
+			gameplayState.OnShaked(shakeDelay)
+		})
 		//enableEdgeToEdge()
+		val delay : Long = resources.getInteger(R.integer.cycleDelayMilli).toLong()
 		setContent {
 			AppTheme(darkTheme = false) {
 				CenterSidebarPager(viewModel,gameplayState)
@@ -39,6 +49,16 @@ class MainActivity : ComponentActivity() {
 				}
 			}
 		}
+	}
+
+	override fun onResume() {
+		super.onResume()
+		sensor.subscribe()
+	}
+	//TODO, don't we ACTUALLY want to also detect shake when apply is paused/out of focus ????
+	override fun onPause() {
+		super.onPause()
+		sensor.unSubscribe()
 	}
 
 }
