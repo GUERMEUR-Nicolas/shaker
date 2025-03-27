@@ -55,6 +55,6 @@ class ScalingInt {
         return this.value.compareTo(getNextCost.value)
     }
     fun ValueAsLong() : Long{
-        return value;
+        return value.toLong();
     }
 }
