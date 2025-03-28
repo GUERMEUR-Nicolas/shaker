@@ -30,13 +30,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
+import com.example.shaker.R
 import com.example.shaker.data.Recipe
 import com.example.shaker.data.allRecipes
 import com.example.shaker.ui.GameplayViewModel
+import com.example.ui.theme.bodyFontFamily
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -72,9 +75,9 @@ fun CurrentUpgrade(
         Column(
             verticalArrangement = Arrangement.Center,
             modifier = modifier
-				.fillMaxWidth(0.8f)
-				.fillMaxHeight()
-				.align(Alignment.CenterEnd),
+                .fillMaxWidth(0.8f)
+                .fillMaxHeight()
+                .align(Alignment.CenterEnd),
         ) {
             RecipeInfo(recipe, gameState = gameState, 40.sp, true, false, modifier)
             Row(
@@ -111,32 +114,33 @@ fun RecipeInfo(
     gameState: GameplayViewModel,
     spBase: TextUnit,
     showName: Boolean,
-	inSidebar: Boolean,
+    inSidebar: Boolean,
     modifier: Modifier
 ) {
     val recipes = gameState.recipes.collectAsState()
+    val recipeAmount = recipes.value.GetRecipeAmount(recipe)
     if (showName) {
         Text(
             fontSize = spBase,
-            text = stringResource(recipe.name) + " (" + recipes.value.GetRecipeAmount(recipe) + ")",
-			color = if(inSidebar) Color.Black else Color.White,
+            text = stringResource(recipe.name) + " (" + recipeAmount + ")" + stringResource(R.string.money_per_cycle, recipe.generating*recipeAmount) ,
+            color = if (inSidebar) Color.Black else Color.White,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
         )
-		if(!inSidebar) {
-			PerSecondText(recipe.generating, spBase * .8f, modifier.fillMaxWidth())
-		}
     }
     Image(
         painter = painterResource(recipe.imageResourceId),
         alignment = Alignment.Center,
         contentScale = ContentScale.FillWidth,
         modifier = Modifier
-			.fillMaxWidth()
-			.padding(all = 5.dp)
-			.graphicsLayer(transformOrigin = TransformOrigin.Center),
+            .fillMaxWidth()
+            .padding(all = 5.dp)
+            .graphicsLayer(transformOrigin = TransformOrigin.Center),
         contentDescription = null
     )
+    if (showName && !inSidebar) {
+        PerSecondText(recipe.generating, spBase * .8f, modifier.fillMaxWidth())
+    }
 }
 /*
 @Preview
@@ -145,7 +149,7 @@ fun Upgrade_P(){
 	UpgradePage(0, {})
 }*/
 
-@Preview
+@Preview(widthDp = 600, heightDp = 600)
 @Composable
 fun CurrentUpgrade_P() {
     val gameplayViewModel = GameplayViewModel()
