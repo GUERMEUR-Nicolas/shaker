@@ -11,9 +11,12 @@ class ScalingInt {
 	fun toInt(): Int {
 		return ValueAsLong().toInt()
 	}
+    fun toFloat(): Float {
+        return ValueAsLong().toFloat()
+    }
     private var value: ULong = 0UL
     fun ValueAsString(): String {
-        return value.toString()
+        return ValueAsLong().toString()
     }
     constructor(value: Int) {
         this.value = value.toULong()

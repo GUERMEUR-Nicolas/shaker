@@ -24,64 +24,75 @@ import com.example.shaker.ui.GameplayViewModel
 import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
-	private val viewModel: MainViewModel by viewModels()
-	private val gameplayState: GameplayViewModel by viewModels()
-	private val sensor : Accelerometer = Accelerometer()
+    private val viewModel: MainViewModel by viewModels()
+    private val gameplayState: GameplayViewModel by viewModels()
+    private val sensor: Accelerometer = Accelerometer()
 
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		val shakeDelay : Long = resources.getInteger(R.integer.shakeDelayMilli).toLong()
-		sensor.Initialize(context = this, listener = ShakeListener(shakeMin = resources.getInteger(R.integer.minShakeIntensity).toFloat()) { intensity ->
-			//TODO integrate intensity
-			gameplayState.OnShaked(shakeDelay)
-		})
-		//enableEdgeToEdge()
-		val delay : Long = resources.getInteger(R.integer.cycleDelayMilli).toLong()
-		setContent {
-			AppTheme(darkTheme = false) {
-				CenterSidebarPager(viewModel,gameplayState)
-				LaunchedEffect(Unit) {
-					while (true) {
-						val cycleDuration = 2000L
-						delay(cycleDuration)
-						gameplayState.Increment(1f)
-					}
-				}
-			}
-		}
-	}
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val shakeDelay: Long = resources.getInteger(R.integer.shakeDelayMilli).toLong()
+        sensor.Initialize(
+            context = this,
+            listener = ShakeListener(
+                shakeMin = resources.getInteger(R.integer.minShakeIntensity).toFloat()
+            ) { intensity ->
+                //TODO integrate intensity
+                gameplayState.OnShaked(shakeDelay)
+            })
+        //enableEdgeToEdge()
+        val delay: Long = resources.getInteger(R.integer.shakeDelayMilli).toLong()
+        setContent {
+            AppTheme(darkTheme = false) {
+                CenterSidebarPager(viewModel, gameplayState)
+                LaunchedEffect(Unit) {
+                    val valueIncrement = resources.getInteger(R.integer.ValueIncrementPerS)
+                    val duration: Float =
+                        resources.getInteger(R.integer.CycleDurationMultiplier).toFloat()
+                    while (true) {
+                        val cycleDuration = 1000L / valueIncrement
+                        delay(cycleDuration)
+                        gameplayState.Increment(1.0f / (duration * valueIncrement))
+                    }
+                }
+            }
+        }
+    }
 
-	override fun onResume() {
-		super.onResume()
-		sensor.subscribe()
-	}
-	//TODO, don't we ACTUALLY want to also detect shake when apply is paused/out of focus ????
-	override fun onPause() {
-		super.onPause()
-		sensor.unSubscribe()
-	}
+    override fun onResume() {
+        super.onResume()
+        sensor.subscribe()
+    }
+
+    //TODO, don't we ACTUALLY want to also detect shake when apply is paused/out of focus ????
+    override fun onPause() {
+        super.onPause()
+        sensor.unSubscribe()
+    }
 
 }
+
 @Preview(widthDp = 380, heightDp = 680)
 @Composable
-fun AppPreviewLight(){
-	val viewModel = MainViewModel()
-	val gameplayState = GameplayViewModel()
-	gameplayState.Increment(999f)
-	gameplayState.Increment(2f)
-	AppTheme(darkTheme = false) {
-		CenterSidebarPager(viewModel,gameplayState)
-	}
+fun AppPreviewLight() {
+    val viewModel = MainViewModel()
+    val gameplayState = GameplayViewModel()
+    gameplayState.Increment(999f)
+    gameplayState.Increment(2f)
+    AppTheme(darkTheme = false) {
+        CenterSidebarPager(viewModel, gameplayState)
+    }
 }
+
 @Preview(widthDp = 380, heightDp = 680)
 @Composable
-fun AppPreviewDark(){
-	val viewModel = MainViewModel()
-	val gameplayState = GameplayViewModel()
-	gameplayState.Increment(999f)
-	gameplayState.Increment(2f)
-	AppTheme(darkTheme = true) {
-		CenterSidebarPager(viewModel,gameplayState)
-	}
+fun AppPreviewDark() {
+    val viewModel = MainViewModel()
+    val gameplayState = GameplayViewModel()
+    gameplayState.Increment(999f)
+    gameplayState.Increment(2f)
+    AppTheme(darkTheme = true) {
+        CenterSidebarPager(viewModel, gameplayState)
+    }
 }
-data class TabItem(val name:String, val screen: String)
+
+data class TabItem(val name: String, val screen: String)

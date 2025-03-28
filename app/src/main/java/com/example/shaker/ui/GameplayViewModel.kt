@@ -1,8 +1,6 @@
 package com.example.shaker.ui
 
-import android.content.res.Resources
 import androidx.lifecycle.ViewModel
-import com.example.shaker.R
 import com.example.shaker.data.Recipe
 import com.example.shaker.data.ScalingInt
 import com.example.shaker.ui.GameplayStates.MoneyState
@@ -10,7 +8,6 @@ import com.example.shaker.ui.GameplayStates.RecipeState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlin.math.pow
 
 class GameplayViewModel : ViewModel() {
 
@@ -18,6 +15,7 @@ class GameplayViewModel : ViewModel() {
     val moneyState: StateFlow<MoneyState> = _moneyState.asStateFlow()
     private val _recipes = MutableStateFlow(RecipeState())
     val recipes: StateFlow<RecipeState> = _recipes.asStateFlow()
+    var accumalated: Float = 0f;
 
     public fun Sell(recipe: Recipe, amount: Long) {
         ForceBuy(recipe, -amount)
@@ -28,7 +26,7 @@ class GameplayViewModel : ViewModel() {
         val id = recipe.id
         _moneyState.value = _moneyState.value.copy(
             perSecond = _moneyState.value.perSecond + recipe.generating * amount,
-			previous = _moneyState.value.current,
+            previous = _moneyState.value.current,
             current = _moneyState.value.current - _recipes.value.GetNextCost(recipe, amount)
         )
         //We increment the recipe count after we effectively bought it, other ways, we'd pay one level ahead
@@ -39,17 +37,30 @@ class GameplayViewModel : ViewModel() {
 
     public fun Increment(value: ScalingInt) {
         _moneyState.value = _moneyState.value.copy(
-			previous = _moneyState.value.current,
+            previous = _moneyState.value.current,
             current = _moneyState.value.current + value
         )
     }
 
     public fun Increment(numberOfCycle: Float) {
-        Increment(_moneyState.value.perSecond * numberOfCycle)
+        val incr = numberOfCycle * _moneyState.value.perSecond.toFloat()
+        //If the value is directly above the minimal value, we increment it directly, using the ScalingInt Multiplication
+        if(incr>10000f)
+            Increment(_moneyState.value.perSecond * numberOfCycle)
+        else {
+            //Else, mostly in the beggining when incr is less than 1 per update rate, we acucumlate it in a float value
+            accumalated += incr;
+            if (accumalated > 1f) {
+                //When the value is above 1, we increment the whole value cropped (maybe we accumlated from 0.99 to 1929.97 and keep the rest for the next cycle
+                val wholeAcc = accumalated.toInt()
+                Increment(ScalingInt(wholeAcc))
+                accumalated -= wholeAcc;
+            }
+        }
     }
 
     var lastShake: Long = 0L
-    public fun OnShaked(delay : Long) {
+    public fun OnShaked(delay: Long) {
         val current = System.currentTimeMillis()
         if ((current - lastShake) > delay) {
             lastShake = current
@@ -57,10 +68,10 @@ class GameplayViewModel : ViewModel() {
         }
     }
 
-	public fun TimesTen(){
-		_moneyState.value = _moneyState.value.copy(
-			previous = _moneyState.value.current,
-			current = _moneyState.value.current * 10
-		)
-	}
+    public fun TimesTen() {
+        _moneyState.value = _moneyState.value.copy(
+            previous = _moneyState.value.current,
+            current = _moneyState.value.current * 10
+        )
+    }
 }
