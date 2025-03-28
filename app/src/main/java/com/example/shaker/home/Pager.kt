@@ -4,14 +4,12 @@ package com.example.shaker.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,8 +19,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import com.example.shaker.R
 import com.example.shaker.TabItem
 import com.example.shaker.data.allRecipes
 import com.example.shaker.ui.GameplayViewModel
@@ -33,13 +29,13 @@ public fun CenterSidebarPager(viewModel: MainViewModel, gameplayState: GameplayV
 
     val listTabItem = listOf(
         TabItem("home", "screen_0"),
-        TabItem("upgrade", "screen_1")
+        TabItem("recipe", "screen_1")
     )
     val pagerState_H: PagerState = rememberPagerState(
         initialPage = 0
     ) { listTabItem.size } // Horizontal pages
     val pagerState_V: PagerState = rememberPagerState(
-        initialPage = viewModel.selectedUpgradeId.value
+        initialPage = viewModel.selectedRecipeId.value
     ) { allRecipes.size } // Vertical pages
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -73,10 +69,10 @@ fun CurrentPage(
         selectedTabItem = page
         when (page) {
             0 -> HomePage(Modifier.fillMaxWidth(0.8f), gameplayState)
-            1 -> UpgradePage(
+            1 -> RecipesPage(
                 pagerState_V,
-                { upgradeId ->
-                    viewModel.selectUpgrade(upgradeId)
+                { recipeId ->
+                    viewModel.selectRecipe(recipeId)
                 },
                 gameplayState,
                 Modifier.background(Color(0xFF454078))

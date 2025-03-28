@@ -8,12 +8,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
-	private val _selectedUpgradeId = MutableStateFlow(0) // Default to the first item
-	val selectedUpgradeId: StateFlow<Int> = _selectedUpgradeId.asStateFlow()
+	private val _selectedRecipeId = MutableStateFlow(0) // Default to the first item
+	val selectedRecipeId: StateFlow<Int> = _selectedRecipeId.asStateFlow()
 
-	fun selectUpgrade(upgradeId: Int) {
+	fun selectRecipe(recipeId: Int) {
 		viewModelScope.launch {
-			_selectedUpgradeId.emit(upgradeId)
+			_selectedRecipeId.emit(recipeId)
 		}
 	}
 }

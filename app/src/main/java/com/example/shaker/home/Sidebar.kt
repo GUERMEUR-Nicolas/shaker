@@ -17,9 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.shape.CutCornerShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,13 +46,11 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.compose.AppTheme
 import com.example.shaker.R
 import com.example.shaker.data.Recipe
 import com.example.shaker.data.allRecipes
 import com.example.shaker.ui.GameplayViewModel
 import kotlinx.coroutines.launch
-import kotlin.math.sqrt
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -76,7 +71,7 @@ fun MovingSideBar(
         -(configuration.screenWidthDp.dp - sidebarWidthDp) * (pagerState_H.currentPage + pagerState_H.currentPageOffsetFraction)
 
     val coroutineScope = rememberCoroutineScope() // scroll to page
-    val selectedUpgradeId by viewModel.selectedUpgradeId.collectAsState()
+    val selectedRecipeId by viewModel.selectedRecipeId.collectAsState()
 	val cutLength = 150f
 	val cornerRadius = 40f
 
@@ -87,17 +82,17 @@ fun MovingSideBar(
 		)
 	}
 
-    UpgradeSidebar(
-        selectedUpgradeId = selectedUpgradeId,
+    Sidebar(
+        selectedRecipeId = selectedRecipeId,
         gameState,
-        onUpgradeClick = { upgradeId ->
-            viewModel.selectUpgrade(upgradeId)
+        onRecipeClick = { recipeId ->
+            viewModel.selectRecipe(recipeId)
             coroutineScope.launch {
 				if(pagerState_H.currentPage == 0) {
-					pagerState_V.scrollToPage(upgradeId)
+					pagerState_V.scrollToPage(recipeId)
 					pagerState_H.animateScrollToPage(1)
 				}else {
-					pagerState_V.animateScrollToPage(upgradeId)
+					pagerState_V.animateScrollToPage(recipeId)
 				}
             }
         },
@@ -129,11 +124,11 @@ fun MovingSideBar(
 }
 
 @Composable
-fun UpgradeSidebar(
-    selectedUpgradeId: Int,
-    gameState : GameplayViewModel,
-    onUpgradeClick: (Int) -> Unit,
-    modifier: Modifier = Modifier
+fun Sidebar(
+	selectedRecipeId: Int,
+	gameState : GameplayViewModel,
+	onRecipeClick: (Int) -> Unit,
+	modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -149,12 +144,12 @@ fun UpgradeSidebar(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top,
             ) {
-                items(allRecipes) { upgrade ->
+                items(allRecipes) { recipe ->
                     RecipeItem(
-                        upgrade = upgrade,
+                        recipe = recipe,
                         gameState = gameState,
-                        isSelected = upgrade.id == selectedUpgradeId,
-                        onUpgradeClick = onUpgradeClick,
+                        isSelected = recipe.id == selectedRecipeId,
+                        onRecipeClick = onRecipeClick,
                         modifier = Modifier
 							.padding(vertical = 1.dp)
 							.fillMaxWidth()
@@ -184,20 +179,20 @@ private fun SidebarHeader(modifier: Modifier = Modifier) {
 
 @Composable
 private fun RecipeItem(
-    upgrade: Recipe,
-    isSelected: Boolean,
-    gameState: GameplayViewModel,
-    onUpgradeClick: (Int) -> Unit,
-    modifier: Modifier = Modifier,
-    showName: Boolean = true
+	recipe: Recipe,
+	isSelected: Boolean,
+	gameState: GameplayViewModel,
+	onRecipeClick: (Int) -> Unit,
+	modifier: Modifier = Modifier,
+	showName: Boolean = true
 ) {
     Column(
         modifier = modifier
-			.clickable { onUpgradeClick(upgrade.id) }
+			.clickable { onRecipeClick(recipe.id) }
 			.background(if (isSelected) Color(0xFFF6C800) else Color(0xFFF0F3D8)),
         verticalArrangement = Arrangement.Top,
     ) {
-        RecipeInfo(upgrade, gameState,12.sp,showName, true, modifier)
+        RecipeInfo(recipe, gameState,12.sp,showName, true, modifier)
     }
 }
 
@@ -284,13 +279,6 @@ fun drawSidebarPath(
 		}
 	}
 }
-
-/*@Preview
-@Composable
-private fun IconPreview() {
-	UpgradeItem(upgrades[0], { })
-}*/
-
 
 /*@Preview(widthDp = 70)
 @Composable

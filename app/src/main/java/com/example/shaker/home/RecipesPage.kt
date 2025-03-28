@@ -2,7 +2,6 @@ package com.example.shaker.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,11 +25,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
@@ -39,18 +36,17 @@ import com.example.shaker.R
 import com.example.shaker.data.Recipe
 import com.example.shaker.data.allRecipes
 import com.example.shaker.ui.GameplayViewModel
-import com.example.ui.theme.bodyFontFamily
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun UpgradePage(
+fun RecipesPage(
     pagerState: PagerState,
-    onUpgradeChange: (Int) -> Unit,
+    onRecipeChange: (Int) -> Unit,
     gameState: GameplayViewModel,
     modifier: Modifier = Modifier
 ) {
-    LaunchedEffect(pagerState.currentPage) { onUpgradeChange(pagerState.currentPage) }
+    LaunchedEffect(pagerState.currentPage) { onRecipeChange(pagerState.currentPage) }
     val fling = PagerDefaults.flingBehavior(
         state = pagerState,
         pagerSnapDistance = PagerSnapDistance.atMost(allRecipes.size / 4)
@@ -60,17 +56,17 @@ fun UpgradePage(
         flingBehavior = fling,
         modifier = modifier
     ) { id ->
-        CurrentUpgrade(upgradeId = id, gameState = gameState)
+        CurrentRecipe(recipeID = id, gameState = gameState)
     }
 }
 
 @Composable
-fun CurrentUpgrade(
-    upgradeId: Int,
+fun CurrentRecipe(
+    recipeID: Int,
     gameState: GameplayViewModel,
     modifier: Modifier = Modifier
 ) {
-    val recipe = allRecipes[upgradeId]
+    val recipe = allRecipes[recipeID]
     Box(modifier.fillMaxSize()) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -142,16 +138,10 @@ fun RecipeInfo(
         PerSecondText(recipe.generating, spBase * .8f, modifier.fillMaxWidth())
     }
 }
-/*
-@Preview
-@Composable
-fun Upgrade_P(){
-	UpgradePage(0, {})
-}*/
 
 @Preview(widthDp = 600, heightDp = 600)
 @Composable
-fun CurrentUpgrade_P() {
+fun CurrentRecipe_P() {
     val gameplayViewModel = GameplayViewModel()
-    CurrentUpgrade(upgradeId = 0, gameState = gameplayViewModel)
+    CurrentRecipe(recipeID = 0, gameState = gameplayViewModel)
 }
