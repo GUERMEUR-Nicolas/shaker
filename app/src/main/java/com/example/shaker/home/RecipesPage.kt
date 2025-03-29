@@ -6,10 +6,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.PagerState
@@ -30,11 +33,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import com.example.shaker.R
 import com.example.shaker.data.Recipe
+import com.example.shaker.data.UpgradeInfo
 import com.example.shaker.data.allRecipes
+import com.example.shaker.data.allUpgrades
 import com.example.shaker.ui.GameplayViewModel
 
 
@@ -80,28 +86,87 @@ fun CurrentRecipe(
                 horizontalArrangement = Arrangement.SpaceAround,
                 modifier = modifier.fillMaxWidth()
             ) {
-                BuyButton(recipe, 1, gameState)
-                BuyButton(recipe, 10, gameState)
+                RecipeBuyButton(recipe, 1, gameState)
+                RecipeBuyButton(recipe, 10, gameState)
             }
+            Spacer(
+                modifier = Modifier.height(15.dp)
+            )
+            UpgradeRow(modifier, 75.dp)
         }
     }
 }
 
 @Composable
-fun BuyButton(recipe: Recipe, amountToBuy: Long, gameplayViewModel: GameplayViewModel) {
-    var recipes = gameplayViewModel.recipes.collectAsState()
-    var money = gameplayViewModel.moneyState.collectAsState()
+fun UpgradeRow(modifier: Modifier, dp: Dp) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        //TODO fetch the actual upgrades of the recipe
+        UpgradeWithButton(allUpgrades[0], modifier, dp)
+        UpgradeWithButton(allUpgrades[1], modifier, dp)
+        UpgradeWithButton(allUpgrades[2], modifier, dp)
+        UpgradeWithButton(allUpgrades[3], modifier, dp)
+    }
+}
+
+@Composable
+fun UpgradeWithButton(info: UpgradeInfo, modifier: Modifier, dp : Dp) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceBetween) {
+        Upgrade(info, Modifier.size(dp))
+        UpgradeBuyButton(info,modifier)
+    }
+}
+
+@Composable
+@Preview(widthDp = 600, heightDp = 100)
+fun UpgradeRowPreview() {
+    UpgradeRow(Modifier.size(100.dp), 75.dp)
+}
+@Composable
+@Preview(widthDp = 100, heightDp = 100)
+fun UpgradeWithButtonPreview() {
+    UpgradeWithButton(allUpgrades[2], Modifier,75.dp)
+}
+@Composable
+fun GenericBuyButton(
+    onClick: () -> Unit,
+    enable: Boolean,
+    text: String
+) {
     Button(
-        onClick = { gameplayViewModel.ForceBuy(recipe, amountToBuy) },
-        enabled = recipes.value.canBuy(recipe, amountToBuy, money.value.current)
+        onClick = onClick,
+        enabled = enable
     ) {
         Text(
-            "Buy $amountToBuy (" + (recipes.value.GetNextCost(
-                recipe,
-                amountToBuy
-            )).ValueAsString() + ")"
+            text
         )
     }
+}
+
+@Composable
+fun UpgradeBuyButton(info: UpgradeInfo, modifier: Modifier) {
+    //TODO bind viewModel/money and enable and procesed the onClick with money dedeuciton and stuff like in the recipeBuyButton
+    GenericBuyButton(
+        onClick = {},
+        enable = true,
+        text = info.cost.GetCost((info.level + 1).toLong()).ValueAsString()
+    )
+}
+
+@Composable
+fun RecipeBuyButton(recipe: Recipe, amountToBuy: Long, gameplayViewModel: GameplayViewModel) {
+    var recipes = gameplayViewModel.recipes.collectAsState()
+    var money = gameplayViewModel.moneyState.collectAsState()
+    GenericBuyButton(
+        onClick = { gameplayViewModel.ForceBuy(recipe, amountToBuy) },
+        enable = recipes.value.canBuy(recipe, amountToBuy, money.value.current),
+        text = "Buy $amountToBuy (" + (recipes.value.GetNextCost(
+            recipe,
+            amountToBuy
+        )).ValueAsString() + ")"
+    )
 }
 
 @Composable
@@ -117,8 +182,8 @@ fun RecipeInfo(
     val recipeAmount = recipes.value.GetRecipeAmount(recipe)
     if (showName) {
         var name = stringResource(recipe.name) + " (" + recipeAmount + ")"
-        if(!inSidebar)
-            name+=stringResource(R.string.money_per_cycle, recipe.generating*recipeAmount)
+        if (!inSidebar)
+            name += stringResource(R.string.money_per_cycle, recipe.generating * recipeAmount)
         Text(
             fontSize = spBase,
             text = name,
@@ -143,7 +208,7 @@ fun RecipeInfo(
     }
 }
 
-@Preview(widthDp = 600, heightDp = 600)
+@Preview(widthDp = 800, heightDp = 2400)
 @Composable
 fun CurrentRecipe_P() {
     val gameplayViewModel = GameplayViewModel()

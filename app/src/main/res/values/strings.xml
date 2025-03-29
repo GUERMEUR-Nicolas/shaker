@@ -4,5 +4,7 @@
     <string name="money_per_cycle">(+ %s $/c)</string>
     <string name="money_on_shake">(+ %s/shake)</string>
     <string name="recipe_name">Recipe</string>
+    <string name="upgrade_name">Upgrade</string>
+    <string name="upgrade_description">Upgrade description</string>
     <string name="empty" />
 </resources>
