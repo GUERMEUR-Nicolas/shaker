@@ -116,9 +116,12 @@ fun RecipeInfo(
     val recipes = gameState.recipes.collectAsState()
     val recipeAmount = recipes.value.GetRecipeAmount(recipe)
     if (showName) {
+        var name = stringResource(recipe.name) + " (" + recipeAmount + ")"
+        if(!inSidebar)
+            name+=stringResource(R.string.money_per_cycle, recipe.generating*recipeAmount)
         Text(
             fontSize = spBase,
-            text = stringResource(recipe.name) + " (" + recipeAmount + ")" + stringResource(R.string.money_per_cycle, recipe.generating*recipeAmount) ,
+            text = name,
             color = if (inSidebar) Color.Black else Color.White,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
@@ -136,6 +139,7 @@ fun RecipeInfo(
     )
     if (showName && !inSidebar) {
         PerSecondText(recipe.generating, spBase * .8f, modifier.fillMaxWidth())
+
     }
 }
 
