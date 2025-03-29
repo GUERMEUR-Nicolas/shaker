@@ -102,7 +102,7 @@ fun MovingSideBar(
 				sidebarWidthPx = coordinates.size.width
 			}
 			.offset { IntOffset(offset.roundToPx(), 0) }
-			.background(Color(0xFF454078))
+			//.background(Color(0xFF454078))
 			.clip(
 				SidebarShape(
 					cutLength,

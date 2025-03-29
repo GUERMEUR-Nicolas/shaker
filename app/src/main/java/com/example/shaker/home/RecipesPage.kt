@@ -20,8 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -112,10 +110,14 @@ fun UpgradeRow(modifier: Modifier, dp: Dp) {
 }
 
 @Composable
-fun UpgradeWithButton(info: UpgradeInfo, modifier: Modifier, dp : Dp) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceBetween) {
+fun UpgradeWithButton(info: UpgradeInfo, modifier: Modifier, dp: Dp) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
         Upgrade(info, Modifier.size(dp))
-        UpgradeBuyButton(info,modifier)
+        UpgradeBuyButton(info, modifier)
     }
 }
 
@@ -124,11 +126,13 @@ fun UpgradeWithButton(info: UpgradeInfo, modifier: Modifier, dp : Dp) {
 fun UpgradeRowPreview() {
     UpgradeRow(Modifier.size(100.dp), 75.dp)
 }
+
 @Composable
 @Preview(widthDp = 100, heightDp = 100)
 fun UpgradeWithButtonPreview() {
-    UpgradeWithButton(allUpgrades[2], Modifier,75.dp)
+    UpgradeWithButton(allUpgrades[2], Modifier, 75.dp)
 }
+
 @Composable
 fun GenericBuyButton(
     onClick: () -> Unit,
@@ -181,9 +185,10 @@ fun RecipeInfo(
     val recipes = gameState.recipes.collectAsState()
     val recipeAmount = recipes.value.GetRecipeAmount(recipe)
     if (showName) {
-        var name = stringResource(recipe.name) + " (" + recipeAmount + ")"
-        if (!inSidebar)
-            name += stringResource(R.string.money_per_cycle, recipe.generating * recipeAmount)
+        var name = stringResource(recipe.name)
+        if (inSidebar) {
+            name += " (" + recipeAmount.toString() + ")"
+        }
         Text(
             fontSize = spBase,
             text = name,
@@ -191,20 +196,34 @@ fun RecipeInfo(
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
         )
+        if (!inSidebar) {
+            Text(
+                fontSize = spBase * .8f,
+                text = stringResource(
+                    R.string.RecipeCountAndTotal, recipeAmount.toString(), stringResource(
+                        R.string.money_per_cycle,
+                        recipe.generating * recipeAmount
+                    )
+                ),
+                color = if (inSidebar) Color.Black else Color.White,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
+    var padding: Dp = 0.dp
+    if (inSidebar) padding = 5.dp else padding = 50.dp
     Image(
         painter = painterResource(recipe.imageResourceId),
         alignment = Alignment.Center,
         contentScale = ContentScale.FillWidth,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(all = 5.dp)
-            .graphicsLayer(transformOrigin = TransformOrigin.Center),
+            .padding(padding),
         contentDescription = null
     )
     if (showName && !inSidebar) {
         PerSecondText(recipe.generating, spBase * .8f, modifier.fillMaxWidth())
-
     }
 }
 
