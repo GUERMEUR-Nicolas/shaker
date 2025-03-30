@@ -37,6 +37,8 @@ class ScalingInt {
 
     constructor(value: Int) : this(value.toULong()){
     }
+    constructor(double: Double) : this(double.toULong()){
+    }
 
     operator fun plus(other: ScalingInt): ScalingInt {
         return ScalingInt(this.value + other.value)

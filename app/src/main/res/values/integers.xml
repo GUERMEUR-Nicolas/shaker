@@ -3,6 +3,7 @@
     <integer name="shakeDelayMilli">500</integer>
     <integer name="minShakeIntensity">10</integer>
     <integer name="ValueIncrementPerS">10</integer>
-    <integer name="CycleDurationMultiplier">1</integer>
+    //SOmething generating 1 per S would be 1 every 10s => .1/sec
+    <integer name="CycleDurationMultiplier">10</integer>
 
 </resources>
