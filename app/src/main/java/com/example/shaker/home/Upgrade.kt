@@ -27,14 +27,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.shaker.R
+import com.example.shaker.data.Upgrade
 import com.example.shaker.data.UpgradeInfo
 import com.example.shaker.data.allUpgrades
 
 @Composable
-fun Upgrade(info: UpgradeInfo, modifier: Modifier = Modifier) {
+fun Upgrade(upg: Upgrade, modifier: Modifier = Modifier) {
     Box(modifier = modifier) {
         Image(
-            painter = painterResource(info.image),
+            painter = painterResource(upg.image),
             contentDescription = null,
             modifier = modifier.align(Alignment.Center),
             contentScale = androidx.compose.ui.layout.ContentScale.FillHeight
@@ -43,7 +44,7 @@ fun Upgrade(info: UpgradeInfo, modifier: Modifier = Modifier) {
             .align(Alignment.Center)
             .padding(0.dp)
         Text(
-            text = info.level.toString(),
+            text = upg.tier.toString(),
             fontSize = 16.sp,
             textAlign = TextAlign.Right,
             modifier = inner
@@ -51,7 +52,7 @@ fun Upgrade(info: UpgradeInfo, modifier: Modifier = Modifier) {
                 .padding(bottom = 50.dp, start = 50.dp, end = 5.dp)
         )
         Text(
-            text = stringResource(info.name),
+            text = stringResource(upg.name),
             fontSize = 16.sp,
             textAlign = TextAlign.Center,
             modifier = inner

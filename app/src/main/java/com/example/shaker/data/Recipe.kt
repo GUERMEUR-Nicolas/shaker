@@ -19,34 +19,42 @@ class Recipe(
     @StringRes val name: Int,
     val id: Int,
     var generating: ScalingInt = ScalingInt(0),
-    var cost: ScalingCost) {
+    var cost: ScalingCost,
+	var upgrades: MutableList<Pair<Upgrade, Boolean>> = mutableListOf<Pair<Upgrade, Boolean>>()
+) {
     public fun GetCost(level: Long): ScalingInt {
-        return cost.GetCost(level)
+		return doAllUpgradesOfType(this.upgrades, this.cost.basePrice, "cost") * this.cost.scalingFactor.pow(level.toDouble());
     }
     constructor(
         @DrawableRes imageResourceId: Int,
         generating10th: Double,
         name: Int,
-        id: Int) : this(
+        id: Int,
+		upgrades: MutableList<Pair<Upgrade, Boolean>> = mutableListOf<Pair<Upgrade, Boolean>>()
+	) : this(
         //When no cost is specified we use a cost based on the ID scaled by 11 on each increment
         cost = ScalingCost(ScalingInt(100.0* 11.0.pow(id - 1.0)),1.15),
         imageResourceId = imageResourceId,
         generating10th = generating10th,
         name = name,
-        id = id
+        id = id,
+		upgrades = upgrades
     )
     constructor(
         @DrawableRes imageResourceId: Int,
         generating10th: Double,
         name: Int,
         id: Int,
-        cost : ScalingCost) : this(
+        cost : ScalingCost,
+		upgrades: MutableList<Pair<Upgrade, Boolean>> = mutableListOf<Pair<Upgrade, Boolean>>()
+	) : this(
         //When no cost is specified we use a cost based on the ID scaled by 11 on each increment
         cost = cost,
         imageResourceId = imageResourceId,
         generating = ScalingInt(generating10th*10),
         name = name,
-        id = id
+        id = id,
+		upgrades = upgrades
     )
 }
 
@@ -58,7 +66,11 @@ val allRecipes = listOf(
         cost = ScalingCost(ScalingInt(15), 1.15),
         generating10th = 0.1,
         name = R.string.cocktail_0,
-        id = 0
+        id = 0,
+		upgrades = mutableListOf(
+			Pair(allUpgrades[0], false),
+			Pair(allUpgrades[1], false)
+		)
     ),
     //From Second Recipe cost is based on the ID with a scaling factor
     Recipe(

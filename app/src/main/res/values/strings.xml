@@ -5,7 +5,8 @@
     <string name="RecipeCountAndTotal">%s shakers for %s</string>
     <string name="money_on_shake">(+ %s/shake)</string>
     <string name="recipe_name">Recipe</string>
-    <string name="upgrade_name">Upgrade</string>
-    <string name="upgrade_description">Upgrade description</string>
+	<string name="tier_name">Tier</string>
+	<string name="upgrade_name">Upgrade</string>
+	<string name="upgrade_description">Upgrade Description</string>
     <string name="empty" />
 </resources>

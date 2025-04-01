@@ -48,8 +48,8 @@ class MainActivity : ComponentActivity() {
                     val valueIncrement = resources.getInteger(R.integer.ValueIncrementPerS)
                     val duration: Float =
                         resources.getInteger(R.integer.CycleDurationMultiplier).toFloat()
+					val cycleDuration = 1000L / valueIncrement
                     while (true) {
-                        val cycleDuration = 1000L / valueIncrement
                         delay(cycleDuration)
                         gameplayState.Increment(1.0f / (duration * valueIncrement))
                     }

@@ -55,6 +55,10 @@ class ScalingInt {
 
     //Forwarder overloads
 
+	operator fun plus(other: Float): ScalingInt {
+		return this + ScalingInt(other.toULong())
+	}
+
     operator fun times(other: ScalingInt): ScalingInt {
         return this * other.ValueAsLong().toDouble()
     }

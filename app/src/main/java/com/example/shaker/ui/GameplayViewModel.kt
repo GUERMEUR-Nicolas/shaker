@@ -3,6 +3,8 @@ package com.example.shaker.ui
 import androidx.lifecycle.ViewModel
 import com.example.shaker.data.Recipe
 import com.example.shaker.data.ScalingInt
+import com.example.shaker.data.doAllUpgradesOfType
+import com.example.shaker.data.allRecipes
 import com.example.shaker.ui.GameplayStates.MoneyState
 import com.example.shaker.ui.GameplayStates.RecipeState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +27,6 @@ class GameplayViewModel : ViewModel() {
     public fun ForceBuy(recipe: Recipe, amount: Long) {
         val id = recipe.id
         _moneyState.value = _moneyState.value.copy(
-            perSecond = _moneyState.value.perSecond + recipe.generating * amount,
             previous = _moneyState.value.current,
             current = _moneyState.value.current - _recipes.value.GetNextCost(recipe, amount)
         )
@@ -33,7 +34,16 @@ class GameplayViewModel : ViewModel() {
         _recipes.value = _recipes.value.copy(
             map = _recipes.value.IncrementedMap(id, amount)
         )
+		this.updatePerSecond()
     }
+	public fun ForceBuy(recipe: Recipe, upgradeID: Int){
+		_moneyState.value = _moneyState.value.copy(
+			previous = _moneyState.value.current,
+			current = _moneyState.value.current - recipe.upgrades[upgradeID].first.cost
+		)
+		recipe.upgrades[upgradeID] = recipe.upgrades[upgradeID].copy(second = true)
+		this.updatePerSecond()
+	}
 
     public fun Increment(value: ScalingInt) {
         _moneyState.value = _moneyState.value.copy(
@@ -46,7 +56,7 @@ class GameplayViewModel : ViewModel() {
         val incr = numberOfCycle * _moneyState.value.perSecond.toFloat()
         //If the value is directly above the minimal value, we increment it directly, using the ScalingInt Multiplication
         if(incr>10000f)
-            Increment(_moneyState.value.perSecond * numberOfCycle)
+            Increment(incr)
         else {
             //Else, mostly in the beggining when incr is less than 1 per update rate, we acucumlate it in a float value
             accumalated += incr;
@@ -74,4 +84,14 @@ class GameplayViewModel : ViewModel() {
             current = _moneyState.value.current * 10
         )
     }
+
+	public fun updatePerSecond(){
+		var perSecond = ScalingInt(0)
+		for(r in allRecipes)
+			perSecond += doAllUpgradesOfType(r.upgrades, r.generating, "generate", _recipes.value.map) * _recipes.value.GetRecipeAmount(r)
+		// TODO: add raw cps
+		_moneyState.value = _moneyState.value.copy(
+			perSecond = perSecond
+		)
+	}
 }

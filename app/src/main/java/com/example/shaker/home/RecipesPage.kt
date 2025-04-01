@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import com.example.shaker.R
 import com.example.shaker.data.Recipe
+import com.example.shaker.data.Upgrade
 import com.example.shaker.data.UpgradeInfo
 import com.example.shaker.data.allRecipes
 import com.example.shaker.data.allUpgrades
@@ -75,9 +76,9 @@ fun CurrentRecipe(
         Column(
             verticalArrangement = Arrangement.Center,
             modifier = modifier
-                .fillMaxWidth(0.8f)
-                .fillMaxHeight()
-                .align(Alignment.CenterEnd),
+				.fillMaxWidth(0.8f)
+				.fillMaxHeight()
+				.align(Alignment.CenterEnd),
         ) {
             RecipeInfo(recipe, gameState = gameState, 40.sp, true, false, modifier)
             Row(
@@ -90,48 +91,51 @@ fun CurrentRecipe(
             Spacer(
                 modifier = Modifier.height(15.dp)
             )
-            UpgradeRow(modifier, 75.dp)
+            UpgradeRow(recipe, modifier, 75.dp, gameState = gameState)
         }
     }
 }
 
 @Composable
-fun UpgradeRow(modifier: Modifier, dp: Dp) {
+fun UpgradeRow(recipe: Recipe, modifier: Modifier, dp: Dp, gameState: GameplayViewModel) {
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxWidth()
     ) {
         //TODO fetch the actual upgrades of the recipe
-        UpgradeWithButton(allUpgrades[0], modifier, dp)
+		for(i in recipe.upgrades.indices){
+			UpgradeWithButton(recipe, i, modifier, dp, gameState)
+		}
+        /*UpgradeWithButton(allUpgrades[0], modifier, dp)
         UpgradeWithButton(allUpgrades[1], modifier, dp)
         UpgradeWithButton(allUpgrades[2], modifier, dp)
-        UpgradeWithButton(allUpgrades[3], modifier, dp)
+        UpgradeWithButton(allUpgrades[3], modifier, dp)*/
     }
 }
 
 @Composable
-fun UpgradeWithButton(info: UpgradeInfo, modifier: Modifier, dp: Dp) {
+fun UpgradeWithButton(recipe: Recipe, upgradeID: Int, modifier: Modifier, dp: Dp, gameState: GameplayViewModel) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Upgrade(info, Modifier.size(dp))
-        UpgradeBuyButton(info, modifier)
+        Upgrade(recipe.upgrades[upgradeID].first, Modifier.size(dp))
+        UpgradeBuyButton(recipe, upgradeID, modifier, gameState)
     }
 }
 
-@Composable
+/*@Composable
 @Preview(widthDp = 600, heightDp = 100)
 fun UpgradeRowPreview() {
-    UpgradeRow(Modifier.size(100.dp), 75.dp)
+    UpgradeRow(allRecipes[0], Modifier.size(100.dp), 75.dp, gameState)
 }
 
 @Composable
 @Preview(widthDp = 100, heightDp = 100)
 fun UpgradeWithButtonPreview() {
-    UpgradeWithButton(allUpgrades[2], Modifier, 75.dp)
-}
+    UpgradeWithButton(allRecipes[0], 2, Modifier, 75.dp, gameState)
+}*/
 
 @Composable
 fun GenericBuyButton(
@@ -150,12 +154,13 @@ fun GenericBuyButton(
 }
 
 @Composable
-fun UpgradeBuyButton(info: UpgradeInfo, modifier: Modifier) {
+fun UpgradeBuyButton(recipe: Recipe, upgradeID: Int, modifier: Modifier, gameplayViewModel: GameplayViewModel) {
     //TODO bind viewModel/money and enable and procesed the onClick with money dedeuciton and stuff like in the recipeBuyButton
     GenericBuyButton(
-        onClick = {},
+        onClick = {gameplayViewModel.ForceBuy(recipe, upgradeID)},
         enable = true,
-        text = info.cost.GetCost((info.level + 1).toLong()).ValueAsString()
+        //text = upg.cost.GetCost((upg.level + 1).toLong()).ValueAsString()
+		text = recipe.upgrades[upgradeID].first.cost.ValueAsString()
     )
 }
 
@@ -218,8 +223,8 @@ fun RecipeInfo(
         alignment = Alignment.Center,
         contentScale = ContentScale.FillWidth,
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(padding),
+			.fillMaxWidth()
+			.padding(padding),
         contentDescription = null
     )
     if (showName && !inSidebar) {
