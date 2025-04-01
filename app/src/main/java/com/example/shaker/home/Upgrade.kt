@@ -33,15 +33,21 @@ import com.example.shaker.data.allUpgrades
 @Composable
 fun Upgrade(info: UpgradeInfo, modifier: Modifier = Modifier) {
     Box(modifier = modifier) {
-        Image(
-            painter = painterResource(info.image),
-            contentDescription = null,
-            modifier = modifier.align(Alignment.Center),
-            contentScale = androidx.compose.ui.layout.ContentScale.FillHeight
-        )
+        Box(
+            modifier = modifier
+                .background(colorResource(R.color.iconsBG))
+                .padding(10.dp)
+                .padding(bottom = 10.dp)
+        ) {
+            Image(
+                painter = painterResource(info.image),
+                contentDescription = null,
+                modifier = modifier.align(Alignment.Center),
+                contentScale = androidx.compose.ui.layout.ContentScale.FillHeight
+            )
+        }
         var inner = modifier
             .align(Alignment.Center)
-            .padding(0.dp)
         Text(
             text = info.level.toString(),
             fontSize = 16.sp,
@@ -52,11 +58,11 @@ fun Upgrade(info: UpgradeInfo, modifier: Modifier = Modifier) {
         )
         Text(
             text = stringResource(info.name),
-            fontSize = 16.sp,
+            fontSize = 12.sp,
             textAlign = TextAlign.Center,
             modifier = inner
                 .padding(top = 53.dp)
-                //.background(Color.Blue)
+            //.background(Color.Blue)
             //.fillMaxWidth()
             //.background(
             //    colorResource(R.color.textBg)
@@ -70,6 +76,7 @@ fun Upgrade(info: UpgradeInfo, modifier: Modifier = Modifier) {
 fun UpgradePreview() {
     Upgrade(allUpgrades[2], Modifier.size(75.dp))
 }
+
 @Composable
 @Preview(widthDp = 100, heightDp = 1000)
 fun UpgradePreview2() {

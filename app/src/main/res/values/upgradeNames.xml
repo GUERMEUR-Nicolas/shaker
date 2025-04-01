@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="upgrade_0">Ice Ball</string>
+    <string name="upgrade_1">Crystal Glass</string>
+    <string name="upgrade_2">Golden Leaf</string>
+    <string name="upgrade_3">Smoke Infuser</string>
+    <string name="upgrade_4">Tiki Mug</string>
+    <string name="upgrade_5">Aged Liquor</string>
+    <string name="upgrade_6">Extra Shot</string>
+    <string name="upgrade_7">Rose Petal</string>
+    <string name="upgrade_8">Fresh Fruits</string>
+
+</resources>
