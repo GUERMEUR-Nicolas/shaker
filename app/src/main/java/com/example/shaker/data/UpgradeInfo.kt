@@ -13,7 +13,7 @@ data class UpgradeInfo(
     @DrawableRes val image: Int){
     constructor(@StringRes name:Int, @StringRes description: Int, @DrawableRes image : Int, baseCost:Int): this(name, 0, ScalingCost(ScalingInt(baseCost)), description, image);
 }
-val allUpgrades = listOf(
+val allUpgrades_ = listOf(
     UpgradeInfo(name=R.string.upgrade_0,image = R.drawable.upgrade_0, baseCost = 10, description = R.string.upgrade_description ),
     UpgradeInfo(name=R.string.upgrade_1,image = R.drawable.upgrade_1, baseCost = 25, description = R.string.upgrade_description ),
     UpgradeInfo(name=R.string.upgrade_2,image = R.drawable.upgrade_2, baseCost = 100, description = R.string.upgrade_description),

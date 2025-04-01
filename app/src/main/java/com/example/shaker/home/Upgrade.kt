@@ -46,28 +46,29 @@ fun Upgrade(upg: Upgrade, modifier: Modifier = Modifier) {
 				modifier = modifier.align(Alignment.Center),
 				contentScale = androidx.compose.ui.layout.ContentScale.FillHeight
 			)
-        var inner = modifier
-            .align(Alignment.Center)
-        Text(
-            text = upg.tier.toString(),
-            fontSize = 16.sp,
-            textAlign = TextAlign.Right,
-            modifier = inner
-                .align(Alignment.TopStart)
-                .padding(bottom = 50.dp, start = 50.dp, end = 5.dp)
-        )
-        Text(
-            text = stringResource(upg.name),
-            fontSize = 12.sp,
-            textAlign = TextAlign.Center,
-            modifier = inner
-                .padding(top = 53.dp)
-            //.background(Color.Blue)
-            //.fillMaxWidth()
-            //.background(
-            //    colorResource(R.color.textBg)
-            //)
-        )
+			var inner = modifier
+				.align(Alignment.Center)
+			Text(
+				text = upg.tier.toString(),
+				fontSize = 16.sp,
+				textAlign = TextAlign.Right,
+				modifier = inner
+					.align(Alignment.TopStart)
+					.padding(bottom = 50.dp, start = 50.dp, end = 5.dp)
+			)
+			Text(
+				text = stringResource(upg.name),
+				fontSize = 12.sp,
+				textAlign = TextAlign.Center,
+				modifier = inner
+					.padding(top = 53.dp)
+				//.background(Color.Blue)
+				//.fillMaxWidth()
+				//.background(
+				//    colorResource(R.color.textBg)
+				//)
+			)
+		}
     }
 }
 

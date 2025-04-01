@@ -111,9 +111,9 @@ fun doAllUpgradesOfType(
 
 val allUpgrades = arrayOf(
 	Upgrade(
-		R.string.upgrade_name_0,
+		R.string.upgrade_0,
 		R.string.upgrade_description_0,
-		R.drawable.placeholder_0,
+		R.drawable.upgrade_0,
 		arrayOf(2),
 		arrayOf("generate"),
 		allTiers[1],
@@ -121,9 +121,9 @@ val allUpgrades = arrayOf(
 		buildingB_ID = null
 	),
 	Upgrade(
-		R.string.upgrade_name_1,
+		R.string.upgrade_1,
 		R.string.upgrade_description_1,
-		R.drawable.placeholder_0,
+		R.drawable.upgrade_1,
 		arrayOf(0, 1),
 		arrayOf("generate", "cost"),
 		allTiers[0],
