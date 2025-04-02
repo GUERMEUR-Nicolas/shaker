@@ -1,10 +1,12 @@
 package com.example.shaker.data
 
+import java.math.BigDecimal
+
 //(currently not scaling at all) wrapper class with overloaded operators instead we change implementation from a simple long to work with powers of 10,255, or other stuff like that
 class ScalingInt {
 
     //TODO only these 3 methods should be enough to reimplement if we change the backup strucutres, all the others depends on it and never onf the value (type nor value)
-    private var value: ULong = 0UL
+	var value: BigDecimal = BigDecimal("0")
     fun ValueAsLong(): Long {
         return value.toLong();
     }
@@ -16,29 +18,34 @@ class ScalingInt {
     }
 
     constructor(value: ULong)  {
-        this.value = value
+        this.value = BigDecimal(value.toLong())
     }
+	constructor(value: BigDecimal) {
+		this.value = value
+	}
     //Forwarder converion overload
     fun toLong(): Long {
-        return ValueAsLong()
+        return this.value.toLong()
     }
 
     fun toInt(): Int {
-        return ValueAsLong().toInt()
+        return this.value.toInt()
     }
 
     fun toFloat(): Float {
-        return ValueAsLong().toFloat()
+        return this.value.toFloat()
     }
 
     fun ValueAsString(): String {
-        return ValueAsLong().toString()
+        return this.value.toString()
     }
 
-    constructor(value: Int) : this(value.toULong()){
+    constructor(value: Int) : this(BigDecimal(value)){
     }
-    constructor(double: Double) : this(double.toULong()){
+    constructor(double: Double) : this(BigDecimal(double)){
     }
+	constructor(value: Float) : this(BigDecimal(value.toDouble())){
+	}
 
     operator fun plus(other: ScalingInt): ScalingInt {
         return ScalingInt(this.value + other.value)
@@ -60,19 +67,19 @@ class ScalingInt {
 	}
 
     operator fun times(other: ScalingInt): ScalingInt {
-        return this * other.ValueAsLong().toDouble()
+        return ScalingInt(this.value * other.value)
     }
 
     operator fun times(other: ULong): ScalingInt {
-        return this * other.toDouble()
+        return this * ScalingInt(other)
     }
 
     operator fun times(other: Long): ScalingInt {
-        return this * other.toDouble()
+        return this * ScalingInt(other.toULong())
     }
 
     operator fun times(factor: Float): ScalingInt {
-        return this * factor.toDouble()
+        return this * ScalingInt(factor)
     }
 
     operator fun compareTo(getNextCost: ScalingInt): Int {
