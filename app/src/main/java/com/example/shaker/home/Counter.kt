@@ -65,6 +65,7 @@ import com.example.shaker.R
 import com.example.shaker.ui.GameplayStates.MoneyState
 import com.example.ui.theme.bodyFontFamily
 import com.example.ui.theme.displayFontFamily
+import kotlin.math.exp
 import kotlin.math.log10
 import kotlin.math.log2
 import kotlin.math.max
@@ -74,13 +75,13 @@ import kotlin.math.roundToLong
 
 @Composable
 fun FlipClockCounter(state: State<MoneyState>, modifier: Modifier = Modifier) {
-	val newNumber = state.value.current.toLong()
-	val oldNumber = state.value.previous.toLong()
+	val newNumber = state.value.current
+	val oldNumber = state.value.previous
 	val exponent = getExponent(newNumber)
-	val formattedNewNumber = String.format("%03d", shiftNumber(newNumber, exponent.roundToLong()))
-	val formattedOldNumber = String.format("%03d", shiftNumber(oldNumber, getExponent(oldNumber).roundToLong()))
+	val formattedNewNumber = String.format("%03d", shiftNumber(newNumber, exponent))
+	val formattedOldNumber = String.format("%03d", shiftNumber(oldNumber, getExponent(oldNumber)))
 
-	val numberName = conwayGuyName(exponent.roundToLong())
+	val numberName = conwayGuyName(exponent)
 
 	Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
 		Box(modifier = Modifier/*.border(5.dp, Color(0xFF444444), CutCornerShape(0.dp))*/) {
@@ -101,7 +102,7 @@ fun FlipClockCounter(state: State<MoneyState>, modifier: Modifier = Modifier) {
 					fontSize = 30.sp,
 					color = Color.White,
 					fontFamily = bodyFontFamily,
-					background = if (exponent.roundToLong() >= 3) Color.Black else Color.Transparent
+					background = if (exponent >= 3) Color.Black else Color.Transparent
 				),
 				modifier = Modifier.fillMaxSize()
 			)
@@ -219,24 +220,15 @@ fun Digit(
 	)
 }
 
-fun getExponent(number: Long): Double {
-	val l = 1/log2(10.0)
-	val t = ((log2(number.toDouble()) * l))
-	return t // Fixme: NaN
+fun getExponent(number: ScalingInt): Int{
+	return number.value.precision() - number.value.scale() -1
 }
 
-fun shiftNumber(number: Long, exponent: Long): Long {
-	var t = exponent
-	var i = 0
-	while(t >= 3){
-		i += 1
-		t -= 3
-	}
-	//println("Init: $number, Number: ${number/10.0.pow(i*6)}, i: $i, t: $t")
-	return (number/10.0.pow(i*3)).toLong()
+fun shiftNumber(number: ScalingInt, exponent: Int): Int{
+	return number.value.movePointLeft(exponent-exponent%3).abs().toInt()
 }
 
-fun conwayGuyName(exponent: Long): String {
+fun conwayGuyName(exponent: Int): String {
 	// TODO: add long scale
 	val firstNames = arrayOf(
 		"M", "B", "Tr", "Quadr", "Quint", "Sext", "Sept", "Oct", "Non", "Dec"

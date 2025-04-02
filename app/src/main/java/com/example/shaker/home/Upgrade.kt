@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.shaker.R
 import com.example.shaker.data.Upgrade
-import com.example.shaker.data.UpgradeInfo
 import com.example.shaker.data.allUpgrades
 
 @Composable
