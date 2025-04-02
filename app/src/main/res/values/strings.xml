@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Shaker</string>
-    <string name="current_money">%s $</string>
+    <string name="money_value">%s $</string>
     <string name="money_per_cycle">%s $/c</string>
     <string name="RecipeCountAndTotal">%s shakers for %s</string>
     <string name="money_on_shake">(+ %s/shake)</string>
@@ -9,4 +9,5 @@
 	<string name="upgrade_name">Upgrade</string>
 	<string name="upgrade_description">Upgrade Description</string>
     <string name="empty" />
+    <string name="buy_upgrade">Upgrade for %s</string>
 </resources>

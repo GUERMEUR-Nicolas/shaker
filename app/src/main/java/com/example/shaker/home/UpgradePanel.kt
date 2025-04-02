@@ -2,7 +2,11 @@ package com.example.shaker.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
@@ -18,8 +22,44 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.shaker.R
+import com.example.shaker.data.Recipe
 import com.example.shaker.data.Upgrade
+import com.example.shaker.data.allRecipes
 import com.example.shaker.data.allUpgrades
+import com.example.shaker.ui.GameplayViewModel
+
+@Composable
+fun UpgradePanel(
+    recipe: Recipe,
+    upg: Upgrade,
+    onExit : () -> Unit,
+    modifier: Modifier = Modifier,
+    gameState: GameplayViewModel
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier.background(color = Color.Blue)
+    ) {
+        Box(
+            modifier = Modifier
+                .background(Color.Red)
+                .padding(10.dp)
+                .padding(bottom = 10.dp)
+                .clickable(onClick =  onExit)
+        ) {
+        }
+        TitledImage(
+            title = stringResource(upg.name),
+            subTitle = stringResource(upg.description),
+            textColor = Color.Black,
+            titleSize = 20.sp,
+            imageId = upg.image,
+            imagePadding = 15.dp,
+        )
+        UpgradeBuyButton(recipe, upg, gameState, modifier)
+    }
+}
 
 @Composable
 fun UpgradeIcon(upg: Upgrade, modifier: Modifier = Modifier) {
@@ -65,13 +105,38 @@ fun UpgradeIcon(upg: Upgrade, modifier: Modifier = Modifier) {
 }
 
 @Composable
+fun UpgradeBuyButton(
+    recipe: Recipe,
+    upgrade: Upgrade,
+    gameplayViewModel: GameplayViewModel,
+    modifier: Modifier
+) {
+    //TODO bind viewModel/money and enable and procesed the onClick and enabled with money dedeuciton and stuff like in the recipeBuyButton
+    GenericBuyButton(
+        //TODO
+        onClick = { gameplayViewModel.ForceBuy(recipe, 0) },
+        enable = true,
+        text = stringResource(
+            R.string.buy_upgrade,
+            stringResource(R.string.money_value, upgrade.cost)
+        )
+    )
+}
+
+@Composable
+@Preview(widthDp = 600, heightDp = 1000)
+fun UpgradePanelPreview() {
+    UpgradePanel(allRecipes[0], allUpgrades[0], {},Modifier.fillMaxSize(), GameplayViewModel())
+}
+
+@Composable
 @Preview(widthDp = 100, heightDp = 1000)
 fun UpgradePreview() {
-    UpgradeIcon(allUpgrades[2], Modifier.size(75.dp))
+    UpgradeIcon(allUpgrades[0], Modifier.size(75.dp))
 }
 
 @Composable
 @Preview(widthDp = 100, heightDp = 1000)
 fun UpgradePreview2() {
-    UpgradeIcon(allUpgrades[2], Modifier.size(100.dp))
+    UpgradeIcon(allUpgrades[0], Modifier.size(100.dp))
 }

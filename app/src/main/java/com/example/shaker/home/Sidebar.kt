@@ -178,7 +178,7 @@ private fun SidebarHeader(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun RecipeItem(
+fun RecipeItem(
 	recipe: Recipe,
 	isSelected: Boolean,
 	gameState: GameplayViewModel,

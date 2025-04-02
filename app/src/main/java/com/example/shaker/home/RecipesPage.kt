@@ -1,7 +1,9 @@
 package com.example.shaker.home
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +30,10 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.material3.Button
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,7 +53,8 @@ fun RecipesPage(
     pagerState: PagerState,
     onRecipeChange: (Int) -> Unit,
     gameState: GameplayViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: MainViewModel
 ) {
     LaunchedEffect(pagerState.currentPage) { onRecipeChange(pagerState.currentPage) }
     val fling = PagerDefaults.flingBehavior(
@@ -59,7 +66,7 @@ fun RecipesPage(
         flingBehavior = fling,
         modifier = modifier
     ) { id ->
-        CurrentRecipe(recipeID = id, gameState = gameState)
+        CurrentRecipe(recipeID = id, gameState, viewModel = viewModel)
     }
 }
 
@@ -67,17 +74,20 @@ fun RecipesPage(
 fun CurrentRecipe(
     recipeID: Int,
     gameState: GameplayViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: MainViewModel
 ) {
     val recipe = allRecipes[recipeID]
     Box(modifier.fillMaxSize()) {
+        val selectedUpgrade = viewModel.selectedUpgrade.collectAsState().value
         Column(
             verticalArrangement = Arrangement.Center,
             modifier = modifier
-				.fillMaxWidth(0.8f)
-				.fillMaxHeight()
-				.align(Alignment.CenterEnd),
+                .fillMaxWidth(0.8f)
+                .fillMaxHeight()
+                .align(Alignment.CenterEnd),
         ) {
+
             RecipeInfo(recipe, gameState = gameState, 40.sp, true, false, modifier)
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
@@ -89,39 +99,64 @@ fun CurrentRecipe(
             Spacer(
                 modifier = Modifier.height(15.dp)
             )
-            UpgradeRow(recipe, modifier, 75.dp, gameState = gameState)
+            UpgradeRow(recipe, modifier, 75.dp, gameState, viewModel)
+        }
+        if (selectedUpgrade is Upgrade) {
+            UpgradePanel(
+                recipe,
+                selectedUpgrade,
+                { viewModel.selectUpgrade(null) },
+                modifier.fillMaxWidth(0.8f)
+                .align(Alignment.CenterEnd),
+                gameState
+            )
         }
     }
 }
 
 @Composable
-fun UpgradeRow(recipe: Recipe, modifier: Modifier, dp: Dp, gameState: GameplayViewModel) {
+fun UpgradeRow(
+    recipe: Recipe,
+    modifier: Modifier,
+    dp: Dp,
+    gameState: GameplayViewModel,
+    viewModel: MainViewModel
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxWidth()
     ) {
         //TODO fetch the actual upgrades of the recipe
-		for(i in recipe.upgrades.indices){
-			UpgradeWithButton(recipe, i, modifier, dp, gameState)
-		}
-        /*UpgradeWithButton(allUpgrades[0], modifier, dp)
-        UpgradeWithButton(allUpgrades[1], modifier, dp)
-        UpgradeWithButton(allUpgrades[2], modifier, dp)
-        UpgradeWithButton(allUpgrades[3], modifier, dp)*/
+        for (i in recipe.upgrades) {
+            UpgradeWithButton(recipe, i.first, modifier, dp, gameState, viewModel)
+        }
     }
 }
 
 @Composable
-fun UpgradeWithButton(recipe: Recipe, upgradeID: Int, modifier: Modifier, dp: Dp, gameState: GameplayViewModel) {
+fun UpgradeWithButton(
+    recipe: Recipe,
+    upgrade: Upgrade,
+    modifier: Modifier,
+    dp: Dp,
+    gameState: GameplayViewModel,
+    viewModel: MainViewModel
+) {
+    //TODO
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        UpgradeIcon(recipe.upgrades[upgradeID].first, Modifier.size(dp))
-        UpgradeBuyButton(recipe, upgradeID, modifier, gameState)
+        UpgradeIcon(upgrade, Modifier
+            .size(dp)
+            .clickable() {
+                viewModel.selectUpgrade(upgrade)
+            })
+        //UpgradeBuyButton(recipe, upgrade, modifier, gameState)
     }
 }
+
 
 /*@Composable
 @Preview(widthDp = 600, heightDp = 100)
@@ -152,17 +187,6 @@ fun GenericBuyButton(
 }
 
 @Composable
-fun UpgradeBuyButton(recipe: Recipe, upgradeID: Int, modifier: Modifier, gameplayViewModel: GameplayViewModel) {
-    //TODO bind viewModel/money and enable and procesed the onClick with money dedeuciton and stuff like in the recipeBuyButton
-    GenericBuyButton(
-        onClick = {gameplayViewModel.ForceBuy(recipe, upgradeID)},
-        enable = true,
-        //text = upg.cost.GetCost((upg.level + 1).toLong()).ValueAsString()
-		text = recipe.upgrades[upgradeID].first.cost.ValueAsString()
-    )
-}
-
-@Composable
 fun RecipeBuyButton(recipe: Recipe, amountToBuy: Long, gameplayViewModel: GameplayViewModel) {
     var recipes = gameplayViewModel.recipes.collectAsState()
     var money = gameplayViewModel.moneyState.collectAsState()
@@ -187,52 +211,83 @@ fun RecipeInfo(
 ) {
     val recipes = gameState.recipes.collectAsState()
     val recipeAmount = recipes.value.GetRecipeAmount(recipe)
-    if (showName) {
-        var name = stringResource(recipe.name)
-        if (inSidebar) {
-            name += " (" + recipeAmount.toString() + ")"
-        }
-        Text(
-            fontSize = spBase,
-            text = name,
-            color = if (inSidebar) Color.Black else Color.White,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth(),
-        )
-        if (!inSidebar) {
-            Text(
-                fontSize = spBase * .8f,
-                text = stringResource(
-                    R.string.RecipeCountAndTotal, recipeAmount.toString(), stringResource(
-                        R.string.money_per_cycle,
-                        recipe.generating * recipeAmount
-                    )
-                ),
-                color = if (inSidebar) Color.Black else Color.White,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
+    var name = stringResource(recipe.name)
+    if (inSidebar) {
+        name += " (" + recipeAmount.toString() + ")"
     }
-    var padding: Dp = 0.dp
-    if (inSidebar) padding = 5.dp else padding = 50.dp
-    Image(
-        painter = painterResource(recipe.imageResourceId),
-        alignment = Alignment.Center,
-        contentScale = ContentScale.FillWidth,
-        modifier = Modifier
-			.fillMaxWidth()
-			.padding(padding),
-        contentDescription = null
+    TitledImage(
+        name,
+        if (!inSidebar) stringResource(
+            R.string.RecipeCountAndTotal, recipeAmount.toString(), stringResource(
+                R.string.money_per_cycle,
+                recipe.generating * recipeAmount
+            )
+        ) else null,
+        if (inSidebar) Color.Black else Color.White,
+        spBase,
+        recipe.imageResourceId,
+        if (inSidebar) 5.dp else 50.dp
     )
     if (showName && !inSidebar) {
         PerSecondText(recipe.generating, spBase * .8f, modifier.fillMaxWidth())
     }
 }
 
+@Composable
+fun TitledImage(
+    title: String,
+    subTitle: String?,
+    textColor: Color,
+    titleSize: TextUnit,
+    @DrawableRes imageId: Int,
+    imagePadding: Dp,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        fontSize = titleSize,
+        text = title,
+        color = textColor,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth(),
+    )
+    if (subTitle is String && !subTitle.isNullOrEmpty()) {
+        Text(
+            fontSize = titleSize * .8f,
+            text = subTitle,
+            color = textColor,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+
+
+    Image(
+        painter = painterResource(imageId),
+        alignment = Alignment.Center,
+        contentScale = ContentScale.FillWidth,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(imagePadding),
+        contentDescription = null
+    )
+}
+
 @Preview(widthDp = 800, heightDp = 2400)
 @Composable
 fun CurrentRecipe_P() {
     val gameplayViewModel = GameplayViewModel()
-    CurrentRecipe(recipeID = 0, gameState = gameplayViewModel)
+    CurrentRecipe(recipeID = 0, gameState = gameplayViewModel, viewModel = MainViewModel())
+}
+
+@Preview(widthDp = 400, heightDp = 400)
+@Composable
+fun CurrentRecipe_SideBar() {
+    val gameplayViewModel = GameplayViewModel()
+    RecipeItem(
+        recipe = allRecipes[0],
+        isSelected = true,
+        gameState = gameplayViewModel,
+        onRecipeClick = {},
+        modifier = Modifier
+    )
 }

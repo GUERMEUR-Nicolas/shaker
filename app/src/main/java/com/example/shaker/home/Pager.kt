@@ -75,7 +75,8 @@ fun CurrentPage(
                     viewModel.selectRecipe(recipeId)
                 },
                 gameplayState,
-                Modifier.background(Color(0xFF454078))
+                Modifier.background(Color(0xFF454078)),
+                viewModel
             )
 
             else -> Text("Unknown Screen")
