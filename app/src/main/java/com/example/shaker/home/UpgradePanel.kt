@@ -2,18 +2,9 @@ package com.example.shaker.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,11 +19,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.shaker.R
 import com.example.shaker.data.Upgrade
-import com.example.shaker.data.UpgradeInfo
 import com.example.shaker.data.allUpgrades
 
 @Composable
-fun Upgrade(upg: Upgrade, modifier: Modifier = Modifier) {
+fun UpgradeIcon(upg: Upgrade, modifier: Modifier = Modifier) {
     Box(modifier = modifier) {
         Box(
             modifier = modifier
@@ -77,11 +67,11 @@ fun Upgrade(upg: Upgrade, modifier: Modifier = Modifier) {
 @Composable
 @Preview(widthDp = 100, heightDp = 1000)
 fun UpgradePreview() {
-    Upgrade(allUpgrades[2], Modifier.size(75.dp))
+    UpgradeIcon(allUpgrades[2], Modifier.size(75.dp))
 }
 
 @Composable
 @Preview(widthDp = 100, heightDp = 1000)
 fun UpgradePreview2() {
-    Upgrade(allUpgrades[2], Modifier.size(100.dp))
+    UpgradeIcon(allUpgrades[2], Modifier.size(100.dp))
 }
