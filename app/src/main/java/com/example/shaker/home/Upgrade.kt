@@ -34,41 +34,43 @@ import com.example.shaker.data.allUpgrades
 @Composable
 fun Upgrade(upg: Upgrade, modifier: Modifier = Modifier) {
     Box(modifier = modifier) {
-		Box(
-			modifier = modifier
-				.background(colorResource(R.color.iconsBG))
-				.padding(10.dp)
-				.padding(bottom = 10.dp)
-		) {
-			Image(
-				painter = painterResource(upg.image),
-				contentDescription = null,
-				modifier = modifier.align(Alignment.Center),
-				contentScale = androidx.compose.ui.layout.ContentScale.FillHeight
-			)
-			var inner = modifier
-				.align(Alignment.Center)
-			Text(
-				text = upg.tier.toString(),
-				fontSize = 16.sp,
-				textAlign = TextAlign.Right,
-				modifier = inner
-					.align(Alignment.TopStart)
-					.padding(bottom = 50.dp, start = 50.dp, end = 5.dp)
-			)
-			Text(
-				text = stringResource(upg.name),
-				fontSize = 12.sp,
-				textAlign = TextAlign.Center,
-				modifier = inner
-					.padding(top = 53.dp)
-				//.background(Color.Blue)
-				//.fillMaxWidth()
-				//.background(
-				//    colorResource(R.color.textBg)
-				//)
-			)
-		}
+        Box(
+            modifier = modifier
+                .background(colorResource(R.color.iconsBG))
+                .padding(10.dp)
+                .padding(bottom = 10.dp)
+        ) {
+            Image(
+                painter = painterResource(upg.image),
+                contentDescription = null,
+                modifier = modifier.align(Alignment.Center),
+                contentScale = androidx.compose.ui.layout.ContentScale.FillHeight
+            )
+        }
+        var inner = modifier
+            .align(Alignment.Center)
+        Text(
+            text = upg.tier.level.toString(),
+            fontSize = 16.sp,
+            color = Color.Black,
+            textAlign = TextAlign.Right,
+            modifier = inner
+                .align(Alignment.TopStart)
+                .padding(bottom = 50.dp, start = 50.dp, end = 5.dp)
+        )
+        Text(
+            text = stringResource(upg.name),
+            color = Color.Black,
+            fontSize = 12.sp,
+            textAlign = TextAlign.Center,
+            modifier = inner
+                .padding(top = 53.dp)
+            //.background(Color.Blue)
+            //.fillMaxWidth()
+            //.background(
+            //    colorResource(R.color.textBg)
+            //)
+        )
     }
 }
 
