@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -65,12 +66,16 @@ import com.example.shaker.R
 import com.example.shaker.ui.GameplayStates.MoneyState
 import com.example.ui.theme.bodyFontFamily
 import com.example.ui.theme.displayFontFamily
+import java.util.Locale
+import kotlin.math.ceil
 import kotlin.math.exp
+import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.log2
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
+import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 @Composable
@@ -81,7 +86,9 @@ fun FlipClockCounter(state: State<MoneyState>, modifier: Modifier = Modifier) {
 	val formattedNewNumber = String.format("%03d", shiftNumber(newNumber, exponent))
 	val formattedOldNumber = String.format("%03d", shiftNumber(oldNumber, getExponent(oldNumber)))
 
-	val numberName = conwayGuyName(exponent)
+	val numberName = conwayGuyName(exponent).replaceFirstChar {
+		if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
+	}
 
 	Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
 		Box(modifier = Modifier/*.border(5.dp, Color(0xFF444444), CutCornerShape(0.dp))*/) {
@@ -228,24 +235,75 @@ fun shiftNumber(number: ScalingInt, exponent: Int): Int{
 	return number.value.movePointLeft(exponent-exponent%3).abs().toInt()
 }
 
-fun conwayGuyName(exponent: Int): String {
+fun conwayGuyName(exponent: Int, isFinal: Boolean = true): String {
 	// TODO: add long scale
 	val firstNames = arrayOf(
-		"M", "B", "Tr", "Quadr", "Quint", "Sext", "Sept", "Oct", "Non", "Dec"
+		"m", "b", "tr", "quadr", "quint", "sext", "sept", "oct", "non", "dec"
 	)
 	val genericNames = arrayOf(
-		arrayOf("Un", "Duo", "Tre", "Quattuor", "Quinqua", "Se", "Septe", "Octo", "Nove"),
-		arrayOf("Deci", "Viginti", "Triginta", "Quadraginta", "Quinquaginta", "Sexaginta", "Octoginta", "Nonaginta"),
-		arrayOf("Centi", "Ducenti", "Trecenti", "Quadringenti", "Quingenti", "Sescenti", "Septigenti", "Octingenti", "Nongenti")
+		arrayOf("un", "duo", "tre", "quattuor", /*"quinqua"*/"quin", "se", "septe", "octo", "nove"),
+		arrayOf("deci", "viginti", "triginta", "quadraginta", "quinquaginta", "sexaginta", "septuaginta", "octoginta", "nonaginta"),
+		arrayOf("centi", "ducenti", "trecenti", "quadringenti", "quingenti", "sescenti", "septigenti", "octingenti", "nongenti")
 	)
-	if(exponent > 66){
-		val strponent = (exponent/3.0 -1).roundToLong().toString()
+	val connections = arrayOf(
+		arrayOf("n", "ms", "ns", "ns", "ns", "n", "n", "mx", ""),
+		arrayOf("nx", "n", "ns", "ns", "ns", "n", "n", "mx", "")
+	)
+	val end = if(isFinal) "illion" else "illi"
+	val n: Int = if(isFinal) floor((exponent-3)/3.0).toInt() else exponent
+	println("n: $n, exponent: $exponent")
+	if(n >= 11){
+		val strponent = n.toString()
 		var rep: String = ""
-		strponent.forEachIndexed { index, c -> rep = genericNames[2-index][c.code-'0'.code] + rep}
+		if(n >= 1000){
+			var i = 0
+			var length = 3
+			var cur: Int
+			while(i < strponent.length){
+				if(i == 0 && strponent.length % 3 != 0){
+					length = strponent.length % 3
+				}else{
+					length = 3
+				}
+				cur = strponent.substring(i, length).toInt()
+				if(cur == 0){
+					rep += "n$end"
+				}else{
+					rep += conwayGuyName(cur, false)
+				}
+			}
+		}else{
+			var nextNonZero: Int = -1// = if(strponent[1] != '0') 1 else if(strponent[2] != '0') 2 else -1
+			for(i in 0..<strponent.lastIndex){
+				if(strponent[i] != '0')
+					nextNonZero = i
+			}
+			for(i in strponent.lastIndex downTo 0){
+				val c: Int = strponent[i].code-'0'.code
+				println("i: "+(strponent.lastIndex-i)+", c: $c")
+				if(c != 0) {
+					rep += genericNames[strponent.lastIndex-i][c-1]
+					if (i == strponent.lastIndex && nextNonZero != -1) {
+						var connect: String = connections[nextNonZero][strponent[nextNonZero].code-'0'.code -1]
+						connect = if(c in setOf(3, 6) && ("x" in connect || "s" in connect)) {
+							connect[1].toString()
+						}else if(c in setOf(7, 9) && ("n" in connect || "m" in connect)){
+							connect[0].toString()
+						} else {
+							""
+						}
+						rep += connect
+					}
+				}
+			}
+			if(rep[rep.lastIndex] in setOf('a', 'i'))
+				rep = rep.dropLast(1)
+			rep += end
+		}
 		return rep
-	} else if(exponent >= 6) {
-		return firstNames[((exponent/3).toInt() - 2)] + "illion"
-	} else if(exponent >= 3) {
+	} else if(n >= 1 || !isFinal) {
+		return firstNames[n - 1] + end
+	} else if(n == 0) {
 		return "Thousand"
 	}
 	return ""
