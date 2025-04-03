@@ -42,7 +42,7 @@ fun UpgradePanel(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
-            .fillMaxWidth(0.8f)
+            .fillMaxWidth(1f)
             //align(Alignment.CenterEnd),
     ) {
         //Box(
@@ -55,10 +55,10 @@ fun UpgradePanel(
         //) {
         //}
         TitledImage(
-            title = stringResource(upg.name),
+            title = stringResource(upg.name) + "\n" +stringResource(R.string.tier_name,upg.tier.level),
             subTitle = stringResource(upg.description),
             textColor = Color.Black,
-            titleSize = 40.sp * .8f,
+            titleSize = 30.sp,
             imageId = upg.image,
             imagePadding = 50.dp,
         )
