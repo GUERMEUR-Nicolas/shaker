@@ -32,7 +32,7 @@ public fun CenterSidebarPager(viewModel: MainViewModel, gameplayState: GameplayV
         TabItem("recipe", "screen_1")
     )
     val pagerState_H: PagerState = rememberPagerState(
-        initialPage = 0
+        initialPage = 1
     ) { listTabItem.size } // Horizontal pages
     val pagerState_V: PagerState = rememberPagerState(
         initialPage = viewModel.selectedRecipeId.value

@@ -6,7 +6,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
@@ -32,30 +34,33 @@ import com.example.shaker.ui.GameplayViewModel
 fun UpgradePanel(
     recipe: Recipe,
     upg: Upgrade,
-    onExit : () -> Unit,
+    onExit: () -> Unit,
     modifier: Modifier = Modifier,
     gameState: GameplayViewModel
 ) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = modifier.background(color = Color.Blue)
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .fillMaxWidth(0.8f)
+            //align(Alignment.CenterEnd),
     ) {
-        Box(
-            modifier = Modifier
-                .background(Color.Red)
-                .padding(10.dp)
-                .padding(bottom = 10.dp)
-                .clickable(onClick =  onExit)
-        ) {
-        }
+        //Box(
+        //    modifier = Modifier
+        //        .fillMaxWidth()
+        //        .background(Color.Red)
+        //        .padding(10.dp)
+        //        .padding(bottom = 10.dp)
+        //        .clickable(onClick = onExit)
+        //) {
+        //}
         TitledImage(
             title = stringResource(upg.name),
             subTitle = stringResource(upg.description),
             textColor = Color.Black,
-            titleSize = 20.sp,
+            titleSize = 40.sp * .8f,
             imageId = upg.image,
-            imagePadding = 15.dp,
+            imagePadding = 50.dp,
         )
         UpgradeBuyButton(recipe, upg, gameState, modifier)
     }
@@ -124,9 +129,26 @@ fun UpgradeBuyButton(
 }
 
 @Composable
-@Preview(widthDp = 600, heightDp = 1000)
+@Preview(widthDp = 800, heightDp = 1500)
 fun UpgradePanelPreview() {
-    UpgradePanel(allRecipes[0], allUpgrades[0], {},Modifier.fillMaxSize(), GameplayViewModel())
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxWidth(0.8f)
+            .fillMaxHeight()
+            .background(Color.White)
+    ) {
+        RecipeInfo(allRecipes[0], GameplayViewModel(), 12.sp, true, false, Modifier) {
+            UpgradePanel(
+                allRecipes[0],
+                allUpgrades[0],
+                {},
+                Modifier.fillMaxSize(),
+                GameplayViewModel()
+            )
+        }
+    }
 }
 
 @Composable
@@ -135,8 +157,3 @@ fun UpgradePreview() {
     UpgradeIcon(allUpgrades[0], Modifier.size(75.dp))
 }
 
-@Composable
-@Preview(widthDp = 100, heightDp = 1000)
-fun UpgradePreview2() {
-    UpgradeIcon(allUpgrades[0], Modifier.size(100.dp))
-}

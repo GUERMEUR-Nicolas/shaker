@@ -82,13 +82,29 @@ fun CurrentRecipe(
         val selectedUpgrade = viewModel.selectedUpgrade.collectAsState().value
         Column(
             verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier
                 .fillMaxWidth(0.8f)
                 .fillMaxHeight()
                 .align(Alignment.CenterEnd),
         ) {
-
-            RecipeInfo(recipe, gameState = gameState, 40.sp, true, false, modifier)
+            RecipeInfo(recipe, gameState = gameState, 40.sp, true, false, modifier) {
+                if (selectedUpgrade is Upgrade) {
+                    //Spacer(modifier.height(15.dp))
+                    UpgradePanel(
+                        recipe,
+                        selectedUpgrade,
+                        { viewModel.selectUpgrade(null) },
+                        modifier
+                            .fillMaxWidth(0.8f),
+                        //.align(Alignment.CenterEnd),
+                        gameState
+                    )
+                    //Spacer(modifier.height(15.dp))
+                } else {
+                    CenteredImage(recipe.imageResourceId, 50.dp)
+                }
+            }
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
                 modifier = modifier.fillMaxWidth()
@@ -101,16 +117,7 @@ fun CurrentRecipe(
             )
             UpgradeRow(recipe, modifier, 75.dp, gameState, viewModel)
         }
-        if (selectedUpgrade is Upgrade) {
-            UpgradePanel(
-                recipe,
-                selectedUpgrade,
-                { viewModel.selectUpgrade(null) },
-                modifier.fillMaxWidth(0.8f)
-                .align(Alignment.CenterEnd),
-                gameState
-            )
-        }
+
     }
 }
 
@@ -207,7 +214,8 @@ fun RecipeInfo(
     spBase: TextUnit,
     showName: Boolean,
     inSidebar: Boolean,
-    modifier: Modifier
+    modifier: Modifier,
+    content: @Composable () -> Unit
 ) {
     val recipes = gameState.recipes.collectAsState()
     val recipeAmount = recipes.value.GetRecipeAmount(recipe)
@@ -215,7 +223,7 @@ fun RecipeInfo(
     if (inSidebar) {
         name += " (" + recipeAmount.toString() + ")"
     }
-    TitledImage(
+    TitledElement(
         name,
         if (!inSidebar) stringResource(
             R.string.RecipeCountAndTotal, recipeAmount.toString(), stringResource(
@@ -224,10 +232,10 @@ fun RecipeInfo(
             )
         ) else null,
         if (inSidebar) Color.Black else Color.White,
-        spBase,
-        recipe.imageResourceId,
-        if (inSidebar) 5.dp else 50.dp
-    )
+        spBase
+    ) {
+        content()
+    }
     if (showName && !inSidebar) {
         PerSecondText(recipe.generating, spBase * .8f, modifier.fillMaxWidth())
     }
@@ -241,7 +249,34 @@ fun TitledImage(
     titleSize: TextUnit,
     @DrawableRes imageId: Int,
     imagePadding: Dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+) {
+    TitledElement(title, subTitle, textColor, titleSize, modifier) {
+        CenteredImage(imageId, imagePadding)
+    }
+}
+
+@Composable
+fun CenteredImage(imageId: Int, imagePadding: Dp) {
+    Image(
+        painter = painterResource(imageId),
+        alignment = Alignment.Center,
+        contentScale = ContentScale.FillWidth,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(imagePadding),
+        contentDescription = null
+    )
+}
+
+@Composable
+fun TitledElement(
+    title: String,
+    subTitle: String?,
+    textColor: Color,
+    titleSize: TextUnit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
 ) {
     Text(
         fontSize = titleSize,
@@ -259,17 +294,7 @@ fun TitledImage(
             modifier = Modifier.fillMaxWidth(),
         )
     }
-
-
-    Image(
-        painter = painterResource(imageId),
-        alignment = Alignment.Center,
-        contentScale = ContentScale.FillWidth,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(imagePadding),
-        contentDescription = null
-    )
+    content()
 }
 
 @Preview(widthDp = 800, heightDp = 2400)

@@ -192,7 +192,12 @@ fun RecipeItem(
 			.background(if (isSelected) Color(0xFFF6C800) else Color(0xFFF0F3D8)),
         verticalArrangement = Arrangement.Top,
     ) {
-        RecipeInfo(recipe, gameState,12.sp,showName, true, modifier)
+        RecipeInfo(recipe, gameState,12.sp,showName, true, modifier){
+			CenteredImage(
+				recipe.imageResourceId,
+				5.dp,
+			)
+		}
     }
 }
 
