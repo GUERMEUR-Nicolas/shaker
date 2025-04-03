@@ -3,6 +3,7 @@ package com.example.shaker.home
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,12 +29,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -79,7 +77,13 @@ fun CurrentRecipe(
     viewModel: MainViewModel
 ) {
     val recipe = allRecipes[recipeID]
-    Box(modifier.fillMaxSize()) {
+    val colorBG = MaterialTheme.colorScheme.surfaceContainer
+    val colorOnBg = MaterialTheme.colorScheme.onSurface
+    val colorBGStacked = MaterialTheme.colorScheme.surfaceContainerHighest
+    val colorOnBgStacked = colorOnBg
+    Box(modifier
+        .fillMaxSize()
+        .background(colorBG)) {
         val selectedUpgrade = viewModel.selectedUpgrade.collectAsState().value
         Column(
             verticalArrangement = Arrangement.Center,
@@ -87,9 +91,19 @@ fun CurrentRecipe(
             modifier = modifier
                 .fillMaxWidth(0.8f)
                 .fillMaxHeight()
-                .align(Alignment.CenterEnd),
+                .align(Alignment.CenterEnd)
+                .background(colorBG),
         ) {
-            RecipeInfo(recipe, gameState = gameState, 40.sp, true, false, modifier) {
+            RecipeInfo(
+                recipe,
+                gameState = gameState,
+                40.sp,
+                true,
+                false,
+                modifier,
+                colorOnBg,
+                colorBG
+            ) {
                 if (selectedUpgrade is Upgrade) {
                     //Spacer(modifier.height(15.dp))
                     UpgradePanel(
@@ -98,6 +112,8 @@ fun CurrentRecipe(
                         { viewModel.selectUpgrade(null) },
                         modifier
                             .fillMaxWidth(0.8f),
+                        colorBGStacked,
+                        colorOnBgStacked,
                         //.align(Alignment.CenterEnd),
                         gameState
                     )
@@ -216,6 +232,8 @@ fun RecipeInfo(
     showName: Boolean,
     inSidebar: Boolean,
     modifier: Modifier,
+    fontColor: Color,
+    backColor : Color,
     content: @Composable () -> Unit
 ) {
     val recipes = gameState.recipes.collectAsState()
@@ -232,13 +250,18 @@ fun RecipeInfo(
                 recipe.generating * recipeAmount
             )
         ) else null,
-        if (inSidebar) Color.Black else Color.White,
+        fontColor,
         spBase
     ) {
         content()
     }
     if (showName && !inSidebar) {
-        PerSecondText(recipe.generating, spBase * .8f, modifier.fillMaxWidth())
+        PerSecondText(
+            recipe.generating,
+            fontColor,
+            spBase * .8f,
+            modifier.fillMaxWidth()
+        )
     }
 }
 

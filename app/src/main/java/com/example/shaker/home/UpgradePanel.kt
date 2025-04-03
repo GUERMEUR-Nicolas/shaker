@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,6 +37,8 @@ fun UpgradePanel(
     upg: Upgrade,
     onExit: () -> Unit,
     modifier: Modifier = Modifier,
+    backColor : Color,
+    color : Color,
     gameState: GameplayViewModel
 ) {
     Column(
@@ -43,6 +46,7 @@ fun UpgradePanel(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxWidth(1f)
+            .background(backColor)
             //align(Alignment.CenterEnd),
     ) {
         //Box(
@@ -57,7 +61,7 @@ fun UpgradePanel(
         TitledImage(
             title = stringResource(upg.name) + "\n" +stringResource(R.string.tier_name,upg.tier.level),
             subTitle = stringResource(upg.description),
-            textColor = Color.Black,
+            textColor = color,
             titleSize = 30.sp,
             imageId = upg.image,
             imagePadding = 50.dp,
@@ -137,16 +141,16 @@ fun UpgradePanelPreview() {
         modifier = Modifier
             .fillMaxWidth(0.8f)
             .fillMaxHeight()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.tertiaryContainer)
     ) {
-        RecipeInfo(allRecipes[0], GameplayViewModel(), 12.sp, true, false, Modifier) {
-            UpgradePanel(
-                allRecipes[0],
-                allUpgrades[0],
-                {},
-                Modifier.fillMaxSize(),
-                GameplayViewModel()
-            )
+        RecipeInfo(allRecipes[0], GameplayViewModel(), 12.sp, true, false, Modifier,MaterialTheme.colorScheme.onTertiaryContainer, MaterialTheme.colorScheme.tertiaryContainer) {
+            //UpgradePanel(
+            //    allRecipes[0],
+            //    allUpgrades[0],
+            //    {},
+            //    Modifier.fillMaxSize(),
+            //    GameplayViewModel()
+            //)
         }
     }
 }

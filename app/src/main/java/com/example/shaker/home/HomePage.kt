@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -64,8 +65,7 @@ fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
 	}
     Surface(
 		modifier = modifier.fillMaxSize()) {
-		Box(modifier = Modifier
-			.fillMaxSize()
+		Box(modifier = modifier
 			//.background(Color(0xFF454078))
 			//.border(10.dp, Color(0xFF8AF4E9), BackLines(false))
 			//.border(8.dp, Color.Red, BackLines(true))
@@ -73,7 +73,7 @@ fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
 		Image(
 			painter = painterResource(id = bgs[st]),
 			contentDescription = "background",
-			modifier = Modifier.fillMaxSize(),
+			modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.primaryContainer),
 			contentScale = ContentScale.FillBounds
 		)
         Column(
@@ -99,24 +99,25 @@ fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
 //					.padding(top = 50.dp)
 //            )
 			Button(
+				modifier = modifier.width(50.dp).background(MaterialTheme.colorScheme.secondaryContainer),
 				onClick = {gameplayState.TimesTen()}
 			){
-				Text(text="x10")
+				Text(text="x10", color = MaterialTheme.colorScheme.onSecondaryContainer)
 			}
         }
     }
 }
 @Composable
-fun MoneyOnShake(@StringRes str: Int, gameplayState: GameplayViewModel, size: TextUnit, modifier: Modifier) {
+fun MoneyOnShake(@StringRes str: Int, color:Color, gameplayState: GameplayViewModel, size: TextUnit, modifier: Modifier) {
     MoneyText(
-        str, gameplayState.moneyState.collectAsState().value.perShake.ValueAsString(),size,modifier
+        str, color,gameplayState.moneyState.collectAsState().value.perShake.ValueAsString(),size,modifier
     )
 }
 @Composable
-fun MoneyText(@StringRes str: Int, value: String, size: TextUnit, modifier: Modifier) {
+fun MoneyText(@StringRes str: Int, color:Color, value: String, size: TextUnit, modifier: Modifier) {
     Text(
         text = stringResource(str, value),
-		style = TextStyle(fontSize = size, color = Color.White, fontFamily = bodyFontFamily),
+		style = TextStyle(fontSize = size, color = color, fontFamily = bodyFontFamily),
         textAlign = TextAlign.Center,
         modifier = modifier
     )
@@ -136,15 +137,16 @@ fun TopBar(gameplayState: GameplayViewModel, modifier: Modifier) {
 //            size = 30.sp,
 //            modifier = Modifier
 //        )
-		FlipClockCounter(state)
-        PerSecondText(state.value.perSecond, 20.sp,Modifier)
+		FlipClockCounter(state,modifier)
+        PerSecondText(state.value.perSecond, MaterialTheme.colorScheme.onBackground, 20.sp,Modifier)
     }
 }
 
 @Composable
-fun PerSecondText(perSecond: ScalingInt, sp: TextUnit, modifier: Modifier) {
+fun PerSecondText(perSecond: ScalingInt, color: Color, sp: TextUnit, modifier: Modifier) {
     MoneyText(
         str = R.string.money_per_cycle,
+		color,
         value = perSecond.ValueAsString(),
         size = sp,
         modifier = modifier

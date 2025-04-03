@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -64,18 +65,27 @@ fun CurrentPage(
         state = pagerState_H,
         beyondViewportPageCount = 1,
         key = { page -> page },
-        modifier = Modifier.fillMaxSize().background(Color(0xFF454078))
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF454078))
     ) { page ->
         selectedTabItem = page
+        val bgColor = MaterialTheme.colorScheme.surfaceContainerLowest
         when (page) {
-            0 -> HomePage(Modifier.fillMaxWidth(0.8f), gameplayState)
+            0 -> HomePage(
+                Modifier
+                    .fillMaxWidth(0.8f)
+                    .background(bgColor),
+                gameplayState
+            )
+
             1 -> RecipesPage(
                 pagerState_V,
                 { recipeId ->
                     viewModel.selectRecipe(recipeId)
                 },
                 gameplayState,
-                Modifier.background(Color(0xFF454078)),
+                Modifier.background(bgColor),
                 viewModel
             )
 

@@ -75,187 +75,216 @@ import kotlin.math.roundToLong
 
 @Composable
 fun FlipClockCounter(state: State<MoneyState>, modifier: Modifier = Modifier) {
-	val newNumber = state.value.current
-	val oldNumber = state.value.previous
-	val exponent = getExponent(newNumber)
-	val formattedNewNumber = String.format("%03d", shiftNumber(newNumber, exponent))
-	val formattedOldNumber = String.format("%03d", shiftNumber(oldNumber, getExponent(oldNumber)))
+    val newNumber = state.value.current
+    val oldNumber = state.value.previous
+    val exponent = getExponent(newNumber)
+    val formattedNewNumber = String.format("%03d", shiftNumber(newNumber, exponent))
+    val formattedOldNumber = String.format("%03d", shiftNumber(oldNumber, getExponent(oldNumber)))
 
-	val numberName = conwayGuyName(exponent)
-
-	Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-		Box(modifier = Modifier/*.border(5.dp, Color(0xFF444444), CutCornerShape(0.dp))*/) {
-			Row(modifier = Modifier) {
-				formattedNewNumber.forEachIndexed { index, newDigitChar ->
-					val oldDigit = formattedOldNumber[index]
-					FlipDigit(
-						oldDigit = oldDigit,
-						newDigit = newDigitChar
-					)
-				}
-			}
-		}
-		Box(modifier = Modifier/*.border(5.dp, Color(0xFF444444), CutCornerShape(0.dp))*/) {
-			Text(
-				text = numberName,
-				style = TextStyle(
-					fontSize = 30.sp,
-					color = Color.White,
-					fontFamily = bodyFontFamily,
-					background = if (exponent >= 3) Color.Black else Color.Transparent
-				),
-				modifier = Modifier.fillMaxSize()
-			)
-		}
-	}
+    val numberName = conwayGuyName(exponent)
+    val backColor = MaterialTheme.colorScheme.tertiaryContainer
+    val color = MaterialTheme.colorScheme.onTertiaryContainer
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(modifier = Modifier/*.border(5.dp, Color(0xFF444444), CutCornerShape(0.dp))*/) {
+            Row(modifier = Modifier) {
+                formattedNewNumber.forEachIndexed { index, newDigitChar ->
+                    val oldDigit = formattedOldNumber[index]
+                    FlipDigit(
+                        oldDigit = oldDigit,
+                        newDigit = newDigitChar,
+                        backColor = backColor,
+                        color = color,
+                    )
+                }
+            }
+        }
+        Box(modifier = Modifier/*.border(5.dp, Color(0xFF444444), CutCornerShape(0.dp))*/) {
+            Text(
+                text = numberName,
+                style = TextStyle(
+                    fontSize = 30.sp,
+                    color = backColor,
+                    fontFamily = bodyFontFamily,
+                    background = if (exponent >= 3) Color.Black else Color.Transparent
+                ),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
 }
 
 @Composable
 fun FlipDigit(
-	oldDigit: Char,
-	newDigit: Char,
-	modifier: Modifier = Modifier
+    oldDigit: Char,
+    newDigit: Char,
+    color: Color,
+    backColor: Color,
+    modifier: Modifier = Modifier
 ) {
-	val rotationAnimatable = remember { Animatable(0f) }
-	var size by remember { mutableStateOf(IntSize.Zero) }
+    val rotationAnimatable = remember { Animatable(0f) }
+    var size by remember { mutableStateOf(IntSize.Zero) }
 
-	LaunchedEffect(newDigit) {
-		rotationAnimatable.snapTo(0f)
-		rotationAnimatable.animateTo(
-			targetValue = 1f,
-			animationSpec = tween(durationMillis = 200, easing = LinearEasing)
-		)
-	}
-	val sh = object: Shape {
-		override fun createOutline(
-			size: Size,
-			layoutDirection: androidx.compose.ui.unit.LayoutDirection,
-			density: Density
-		): androidx.compose.ui.graphics.Outline {
-			return Outline.Generic(
-				path = Path().apply{
-					reset()
-					moveTo(0f, size.height/2f)
-					lineTo(size.width, size.height/2f)
-					lineTo(size.width, size.height/2f + 10f)
-					lineTo(0f, size.height/2f + 10f)
-				}
-			)
-		}
-	}
+    LaunchedEffect(newDigit) {
+        rotationAnimatable.snapTo(0f)
+        rotationAnimatable.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+        )
+    }
+    val sh = object : Shape {
+        override fun createOutline(
+            size: Size,
+            layoutDirection: androidx.compose.ui.unit.LayoutDirection,
+            density: Density
+        ): androidx.compose.ui.graphics.Outline {
+            return Outline.Generic(
+                path = Path().apply {
+                    reset()
+                    moveTo(0f, size.height / 2f)
+                    lineTo(size.width, size.height / 2f)
+                    lineTo(size.width, size.height / 2f + 10f)
+                    lineTo(0f, size.height / 2f + 10f)
+                }
+            )
+        }
+    }
 
-	Column(modifier = modifier
-		.onGloballyPositioned {
-			size = it.size
-		}
-		.background(Color.Black)
-		.clipToBounds()
-	) {
-		Box(modifier = Modifier
-			.height(70.dp)
-			.border(12.dp, Color.Black, sh)
-		) {
-			Digit(newDigit, size, rotationAnimatable, true,  0f)
-			Digit(oldDigit, size, rotationAnimatable, true,  1f)
-			Digit(oldDigit, size, rotationAnimatable, false, 0f)
-			Digit(newDigit, size, rotationAnimatable, false, 1f)
-		}
-	}
+    Column(modifier = modifier
+        .onGloballyPositioned {
+            size = it.size
+        }
+        //.background(backColor)
+        .clipToBounds()
+    ) {
+        Box(
+            modifier = Modifier
+                .height(70.dp)
+                .border(12.dp, backColor, sh)
+        ) {
+            Digit(newDigit, backColor,color, size, rotationAnimatable, true, 0f)
+            Digit(oldDigit, backColor,color, size, rotationAnimatable, true, 1f)
+            Digit(oldDigit, backColor,color, size, rotationAnimatable, false, 0f)
+            Digit(newDigit, backColor,color, size, rotationAnimatable, false, 1f)
+        }
+    }
 }
 
 @Composable
 fun Digit(
-	digit: Char,
-	sz: IntSize,
-	rotationAnimatable: Animatable<Float, AnimationVector1D>,
-	isTop: Boolean,
-	z: Float
-){
-	val h = 70.sp
-	val tmp = sz.height.toFloat()
-	var grad = listOf(Color(0xFF000000), Color(0xFF333333))
-	var tp = 0.5f * tmp // TODO: remove tp / bt
-	var bt = tmp * max(0.5f, rotationAnimatable.value)
-	var rt = 0f
-	if (isTop) {
-		grad = grad.reversed()
-		if(z == 1f) {
-			rt = 180 * min(0.5f, rotationAnimatable.value)
-			tp = tmp * min(0.5f, rotationAnimatable.value)
-		}else{
-			tp = 0f
-		}
-		bt = 0.5f * tmp
-	} else if(z != 1f) {
-		bt = tmp
-		rt = 180f
-	} else {
-		rt = -180 * max(0.5f, rotationAnimatable.value)
-	}
-	Text(
-		text = digit.toString(),
-		style = TextStyle(fontSize = h, color = Color.White, fontFamily = displayFontFamily),
-		textAlign = TextAlign.Center,
-		modifier = Modifier
-			.drawWithContent {
-				clipRect(
-					top = tp,
-					bottom = bt
-				) {
-					this@drawWithContent.drawContent()
-				}
-			}
-			.background(
-				Brush.verticalGradient(
-					grad,
-					startY = tp,
-					endY = bt
-				)
-			)
-			.width(h.value.dp)
-			.graphicsLayer {
-				rotationX = rt - if (!isTop) 180f else 0f
-			}
-			.zIndex(z)
-	)
+    digit: Char,
+    backColor: Color,
+    color: Color,
+    sz: IntSize,
+    rotationAnimatable: Animatable<Float, AnimationVector1D>,
+    isTop: Boolean,
+    z: Float
+) {
+    val h = 70.sp
+    val tmp = sz.height.toFloat()
+    var grad = listOf(backColor, backColor)
+    var tp = 0.5f * tmp // TODO: remove tp / bt
+    var bt = tmp * max(0.5f, rotationAnimatable.value)
+    var rt = 0f
+    if (isTop) {
+        grad = grad.reversed()
+        if (z == 1f) {
+            rt = 180 * min(0.5f, rotationAnimatable.value)
+            tp = tmp * min(0.5f, rotationAnimatable.value)
+        } else {
+            tp = 0f
+        }
+        bt = 0.5f * tmp
+    } else if (z != 1f) {
+        bt = tmp
+        rt = 180f
+    } else {
+        rt = -180 * max(0.5f, rotationAnimatable.value)
+    }
+    Text(
+        text = digit.toString(),
+        style = TextStyle(fontSize = h, color = color, fontFamily = displayFontFamily),
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .drawWithContent {
+                clipRect(
+                    top = tp,
+                    bottom = bt
+                ) {
+                    this@drawWithContent.drawContent()
+                }
+            }
+            .background(
+                Brush.verticalGradient(
+                    grad,
+                    startY = tp,
+                    endY = bt
+                )
+            )
+            .width(h.value.dp)
+            .graphicsLayer {
+                rotationX = rt - if (!isTop) 180f else 0f
+            }
+            .zIndex(z)
+    )
 }
 
-fun getExponent(number: ScalingInt): Int{
-	return number.value.precision() - number.value.scale() -1
+fun getExponent(number: ScalingInt): Int {
+    return number.value.precision() - number.value.scale() - 1
 }
 
-fun shiftNumber(number: ScalingInt, exponent: Int): Int{
-	return number.value.movePointLeft(exponent-exponent%3).abs().toInt()
+fun shiftNumber(number: ScalingInt, exponent: Int): Int {
+    return number.value.movePointLeft(exponent - exponent % 3).abs().toInt()
 }
 
 fun conwayGuyName(exponent: Int): String {
-	// TODO: add long scale
-	val firstNames = arrayOf(
-		"M", "B", "Tr", "Quadr", "Quint", "Sext", "Sept", "Oct", "Non", "Dec"
-	)
-	val genericNames = arrayOf(
-		arrayOf("Un", "Duo", "Tre", "Quattuor", "Quinqua", "Se", "Septe", "Octo", "Nove"),
-		arrayOf("Deci", "Viginti", "Triginta", "Quadraginta", "Quinquaginta", "Sexaginta", "Octoginta", "Nonaginta"),
-		arrayOf("Centi", "Ducenti", "Trecenti", "Quadringenti", "Quingenti", "Sescenti", "Septigenti", "Octingenti", "Nongenti")
-	)
-	if(exponent > 66){
-		val strponent = (exponent/3.0 -1).roundToLong().toString()
-		var rep: String = ""
-		strponent.forEachIndexed { index, c -> rep = genericNames[2-index][c.code-'0'.code] + rep}
-		return rep
-	} else if(exponent >= 6) {
-		return firstNames[((exponent/3).toInt() - 2)] + "illion"
-	} else if(exponent >= 3) {
-		return "Thousand"
-	}
-	return ""
+    // TODO: add long scale
+    val firstNames = arrayOf(
+        "M", "B", "Tr", "Quadr", "Quint", "Sext", "Sept", "Oct", "Non", "Dec"
+    )
+    val genericNames = arrayOf(
+        arrayOf("Un", "Duo", "Tre", "Quattuor", "Quinqua", "Se", "Septe", "Octo", "Nove"),
+        arrayOf(
+            "Deci",
+            "Viginti",
+            "Triginta",
+            "Quadraginta",
+            "Quinquaginta",
+            "Sexaginta",
+            "Octoginta",
+            "Nonaginta"
+        ),
+        arrayOf(
+            "Centi",
+            "Ducenti",
+            "Trecenti",
+            "Quadringenti",
+            "Quingenti",
+            "Sescenti",
+            "Septigenti",
+            "Octingenti",
+            "Nongenti"
+        )
+    )
+    if (exponent > 66) {
+        val strponent = (exponent / 3.0 - 1).roundToLong().toString()
+        var rep: String = ""
+        strponent.forEachIndexed { index, c ->
+            rep = genericNames[2 - index][c.code - '0'.code] + rep
+        }
+        return rep
+    } else if (exponent >= 6) {
+        return firstNames[((exponent / 3).toInt() - 2)] + "illion"
+    } else if (exponent >= 3) {
+        return "Thousand"
+    }
+    return ""
 }
 
 
 @Preview
 @Composable
-fun FlipDigit_P(){
-	AppTheme(darkTheme = false) {
-		FlipDigit('1', '1')
-	}
+fun FlipDigit_P() {
+    AppTheme(darkTheme = false) {
+        FlipDigit('1', '1', MaterialTheme.colorScheme.onSecondaryContainer, MaterialTheme.colorScheme.secondaryContainer)
+    }
 }

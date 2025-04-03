@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
         //enableEdgeToEdge()
         val delay: Long = resources.getInteger(R.integer.shakeDelayMilli).toLong()
         setContent {
-            AppTheme(darkTheme = false) {
+            AppTheme(darkTheme = true) {
                 CenterSidebarPager(viewModel, gameplayState)
                 LaunchedEffect(Unit) {
                     val valueIncrement = resources.getInteger(R.integer.ValueIncrementPerS)

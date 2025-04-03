@@ -17,8 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -40,13 +39,10 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.shaker.R
 import com.example.shaker.data.Recipe
 import com.example.shaker.data.allRecipes
 import com.example.shaker.ui.GameplayViewModel
@@ -133,7 +129,6 @@ fun Sidebar(
     Column(
         modifier = modifier
     ) {
-        //SidebarHeader(Modifier)
         Box(
 			Modifier
 				.fillMaxSize()
@@ -161,23 +156,6 @@ fun Sidebar(
 }
 
 @Composable
-private fun SidebarHeader(modifier: Modifier = Modifier) {
-    Surface(
-        modifier
-			.fillMaxWidth()
-			.background(Color.Red)
-    ) {
-        Text(
-            text = (stringResource(R.string.recipe_name) + "s"),
-            textAlign = TextAlign.Center,
-            fontSize = 16.sp,
-            modifier = modifier
-                .padding(horizontal = 5.dp)
-        )
-    }
-}
-
-@Composable
 fun RecipeItem(
 	recipe: Recipe,
 	isSelected: Boolean,
@@ -192,7 +170,7 @@ fun RecipeItem(
 			.background(if (isSelected) Color(0xFFF6C800) else Color(0xFFF0F3D8)),
         verticalArrangement = Arrangement.Top,
     ) {
-        RecipeInfo(recipe, gameState,12.sp,showName, true, modifier){
+        RecipeInfo(recipe, gameState,12.sp,showName, true, Modifier,MaterialTheme.colorScheme.onTertiaryContainer, MaterialTheme.colorScheme.tertiaryContainer){
 			CenteredImage(
 				recipe.imageResourceId,
 				5.dp,
