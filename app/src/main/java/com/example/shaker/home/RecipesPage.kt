@@ -28,8 +28,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.pager.VerticalPager
-import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
@@ -77,13 +79,15 @@ fun CurrentRecipe(
     viewModel: MainViewModel
 ) {
     val recipe = allRecipes[recipeID]
-    val colorBG = MaterialTheme.colorScheme.surfaceContainer
-    val colorOnBg = MaterialTheme.colorScheme.onSurface
-    val colorBGStacked = MaterialTheme.colorScheme.surfaceContainerHighest
-    val colorOnBgStacked = colorOnBg
-    Box(modifier
-        .fillMaxSize()
-        .background(colorBG)) {
+    val colorBG = MaterialTheme.colorScheme.background
+    val colorOnBg = MaterialTheme.colorScheme.onBackground
+    val colorBGStacked = MaterialTheme.colorScheme.surfaceDim
+    val colorOnBgStacked = MaterialTheme.colorScheme.onSurface
+    Box(
+        modifier
+            .fillMaxSize()
+            .background(colorBG)
+    ) {
         val selectedUpgrade = viewModel.selectedUpgrade.collectAsState().value
         Column(
             verticalArrangement = Arrangement.Center,
@@ -126,8 +130,12 @@ fun CurrentRecipe(
                 horizontalArrangement = Arrangement.SpaceAround,
                 modifier = modifier.fillMaxWidth()
             ) {
-                RecipeBuyButton(recipe, 1, gameState)
-                RecipeBuyButton(recipe, 10, gameState)
+                val buttonColor = ButtonDefaults.textButtonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+                )
+                RecipeBuyButton(recipe, 1, gameState, buttonColor)
+                RecipeBuyButton(recipe, 10, gameState, buttonColor)
             }
             Spacer(
                 modifier = Modifier.height(15.dp)
@@ -195,14 +203,19 @@ fun UpgradeWithButtonPreview() {
 }*/
 
 @Composable
-fun GenericBuyButton(
+fun TextButton(
     onClick: () -> Unit,
     enable: Boolean,
-    text: String
+    text: String,
+    colors: ButtonColors = ButtonDefaults.textButtonColors(
+        containerColor = MaterialTheme.colorScheme.secondary,
+        contentColor = MaterialTheme.colorScheme.onSecondary
+    )
 ) {
-    Button(
+    TextButton(
         onClick = onClick,
-        enabled = enable
+        enabled = enable,
+        colors = colors,
     ) {
         Text(
             text
@@ -211,16 +224,27 @@ fun GenericBuyButton(
 }
 
 @Composable
-fun RecipeBuyButton(recipe: Recipe, amountToBuy: Long, gameplayViewModel: GameplayViewModel) {
+fun RecipeBuyButton(
+    recipe: Recipe,
+    amountToBuy: Long,
+    gameplayViewModel: GameplayViewModel,
+    color: ButtonColors
+) {
     var recipes = gameplayViewModel.recipes.collectAsState()
     var money = gameplayViewModel.moneyState.collectAsState()
-    GenericBuyButton(
+    val cost = recipes.value.GetNextCost(
+        recipe,
+        amountToBuy
+    ).ValueAsString()
+    TextButton(
         onClick = { gameplayViewModel.ForceBuy(recipe, amountToBuy) },
         enable = recipes.value.canBuy(recipe, amountToBuy, money.value.current),
-        text = "Buy $amountToBuy (" + (recipes.value.GetNextCost(
-            recipe,
-            amountToBuy
-        )).ValueAsString() + ")"
+        text = stringResource(
+            R.string.buy_recipee,
+            amountToBuy,
+            stringResource(R.string.money_value, cost)
+        ),
+        colors = color
     )
 }
 
@@ -233,7 +257,7 @@ fun RecipeInfo(
     inSidebar: Boolean,
     modifier: Modifier,
     fontColor: Color,
-    backColor : Color,
+    backColor: Color,
     content: @Composable () -> Unit
 ) {
     val recipes = gameState.recipes.collectAsState()
@@ -330,15 +354,14 @@ fun CurrentRecipe_P() {
     CurrentRecipe(recipeID = 0, gameState = gameplayViewModel, viewModel = MainViewModel())
 }
 
-@Preview(widthDp = 400, heightDp = 400)
-@Composable
-fun CurrentRecipe_SideBar() {
-    val gameplayViewModel = GameplayViewModel()
-    RecipeItem(
-        recipe = allRecipes[0],
-        isSelected = true,
-        gameState = gameplayViewModel,
-        onRecipeClick = {},
-        modifier = Modifier
-    )
-}
+//@Preview(widthDp = 400, heightDp = 400)
+//@Composable
+//fun CurrentRecipe_SideBar() {
+//    val gameplayViewModel = GameplayViewModel()
+//    RecipeItem(
+//        recipe = allRecipes[0],
+//        gameState = gameplayViewModel,
+//        onRecipeClick = {},
+//        modifier = Modifier
+//    )
+//}

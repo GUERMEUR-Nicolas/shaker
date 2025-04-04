@@ -26,21 +26,21 @@ import com.example.shaker.ui.GameplayViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-public fun CenterSidebarPager(viewModel: MainViewModel, gameplayState: GameplayViewModel) {
+public fun CenterSidebarPager(viewModel: MainViewModel, gameplayState: GameplayViewModel, startPage: Int = 0) {
 
     val listTabItem = listOf(
         TabItem("home", "screen_0"),
         TabItem("recipe", "screen_1")
     )
     val pagerState_H: PagerState = rememberPagerState(
-        initialPage = 1
+        initialPage = startPage
     ) { listTabItem.size } // Horizontal pages
     val pagerState_V: PagerState = rememberPagerState(
         initialPage = viewModel.selectedRecipeId.value
     ) { allRecipes.size } // Vertical pages
 
     Box(modifier = Modifier.fillMaxSize()) {
-        CurrentPage(viewModel, gameplayState, pagerState_H, pagerState_V)
+        CurrentPage(viewModel, gameplayState,pagerState_H, pagerState_V)
         MovingSideBar(
             viewModel,
             gameplayState,
@@ -61,16 +61,16 @@ fun CurrentPage(
 
     var selectedTabItem: Int by remember { mutableStateOf(0) }
 
+    val bgColor = MaterialTheme.colorScheme.surfaceContainerLowest
     HorizontalPager(
         state = pagerState_H,
         beyondViewportPageCount = 1,
         key = { page -> page },
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF454078))
+            .background(bgColor)
     ) { page ->
         selectedTabItem = page
-        val bgColor = MaterialTheme.colorScheme.surfaceContainerLowest
         when (page) {
             0 -> HomePage(
                 Modifier
@@ -83,6 +83,7 @@ fun CurrentPage(
                 pagerState_V,
                 { recipeId ->
                     viewModel.selectRecipe(recipeId)
+                    viewModel.selectUpgrade(null)
                 },
                 gameplayState,
                 Modifier.background(bgColor),

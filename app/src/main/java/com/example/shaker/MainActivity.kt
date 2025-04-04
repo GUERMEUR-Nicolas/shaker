@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.compose.AppTheme
+import com.example.shaker.data.allRecipes
 import com.example.shaker.home.CenterSidebarPager
 import com.example.shaker.home.Accelerometer
 import com.example.shaker.home.ShakeListener
@@ -42,7 +43,7 @@ class MainActivity : ComponentActivity() {
         //enableEdgeToEdge()
         val delay: Long = resources.getInteger(R.integer.shakeDelayMilli).toLong()
         setContent {
-            AppTheme(darkTheme = true) {
+            AppTheme(darkTheme = false, dynamicColor = false) {
                 CenterSidebarPager(viewModel, gameplayState)
                 LaunchedEffect(Unit) {
                     val valueIncrement = resources.getInteger(R.integer.ValueIncrementPerS)
@@ -78,10 +79,34 @@ fun AppPreviewLight() {
     val gameplayState = GameplayViewModel()
     gameplayState.Increment(999f)
     gameplayState.Increment(2f)
-    AppTheme(darkTheme = false) {
+    AppTheme(darkTheme = false, dynamicColor = false) {
         CenterSidebarPager(viewModel, gameplayState)
     }
 }
+@Preview(widthDp = 380, heightDp = 680)
+@Composable
+fun AppPreviewRecipesLight() {
+    val viewModel = MainViewModel()
+    val gameplayState = GameplayViewModel()
+    gameplayState.Increment(999f)
+    gameplayState.Increment(2f)
+    AppTheme(darkTheme = false, dynamicColor = false) {
+        CenterSidebarPager(viewModel, gameplayState, 1)
+    }
+}
+@Preview(widthDp = 380, heightDp = 680)
+@Composable
+fun AppPreviewClickedUpgradeLight() {
+    val viewModel = MainViewModel()
+    viewModel.selectUpgrade(allRecipes[0].upgrades[0].first)
+    val gameplayState = GameplayViewModel()
+    gameplayState.Increment(999f)
+    gameplayState.Increment(2f)
+    AppTheme(darkTheme = false, dynamicColor = false) {
+        CenterSidebarPager(viewModel, gameplayState, 1)
+    }
+}
+
 
 @Preview(widthDp = 380, heightDp = 680)
 @Composable
@@ -90,7 +115,7 @@ fun AppPreviewDark() {
     val gameplayState = GameplayViewModel()
     gameplayState.Increment(999f)
     gameplayState.Increment(2f)
-    AppTheme(darkTheme = true) {
+    AppTheme(darkTheme = true,dynamicColor = false) {
         CenterSidebarPager(viewModel, gameplayState)
     }
 }
