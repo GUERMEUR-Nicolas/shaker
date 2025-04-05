@@ -68,14 +68,14 @@ fun CurrentPage(
         key = { page -> page },
         modifier = Modifier
             .fillMaxSize()
-            .background(bgColor)
+            //.background(bgColor)
     ) { page ->
         selectedTabItem = page
         when (page) {
             0 -> HomePage(
                 Modifier
-                    .fillMaxWidth(0.8f)
-                    .background(bgColor),
+                    .fillMaxWidth(0.8f),
+                    //.background(bgColor),
                 gameplayState
             )
 
@@ -86,7 +86,7 @@ fun CurrentPage(
                     viewModel.selectUpgrade(null)
                 },
                 gameplayState,
-                Modifier.background(bgColor),
+                Modifier,//.background(bgColor),
                 viewModel
             )
 

@@ -71,8 +71,8 @@ fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
             painter = painterResource(id = bgs[st]),
             contentDescription = "background",
             modifier = modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.primaryContainer),
+                .fillMaxSize(),
+                //.background(MaterialTheme.colorScheme.primaryContainer),
             contentScale = ContentScale.FillBounds
         )
         Column(
