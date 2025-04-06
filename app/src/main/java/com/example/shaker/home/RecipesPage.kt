@@ -34,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -84,9 +85,13 @@ fun CurrentRecipe(
     val colorBGStacked = MaterialTheme.colorScheme.surfaceDim
     val colorOnBgStacked = MaterialTheme.colorScheme.onSurface
     Box(
-        modifier
-            .fillMaxSize()
-            .background(colorBG)
+        modifier = with(Modifier) {
+            fillMaxSize()
+                .paint(
+                    painterResource(id = R.drawable.bg2),
+                    contentScale = ContentScale.FillBounds
+                )
+        }
     ) {
         val selectedUpgrade = viewModel.selectedUpgrade.collectAsState().value
         Column(
@@ -96,7 +101,7 @@ fun CurrentRecipe(
                 .fillMaxWidth(0.8f)
                 .fillMaxHeight()
                 .align(Alignment.CenterEnd)
-                .background(colorBG),
+                //.background(colorBG),
         ) {
             RecipeInfo(
                 recipe,

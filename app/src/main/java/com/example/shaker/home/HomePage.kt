@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
@@ -50,7 +51,7 @@ import kotlin.math.pow
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
-    var st = if (gameplayState.moneyState.collectAsState().value.current.toLong() >= 1000) 1 else 0
+    val st = if (gameplayState.moneyState.collectAsState().value.current.toLong() >= 1000) 1 else 0
     val bgs = when {
         isSystemInDarkTheme() -> arrayOf(
             R.drawable.p0n,
@@ -63,18 +64,12 @@ fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
     ) {
         Box(
             modifier = modifier
-            //.background(Color(0xFF454078))
-            //.border(10.dp, Color(0xFF8AF4E9), BackLines(false))
-            //.border(8.dp, Color.Red, BackLines(true))
         )
         Image(
             painter = painterResource(id = bgs[st]),
             contentDescription = "background",
-            modifier = modifier
-                .fillMaxSize(),
-                //.background(MaterialTheme.colorScheme.primaryContainer),
+            modifier = modifier.fillMaxSize(),
             contentScale = ContentScale.FillBounds
-        )
         Column(
             modifier = modifier
                 .padding(vertical = 50.dp),
