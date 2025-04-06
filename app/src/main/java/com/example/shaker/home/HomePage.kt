@@ -70,6 +70,7 @@ fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
             contentDescription = "background",
             modifier = modifier.fillMaxSize(),
             contentScale = ContentScale.FillBounds
+        )
         Column(
             modifier = modifier
                 .padding(vertical = 50.dp),
