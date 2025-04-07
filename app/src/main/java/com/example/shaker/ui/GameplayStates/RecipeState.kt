@@ -2,6 +2,7 @@ package com.example.shaker.ui.GameplayStates
 
 import com.example.shaker.data.Recipe
 import com.example.shaker.data.ScalingInt
+import com.example.shaker.data.Upgrade
 import com.example.shaker.data.allRecipes
 
 data class RecipeState(
@@ -22,16 +23,20 @@ data class RecipeState(
         return UpdatedMap(id, map[id]!! + amount)
     }
 
-    public fun GetNextCost(recipe: Recipe, amount: Long = 1): ScalingInt {
-        var sum = ScalingInt(0)
-        for (i in 0 until amount) {
-            sum += recipe.GetCost(this.GetRecipeAmount(recipe) + i)
-        }
-        return sum
+    fun canBuy(recipe: Recipe, amount: Long, available: ScalingInt): Boolean {
+        return recipe.GetNextCost(this.GetRecipeAmount(recipe), amount) <= available;
     }
 
-    fun canBuy(recipe: Recipe, amount: Long, available: ScalingInt): Boolean {
-        return this.GetNextCost(recipe, amount) <= available;
+    fun canBuy(upgrade: Upgrade, amount: Long, available: ScalingInt): Boolean {
+        return upgrade.GetNextCost(amount) <= available;
+    }
+
+    public fun GetNextCost(recipe: Recipe, amount: Long): ScalingInt{
+        return recipe.GetNextCost(this.GetRecipeAmount(recipe), amount)
+    }
+
+    public fun GetNextCost(upgrade: Upgrade, amount: Long): ScalingInt{
+        return upgrade.GetNextCost(amount)
     }
 }
 

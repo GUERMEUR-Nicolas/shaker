@@ -81,7 +81,8 @@ fun CurrentRecipe(
 ) {
     val recipe = allRecipes[recipeID]
     val colorBG = MaterialTheme.colorScheme.background
-    val colorOnBg = MaterialTheme.colorScheme.onBackground
+    //val colorOnBg = MaterialTheme.colorScheme.onBackground
+    val colorOnBg = Color.White
     val colorBGStacked = MaterialTheme.colorScheme.surfaceDim
     val colorOnBgStacked = MaterialTheme.colorScheme.onSurface
     Box(
@@ -165,7 +166,7 @@ fun UpgradeRow(
     ) {
         //TODO fetch the actual upgrades of the recipe
         for (i in recipe.upgrades) {
-            UpgradeWithButton(recipe, i.first, modifier, dp, gameState, viewModel)
+            UpgradeWithButton(recipe, i, modifier, dp, gameState, viewModel)
         }
     }
 }
@@ -185,11 +186,17 @@ fun UpgradeWithButton(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        UpgradeIcon(upgrade, Modifier
+        val selectedUpgrade = viewModel.selectedUpgrade.collectAsState().value
+        UpgradeIcon(recipe, upgrade, gameState, Modifier
             .size(dp)
             .clickable() {
-                viewModel.selectUpgrade(upgrade)
-            })
+                if(selectedUpgrade != upgrade) {
+                    viewModel.selectUpgrade(upgrade)
+                }else{
+                    viewModel.selectUpgrade(null)
+                }
+            }
+        )
         //UpgradeBuyButton(recipe, upgrade, modifier, gameState)
     }
 }
@@ -237,10 +244,7 @@ fun RecipeBuyButton(
 ) {
     var recipes = gameplayViewModel.recipes.collectAsState()
     var money = gameplayViewModel.moneyState.collectAsState()
-    val cost = recipes.value.GetNextCost(
-        recipe,
-        amountToBuy
-    ).ValueAsString()
+    val cost = recipes.value.GetNextCost(recipe, amountToBuy).ValueAsString()
     TextButton(
         onClick = { gameplayViewModel.ForceBuy(recipe, amountToBuy) },
         enable = recipes.value.canBuy(recipe, amountToBuy, money.value.current),
@@ -269,7 +273,7 @@ fun RecipeInfo(
     val recipeAmount = recipes.value.GetRecipeAmount(recipe)
     var name = stringResource(recipe.name)
     if (inSidebar) {
-        name += " (" + recipeAmount.toString() + ")"
+        name += " ($recipeAmount)"
     }
     TitledElement(
         name,

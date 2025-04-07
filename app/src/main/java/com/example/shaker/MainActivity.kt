@@ -98,7 +98,7 @@ fun AppPreviewRecipesLight() {
 @Composable
 fun AppPreviewClickedUpgradeLight() {
     val viewModel = MainViewModel()
-    viewModel.selectUpgrade(allRecipes[0].upgrades[0].first)
+    viewModel.selectUpgrade(allRecipes[0].upgrades[0])
     val gameplayState = GameplayViewModel()
     gameplayState.Increment(999f)
     gameplayState.Increment(2f)

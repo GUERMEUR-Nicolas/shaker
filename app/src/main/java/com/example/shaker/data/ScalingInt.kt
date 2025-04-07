@@ -40,6 +40,10 @@ class ScalingInt {
         return this.value.toString()
     }
 
+    fun getExponent(): Int {
+        return this.value.precision() - this.value.scale() - 1
+    }
+
     constructor(value: Int) : this(BigDecimal(value)){
     }
     constructor(double: Double) : this(BigDecimal(double)){

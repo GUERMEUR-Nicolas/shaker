@@ -3,10 +3,12 @@ package com.example.shaker.ui
 import androidx.lifecycle.ViewModel
 import com.example.shaker.data.Recipe
 import com.example.shaker.data.ScalingInt
+import com.example.shaker.data.Upgrade
 import com.example.shaker.data.doAllUpgradesOfType
 import com.example.shaker.data.allRecipes
 import com.example.shaker.ui.GameplayStates.MoneyState
 import com.example.shaker.ui.GameplayStates.RecipeState
+import com.example.shaker.ui.GameplayStates.UpgradeState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +19,11 @@ class GameplayViewModel : ViewModel() {
     val moneyState: StateFlow<MoneyState> = _moneyState.asStateFlow()
     private val _recipes = MutableStateFlow(RecipeState())
     val recipes: StateFlow<RecipeState> = _recipes.asStateFlow()
-    var accumalated: Float = 0f;
+//    private val _upgradeLevels = MutableStateFlow<MutableMap<Pair<Int, Int>, Int>>(mutableMapOf<Pair<Int, Int>, Int>())
+//    val upgradeLevels: StateFlow<Map<Pair<Int, Int>, Int>> = _upgradeLevels.asStateFlow()
+    private val _upgradeLevels = MutableStateFlow(UpgradeState())
+    val upgradeLevels: StateFlow<UpgradeState> = _upgradeLevels.asStateFlow()
+    var accumalated: Float = 0f
 
     public fun Sell(recipe: Recipe, amount: Long) {
         ForceBuy(recipe, -amount)
@@ -28,22 +34,25 @@ class GameplayViewModel : ViewModel() {
         val id = recipe.id
         _moneyState.value = _moneyState.value.copy(
             previous = _moneyState.value.current,
-            current = _moneyState.value.current - _recipes.value.GetNextCost(recipe, amount)
+            current = _moneyState.value.current - recipe.GetNextCost(_recipes.value.GetRecipeAmount(recipe), amount)
         )
         //We increment the recipe count after we effectively bought it, other ways, we'd pay one level ahead
         _recipes.value = _recipes.value.copy(
             map = _recipes.value.IncrementedMap(id, amount)
         )
-		this.updatePerSecond()
+        this.updatePerSecond()
     }
-	public fun ForceBuy(recipe: Recipe, upgradeID: Int){
-		_moneyState.value = _moneyState.value.copy(
-			previous = _moneyState.value.current,
-			current = _moneyState.value.current - recipe.upgrades[upgradeID].first.cost
-		)
-		recipe.upgrades[upgradeID] = recipe.upgrades[upgradeID].copy(second = true)
-		this.updatePerSecond()
-	}
+    public fun ForceBuy(recipe: Recipe, upgrade: Upgrade, amount: Long = 1){
+        _moneyState.value = _moneyState.value.copy(
+            previous = _moneyState.value.current,
+            current = _moneyState.value.current - upgrade.GetNextCost(amount)
+        )
+        _upgradeLevels.value = _upgradeLevels.value.copy(
+            map = _upgradeLevels.value.IncrementedMap(Pair(recipe.id, upgrade.id), amount.toInt())
+        )
+        upgrade.level += amount.toInt()
+        this.updatePerSecond()
+    }
 
     public fun Increment(value: ScalingInt) {
         _moneyState.value = _moneyState.value.copy(
@@ -85,13 +94,17 @@ class GameplayViewModel : ViewModel() {
         )
     }
 
-	public fun updatePerSecond(){
-		var perSecond = ScalingInt(0)
-		for(r in allRecipes)
-			perSecond += doAllUpgradesOfType(r.upgrades, r.generating, "generate", _recipes.value.map) * _recipes.value.GetRecipeAmount(r)
-		// TODO: add raw cps
-		_moneyState.value = _moneyState.value.copy(
-			perSecond = perSecond
-		)
-	}
+    public fun updatePerSecond(){
+        var perSecond = ScalingInt(0)
+        for(r in allRecipes)
+            perSecond += doAllUpgradesOfType(r.upgrades, r.generating, "generate", _recipes.value.map) * _recipes.value.GetRecipeAmount(r)
+        // TODO: add raw cps
+        _moneyState.value = _moneyState.value.copy(
+            perSecond = perSecond
+        )
+    }
+
+//    fun getUpgradeLevel(recipeId: Int, upgradeId: Int): Int {
+//        return _upgradeLevels.value[Pair(recipeId, upgradeId)] ?: 0
+//    }
 }

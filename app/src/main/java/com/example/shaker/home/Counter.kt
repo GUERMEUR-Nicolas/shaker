@@ -84,9 +84,9 @@ fun FlipClockCounter(
 ) {
     val newNumber = state.value.current
     val oldNumber = state.value.previous
-    val exponent = getExponent(newNumber)
+    val exponent = newNumber.getExponent()
     val formattedNewNumber = String.format("%03d", shiftNumber(newNumber, exponent))
-    val formattedOldNumber = String.format("%03d", shiftNumber(oldNumber, getExponent(oldNumber)))
+    val formattedOldNumber = String.format("%03d", shiftNumber(oldNumber, oldNumber.getExponent()))
 
     val numberName = conwayGuyName(exponent).replaceFirstChar {
         if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
@@ -235,10 +235,6 @@ fun Digit(
     )
 }
 
-fun getExponent(number: ScalingInt): Int {
-    return number.value.precision() - number.value.scale() - 1
-}
-
 fun shiftNumber(number: ScalingInt, exponent: Int): Int {
     return number.value.movePointLeft(exponent - exponent % 3).abs().toInt()
 }
@@ -259,7 +255,6 @@ fun conwayGuyName(exponent: Int, isFinal: Boolean = true): String {
     )
     val end = if(isFinal) "illion" else "illi"
     val n: Int = if(isFinal) floor((exponent-3)/3.0).toInt() else exponent
-    println("n: $n, exponent: $exponent")
     if(n >= 11){
         val strponent = n.toString()
         var rep: String = ""
@@ -288,7 +283,6 @@ fun conwayGuyName(exponent: Int, isFinal: Boolean = true): String {
             }
             for(i in strponent.lastIndex downTo 0){
                 val c: Int = strponent[i].code-'0'.code
-                println("i: "+(strponent.lastIndex-i)+", c: $c")
                 if(c != 0) {
                     rep += genericNames[strponent.lastIndex-i][c-1]
                     if (i == strponent.lastIndex && nextNonZero != -1) {

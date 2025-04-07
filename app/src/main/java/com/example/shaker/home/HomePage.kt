@@ -51,7 +51,7 @@ import kotlin.math.pow
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
-    val st = if (gameplayState.moneyState.collectAsState().value.current.toLong() >= 1000) 1 else 0
+    val st = if (gameplayState.moneyState.collectAsState().value.current.getExponent() >= 3) 1 else 0
     val bgs = when {
         isSystemInDarkTheme() -> arrayOf(
             R.drawable.p0n,

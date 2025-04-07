@@ -16,6 +16,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +48,8 @@ fun UpgradePanel(
     color : Color,
     gameState: GameplayViewModel
 ) {
+    val upgradeLevels by gameState.upgradeLevels.collectAsState()
+    //val upgradeLevel = gameState.getUpgradeLevel(recipe.id, upg.id)
     Column(
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -64,7 +71,7 @@ fun UpgradePanel(
             modifier = Modifier.height(20.dp)
         )
         TitledImage(
-            title = stringResource(upg.name) + "\n" +stringResource(R.string.tier_name,upg.tier.level),
+            title = stringResource(upg.name) + "\n" +stringResource(R.string.tier_name,upgradeLevels.getUpgradeLevel(recipe.id, upg.id)),
             subTitle = stringResource(upg.description),
             textColor = color,
             titleSize = 30.sp,
@@ -72,7 +79,8 @@ fun UpgradePanel(
             imagePadding = 50.dp,
         )
         UpgradeBuyButton(
-            recipe, upg, gameState, modifier, ButtonDefaults.textButtonColors(
+            recipe, upg, { gameState.ForceBuy(recipe, upg, 1) },
+            gameState, modifier, ButtonDefaults.textButtonColors(
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary,
             )
@@ -84,7 +92,9 @@ fun UpgradePanel(
 }
 
 @Composable
-fun UpgradeIcon(upg: Upgrade, modifier: Modifier = Modifier) {
+fun UpgradeIcon(recipe: Recipe, upg: Upgrade, gameState: GameplayViewModel, modifier: Modifier = Modifier) {
+    val upgradeLevels by gameState.upgradeLevels.collectAsState()
+    //val upgradeLevel = gameState.getUpgradeLevel(recipe.id, upg.id)
     Box(modifier = modifier) {
         Box(
             modifier = modifier
@@ -102,7 +112,7 @@ fun UpgradeIcon(upg: Upgrade, modifier: Modifier = Modifier) {
         var inner = modifier
             .align(Alignment.Center)
         Text(
-            text = upg.tier.level.toString(),
+            text = upgradeLevels.getUpgradeLevel(recipe.id, upg.id).toString(),
             fontSize = 16.sp,
             color = Color.Black,
             textAlign = TextAlign.Right,
@@ -130,18 +140,20 @@ fun UpgradeIcon(upg: Upgrade, modifier: Modifier = Modifier) {
 fun UpgradeBuyButton(
     recipe: Recipe,
     upgrade: Upgrade,
+    onClick: () -> Unit,
     gameplayViewModel: GameplayViewModel,
     modifier: Modifier,
     colors: ButtonColors
 ) {
-    //TODO bind viewModel/money and enable and procesed the onClick and enabled with money dedeuciton and stuff like in the recipeBuyButton
+    var recipes = gameplayViewModel.recipes.collectAsState()
+    var money = gameplayViewModel.moneyState.collectAsState()
+    val cost = recipes.value.GetNextCost(upgrade, 1)
     TextButton(
-        //TODO
-        onClick = { gameplayViewModel.ForceBuy(recipe, 0) },
-        enable = true,
+        onClick = onClick,
+        enable = recipes.value.canBuy(upgrade, 1, money.value.current),
         text = stringResource(
             R.string.buy_upgrade,
-            stringResource(R.string.money_value, upgrade.cost)
+            stringResource(R.string.money_value, cost)
         ),
         colors = colors
     )
@@ -170,9 +182,8 @@ fun UpgradePanelPreview() {
     }
 }
 
-@Composable
-@Preview(widthDp = 100, heightDp = 1000)
-fun UpgradePreview() {
-    UpgradeIcon(allUpgrades[0], Modifier.size(75.dp))
-}
-
+//@Composable
+//@Preview(widthDp = 100, heightDp = 1000)
+//fun UpgradePreview() {
+//    UpgradeIcon(allRecipes[0], allUpgrades[0], Modifier.size(75.dp))
+//}
