@@ -7,6 +7,7 @@ import com.example.shaker.data.ScalingInt
 import com.example.shaker.data.Upgrade
 import com.example.shaker.data.doAllUpgradesOfType
 import com.example.shaker.data.allRecipes
+import com.example.shaker.ui.GameplayStates.AdvancementState
 import com.example.shaker.ui.GameplayStates.MoneyState
 import com.example.shaker.ui.GameplayStates.RecipeState
 import com.example.shaker.ui.GameplayStates.UpgradeState
@@ -16,18 +17,16 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class GameplayViewModel : ViewModel() {
 
-    private val _moneyState = MutableStateFlow<MoneyState>(MoneyState(15))
+    private val _moneyState = MutableStateFlow<MoneyState>(MoneyState(0))
     val moneyState: StateFlow<MoneyState> = _moneyState.asStateFlow()
     private val _recipes = MutableStateFlow(RecipeState())
     val recipes: StateFlow<RecipeState> = _recipes.asStateFlow()
 
-    //    private val _upgradeLevels = MutableStateFlow<MutableMap<Pair<Int, Int>, Int>>(mutableMapOf<Pair<Int, Int>, Int>())
-//    val upgradeLevels: StateFlow<Map<Pair<Int, Int>, Int>> = _upgradeLevels.asStateFlow()
     private val _upgradeLevels = MutableStateFlow(UpgradeState())
     val upgradeLevels: StateFlow<UpgradeState> = _upgradeLevels.asStateFlow()
     var accumalated: Float = 0f
-    private var _showSideBar = MutableStateFlow(false)
-    var showSideBar = _showSideBar.asStateFlow()
+    private var _advancementState = MutableStateFlow(AdvancementState())
+    val advancementState: StateFlow<AdvancementState> = _advancementState.asStateFlow()
 
 
     public fun Sell(recipe: Recipe, amount: Long) {
@@ -69,13 +68,11 @@ class GameplayViewModel : ViewModel() {
             previous = _moneyState.value.current,
             current = _moneyState.value.current + value
         )
-        if (!_showSideBar.value && _recipes.value.canBuy(
-                allRecipes[0],
-                1,
-                _moneyState.value.current
-            )
-        )
-            _showSideBar.value = true
+        if (!_advancementState.value.getAdvancement("showSideBar")
+            && _recipes.value.canBuy(allRecipes[0],1,_moneyState.value.current)
+        ) {
+            toggleAdvancement("showSideBar")
+        }
     }
 
     public fun Increment(numberOfCycle: Float) {
@@ -126,7 +123,9 @@ class GameplayViewModel : ViewModel() {
         )
     }
 
-//    fun getUpgradeLevel(recipeId: Int, upgradeId: Int): Int {
-//        return _upgradeLevels.value[Pair(recipeId, upgradeId)] ?: 0
-//    }
+    fun toggleAdvancement(id: String){
+        _advancementState.value = _advancementState.value.copy(
+            map = _advancementState.value.toggleAdvancement(id)
+        )
+    }
 }

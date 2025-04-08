@@ -62,9 +62,9 @@ fun MovingSideBar(
     var sidebarWidthPx by remember { mutableStateOf(0) }
     val sidebarWidthDp = with(density) { sidebarWidthPx.toDp() }
     val cutCorner = remember { Animatable(0f) }
-    var showSideBar = gameState.showSideBar.collectAsState()
+    var advancement = gameState.advancementState.collectAsState()
 
-    val offset = if(!showSideBar.value) sidebarWidthDp else
+    val offset = if(!advancement.value.getAdvancement("showSideBar")) sidebarWidthDp else
         -(configuration.screenWidthDp.dp - sidebarWidthDp) * (pagerState_H.currentPage + pagerState_H.currentPageOffsetFraction)
 
     val coroutineScope = rememberCoroutineScope() // scroll to page
@@ -85,11 +85,19 @@ fun MovingSideBar(
         onRecipeClick = { recipeId ->
             viewModel.selectRecipe(recipeId)
             coroutineScope.launch {
-                if (pagerState_H.currentPage == 0) {
-                    pagerState_V.scrollToPage(recipeId)
-                    pagerState_H.animateScrollToPage(1)
-                } else {
-                    pagerState_V.animateScrollToPage(recipeId)
+                if(!advancement.value.getAdvancement("shaking")) {
+                    if (pagerState_H.currentPage == 0) {
+                        pagerState_V.scrollToPage(recipeId)
+                        pagerState_H.animateScrollToPage(
+                            page = 1,
+                            animationSpec = tween(
+                                durationMillis = if(advancement.value.getAdvancement("firstBuy")) 100 else 200,
+                                easing = LinearEasing
+                            )
+                        )
+                    } else {
+                        pagerState_V.animateScrollToPage(recipeId)
+                    }
                 }
             }
         },

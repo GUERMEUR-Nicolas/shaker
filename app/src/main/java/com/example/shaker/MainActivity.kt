@@ -38,13 +38,15 @@ class MainActivity : ComponentActivity() {
                 shakeMin = resources.getInteger(R.integer.minShakeIntensity).toFloat()
             ) { intensity ->
                 //TODO integrate intensity
+                gameplayState.toggleAdvancement("shaking")
                 gameplayState.OnShaked(shakeDelay)
+                gameplayState.toggleAdvancement("shaking")
             })
         //enableEdgeToEdge()
         val delay: Long = resources.getInteger(R.integer.shakeDelayMilli).toLong()
         setContent {
             AppTheme(darkTheme = false, dynamicColor = false) {
-                CenterSidebarPager(viewModel, gameplayState, 1)
+                CenterSidebarPager(viewModel, gameplayState, 0)
                 LaunchedEffect(Unit) {
                     val valueIncrement = resources.getInteger(R.integer.ValueIncrementPerS)
                     val duration: Float =

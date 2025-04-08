@@ -53,7 +53,7 @@ import kotlin.math.pow
 fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
     val st = if (gameplayState.moneyState.collectAsState().value.current.getExponent() >= 3) 1 else 0
     val bgs = when {
-        isSystemInDarkTheme() -> arrayOf(
+        /*isSystemInDarkTheme()*/false -> arrayOf(
             R.drawable.p0n,
             R.drawable.p1n
         ) // TODO: use darkTheme from AppTheme

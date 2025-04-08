@@ -150,47 +150,5 @@ val allRecipes = listOf(
             3,
             8
         )
-    ),
-    Recipe(
-        imageResourceId = R.drawable.placeholder_0,
-        generating10th = 260 * 1000.0,
-        name = R.string.recipe_name,
-        id = 8
-    ),
-    Recipe(
-        imageResourceId = R.drawable.placeholder_1,
-        generating10th = 1.6 * 10.0.pow(6.0),
-        name = R.string.recipe_name,
-        id = 9
-    ),
-    Recipe(
-        imageResourceId = R.drawable.placeholder_2,
-        generating10th = 10 * 10.0.pow(6.0),
-        name = R.string.recipe_name,
-        id = 10
-    ),
-    Recipe(
-        imageResourceId = R.drawable.placeholder_3,
-        generating10th = 65 * 10.0.pow(6.0),
-        name = R.string.recipe_name,
-        id = 11
-    ),
-    Recipe(
-        imageResourceId = R.drawable.placeholder_4,
-        generating10th = 430 * 10.0.pow(6.0),
-        name = R.string.recipe_name,
-        id = 12
-    ),
-    Recipe(
-        imageResourceId = R.drawable.placeholder_0,
-        generating10th = 2.9 * 10.0.pow(9.0),
-        name = R.string.recipe_name,
-        id = 13
-    ),
-    Recipe(
-        imageResourceId = R.drawable.placeholder_1,
-        generating10th = 21 * 10.0.pow(9.0),
-        name = R.string.recipe_name,
-        id = 14
     )
 )

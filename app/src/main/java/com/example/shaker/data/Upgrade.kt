@@ -136,8 +136,8 @@ fun doAllUpgradesOfType(
 
 public fun allUpgrades(index: Int, baseCost: ScalingInt): Upgrade {
     var upgrade = Upgrade(allUpgrades[index])
-    //An upgrade base cost is 7 times bigger than buying the first recipe
-    upgrade.setBaseCost(baseCost*7);
+    //An upgrade base cost is 3 times bigger than buying the first recipe
+    upgrade.setBaseCost(baseCost*3);
     return upgrade;
 }
 

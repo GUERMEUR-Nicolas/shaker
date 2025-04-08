@@ -92,7 +92,7 @@ fun FlipClockCounter(
         if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
     }
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(modifier = Modifier/*.border(5.dp, Color(0xFF444444), CutCornerShape(0.dp))*/) {
+        Box(modifier = Modifier) {
             Row(modifier = Modifier) {
                 formattedNewNumber.forEachIndexed { index, newDigitChar ->
                     val oldDigit = formattedOldNumber[index]
@@ -105,16 +105,19 @@ fun FlipClockCounter(
                 }
             }
         }
-        Box(modifier = Modifier/*.border(5.dp, Color(0xFF444444), CutCornerShape(0.dp))*/) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+        ) {
             Text(
                 text = numberName,
                 style = TextStyle(
                     fontSize = 30.sp,
-                    color = backColor,
+                    color = color,
                     fontFamily = bodyFontFamily,
-                    background = if (exponent >= 3) Color.Black else Color.Transparent
+                    background = if (exponent >= 3) backColor else Color.Transparent
                 ),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }

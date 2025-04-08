@@ -92,9 +92,13 @@ fun CurrentRecipe(
     val colorOnBgStacked = MaterialTheme.colorScheme.onSurface
     Box(
         contentAlignment = Alignment.CenterEnd,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorBG)
+        modifier = with(Modifier) {
+            fillMaxSize()
+                .paint(
+                    painter = painterResource(R.drawable.wallpaper),
+                    contentScale = ContentScale.FillBounds
+                )
+        }
     ) {
         Column(
             verticalArrangement = Arrangement.SpaceEvenly,
@@ -281,7 +285,11 @@ fun RecipeBuyButton(
     var money = gameplayViewModel.moneyState.collectAsState()
     val cost = recipes.value.GetNextCost(recipe, amountToBuy).ValueAsString()
     TextButton(
-        onClick = { gameplayViewModel.ForceBuy(recipe, amountToBuy) },
+        onClick = {
+            if(!gameplayViewModel.advancementState.value.getAdvancement("firstBuy"))
+                gameplayViewModel.toggleAdvancement("firstBuy")
+            gameplayViewModel.ForceBuy(recipe, amountToBuy)
+        },
         enable = recipes.value.canBuy(recipe, amountToBuy, money.value.current),
         text = stringResource(
             R.string.buy_recipee,
