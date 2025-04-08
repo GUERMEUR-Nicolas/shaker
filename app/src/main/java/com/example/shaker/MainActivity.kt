@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
         val delay: Long = resources.getInteger(R.integer.shakeDelayMilli).toLong()
         setContent {
             AppTheme(darkTheme = false, dynamicColor = false) {
-                CenterSidebarPager(viewModel, gameplayState)
+                CenterSidebarPager(viewModel, gameplayState, 1)
                 LaunchedEffect(Unit) {
                     val valueIncrement = resources.getInteger(R.integer.ValueIncrementPerS)
                     val duration: Float =

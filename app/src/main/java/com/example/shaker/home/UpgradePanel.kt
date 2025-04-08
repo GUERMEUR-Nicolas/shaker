@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -18,9 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,7 +31,6 @@ import com.example.shaker.R
 import com.example.shaker.data.Recipe
 import com.example.shaker.data.Upgrade
 import com.example.shaker.data.allRecipes
-import com.example.shaker.data.allUpgrades
 import com.example.shaker.ui.GameplayViewModel
 
 @Composable
@@ -44,8 +39,8 @@ fun UpgradePanel(
     upg: Upgrade,
     onExit: () -> Unit,
     modifier: Modifier = Modifier,
-    backColor : Color,
-    color : Color,
+    backColor : Color, // val colorBGStacked = MaterialTheme.colorScheme.surfaceDim
+    textColor : Color,//val colorOnBgStacked = MaterialTheme.colorScheme.onSurface
     gameState: GameplayViewModel
 ) {
     val upgradeLevels by gameState.upgradeLevels.collectAsState()
@@ -58,22 +53,13 @@ fun UpgradePanel(
             .background(backColor)
             //align(Alignment.CenterEnd),
     ) {
-        //Box(
-        //    modifier = Modifier
-        //        .fillMaxWidth()
-        //        .background(Color.Red)
-        //        .padding(10.dp)
-        //        .padding(bottom = 10.dp)
-        //        .clickable(onClick = onExit)
-        //) {
-        //}
         Spacer(
             modifier = Modifier.height(20.dp)
         )
         TitledImage(
             title = stringResource(upg.name) + "\n" +stringResource(R.string.tier_name,upgradeLevels.getUpgradeLevel(recipe.id, upg.id)),
             subTitle = stringResource(upg.description),
-            textColor = color,
+            textColor = textColor,
             titleSize = 30.sp,
             imageId = upg.image,
             imagePadding = 50.dp,
@@ -83,6 +69,8 @@ fun UpgradePanel(
             gameState, modifier, ButtonDefaults.textButtonColors(
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary,
+                disabledContainerColor = MaterialTheme.colorScheme.surface,
+                disabledContentColor = MaterialTheme.colorScheme.onSurface,
             )
         )
         Spacer(

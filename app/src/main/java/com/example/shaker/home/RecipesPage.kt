@@ -255,7 +255,12 @@ fun TextButton(
     TextButton(
         onClick = onClick,
         enabled = enable,
-        colors = colors,
+        colors = ButtonDefaults.textButtonColors(
+            containerColor = colors.containerColor,
+            contentColor = colors.contentColor,
+            disabledContainerColor = if(colors.disabledContainerColor == Color.Unspecified) MaterialTheme.colorScheme.tertiaryContainer else colors.disabledContainerColor,
+            disabledContentColor = if(colors.disabledContentColor == Color.Unspecified) MaterialTheme.colorScheme.tertiaryContainer else colors.disabledContentColor,
+        ),
     ) {
         Text(
             text
