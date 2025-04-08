@@ -8,4 +8,9 @@ data class MoneyState(
     val perSecond : ScalingInt = ScalingInt(0),
     val perShake : ScalingInt = ScalingInt(1),
 )
+{
+    constructor(initMoney : Int) : this(
+        current = ScalingInt(initMoney),
+    )
+}
 

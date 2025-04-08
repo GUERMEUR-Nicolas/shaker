@@ -28,10 +28,14 @@ class Recipe(
     val id: Int,
     var generating: ScalingInt = ScalingInt(0),
     var cost: ScalingCost,
-	var upgrades: MutableList<Upgrade> = mutableListOf<Upgrade>()
+    var upgrades: MutableList<Upgrade> = mutableListOf<Upgrade>()
 ) {
     public fun GetNextCost(amountOwned: Long = 0, amountBought: Long = 1): ScalingInt {
-        return doAllUpgradesOfType(this.upgrades, this.cost.GetNextCost(amountOwned, amountBought), "cost")
+        return doAllUpgradesOfType(
+            this.upgrades,
+            this.cost.GetNextCost(amountOwned, amountBought),
+            "cost"
+        )
     }
 
     constructor(
@@ -39,31 +43,31 @@ class Recipe(
         generating10th: Double,
         name: Int,
         id: Int,
-		upgrades: MutableList<Upgrade> = mutableListOf<Upgrade>()
-	) : this(
+        upgradesIndex: List<Int> = listOf(0, 1, 2, 3)
+    ) : this(
         //When no cost is specified we use a cost based on the ID scaled by 11 on each increment
-        cost = ScalingCost(ScalingInt(100.0* 11.0.pow(id - 1.0)),1.15),
         imageResourceId = imageResourceId,
         generating10th = generating10th,
         name = name,
         id = id,
-		upgrades = upgrades
+        cost = ScalingCost(ScalingInt(100.0 * 11.0.pow(id - 1.0)), 1.15),
+        upgradesIndex = upgradesIndex
     )
+
     constructor(
         @DrawableRes imageResourceId: Int,
         generating10th: Double,
         name: Int,
         id: Int,
-        cost : ScalingCost,
-		upgrades: MutableList<Upgrade> = mutableListOf<Upgrade>()
-	) : this(
-        //When no cost is specified we use a cost based on the ID scaled by 11 on each increment
+        cost: ScalingCost,
+        upgradesIndex: List<Int>
+    ) : this(
         cost = cost,
         imageResourceId = imageResourceId,
-        generating = ScalingInt(generating10th*10),
+        generating = ScalingInt(generating10th * 10),
         name = name,
         id = id,
-		upgrades = upgrades
+        upgrades = upgradesIndex.map { allUpgrades(it, cost.basePrice) }.toMutableList<Upgrade>()
     )
 }
 
@@ -76,12 +80,7 @@ val allRecipes = listOf(
         generating10th = 0.1,
         name = R.string.cocktail_0,
         id = 0,
-		upgrades = mutableListOf(
-			allUpgrades[0],
-			allUpgrades[1],
-            allUpgrades[2],
-            allUpgrades[3]
-		)
+        upgradesIndex = listOf(0, 1, 2, 3)
     ),
     //From Second Recipe cost is based on the ID with a scaling factor
     Recipe(
@@ -89,59 +88,43 @@ val allRecipes = listOf(
         generating10th = 1.0,
         name = R.string.cocktail_7,
         id = 1,
-        upgrades = mutableListOf(
-            allUpgrades[0],
-            allUpgrades[1],
-            allUpgrades[2],
-            allUpgrades[3]
-        )
+        upgradesIndex = listOf(0, 1, 2, 3)
+
     ),
     Recipe(
         imageResourceId = R.drawable.cocktail_1,
         generating10th = 8.0,
         name = R.string.cocktail_1,
         id = 2,
-        upgrades = mutableListOf(
-            allUpgrades[0],
-            allUpgrades[1],
-            allUpgrades[2],
-            allUpgrades[3]
-        )
+        upgradesIndex = listOf(0, 1, 2, 3)
+
     ),
     Recipe(
         imageResourceId = R.drawable.cocktail_5,
         generating10th = 47.0,
         name = R.string.cocktail_5,
         id = 3,
-        upgrades = mutableListOf(
-            allUpgrades[0],
-            allUpgrades[1],
-            allUpgrades[2],
-            allUpgrades[3]
-        )
+        upgradesIndex = listOf(0, 1, 2, 3)
+
     ),
     Recipe(
         imageResourceId = R.drawable.cocktail_4,
         generating10th = 260.0,
         name = R.string.cocktail_4,
         id = 4,
-        upgrades = mutableListOf(
-            allUpgrades[3],
-            allUpgrades[7],
-            allUpgrades[8],
-            allUpgrades[6]
-        )
+        upgradesIndex = listOf(3, 7, 8, 6)
+
     ),
     Recipe(
         imageResourceId = R.drawable.cocktail_3,
         generating10th = 1400.0,
         name = R.string.cocktail_3,
         id = 5,
-        upgrades = mutableListOf(
-            allUpgrades[3],
-            allUpgrades[1],
-            allUpgrades[2],
-            allUpgrades[4]
+        upgradesIndex = listOf(
+            3,
+            1,
+            2,
+            4
         )
     ),
     Recipe(
@@ -149,64 +132,64 @@ val allRecipes = listOf(
         generating10th = 7800.0,
         name = R.string.cocktail_2,
         id = 6,
-        upgrades = mutableListOf(
-            allUpgrades[7],
-            allUpgrades[2],
-            allUpgrades[6],
-            allUpgrades[5]
+        upgradesIndex = listOf(
+            7,
+            2,
+            6,
+            5
         )
     ),
     Recipe(
         imageResourceId = R.drawable.cocktail_6,
-        generating10th = 44*1000.0,
+        generating10th = 44 * 1000.0,
         name = R.string.cocktail_6,
         id = 7,
-        upgrades = mutableListOf(
-            allUpgrades[1],
-            allUpgrades[4],
-            allUpgrades[3],
-            allUpgrades[8]
+        upgradesIndex = listOf(
+            1,
+            4,
+            3,
+            8
         )
     ),
     Recipe(
         imageResourceId = R.drawable.placeholder_0,
-        generating10th = 260*1000.0,
+        generating10th = 260 * 1000.0,
         name = R.string.recipe_name,
         id = 8
     ),
     Recipe(
         imageResourceId = R.drawable.placeholder_1,
-        generating10th = 1.6*10.0.pow(6.0),
+        generating10th = 1.6 * 10.0.pow(6.0),
         name = R.string.recipe_name,
         id = 9
     ),
     Recipe(
         imageResourceId = R.drawable.placeholder_2,
-        generating10th = 10*10.0.pow(6.0),
+        generating10th = 10 * 10.0.pow(6.0),
         name = R.string.recipe_name,
         id = 10
     ),
     Recipe(
         imageResourceId = R.drawable.placeholder_3,
-        generating10th = 65*10.0.pow(6.0),
+        generating10th = 65 * 10.0.pow(6.0),
         name = R.string.recipe_name,
         id = 11
     ),
     Recipe(
         imageResourceId = R.drawable.placeholder_4,
-        generating10th = 430*10.0.pow(6.0),
+        generating10th = 430 * 10.0.pow(6.0),
         name = R.string.recipe_name,
         id = 12
     ),
     Recipe(
         imageResourceId = R.drawable.placeholder_0,
-        generating10th = 2.9*10.0.pow(9.0),
+        generating10th = 2.9 * 10.0.pow(9.0),
         name = R.string.recipe_name,
         id = 13
     ),
     Recipe(
         imageResourceId = R.drawable.placeholder_1,
-        generating10th = 21*10.0.pow(9.0),
+        generating10th = 21 * 10.0.pow(9.0),
         name = R.string.recipe_name,
         id = 14
     )

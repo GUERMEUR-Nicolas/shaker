@@ -16,116 +16,150 @@ class Upgrade(
     val type: Array<String>,
     private val x: Array<Float>,
     var buildingB_ID: Int? = null,
-    val cost: ScalingCost = ScalingCost(ScalingInt(1), 2.0),
+    private var cost: ScalingCost = ScalingCost(ScalingInt(1), 2.0),
     var level: Int = 0
-){
-	public fun doAllActionsOfType(original: ScalingInt, type: String, recipesInfo: Map<Int, Long> = mapOf<Int, Long>()): ScalingInt{
-		var res: ScalingInt = original
-		for(i in actions.indices){ // inner precedence implicit if actions[type] is sorted
-			if(this.type[i] == type){
-				val p = availableActions[type]?.get(actions[i])
-				var amount: Long = 0
-				if(type == "generate"){
-					 /**/ if(i == 0){
-						recipesInfo.forEach{(id, n) -> if(id != buildingB_ID) amount += n;}
-					}else if(i == 3){
-						amount = recipesInfo[buildingB_ID]!!
-					}
-				}
-				res = p!!.first(res, p.second(i, amount))
-			}
-		}
-		return res
-	}
+) {
+    constructor(upgrade: Upgrade) : this(
+        name = upgrade.name,
+        description = upgrade.description,
+        image = upgrade.image,
+        id = upgrade.id,
+        actions = upgrade.actions.clone(),
+        type = upgrade.type.clone(),
+        x = upgrade.x.clone(),
+        buildingB_ID = upgrade.buildingB_ID,
+        cost = ScalingCost(upgrade.cost.basePrice, upgrade.cost.scalingFactor),
+        level = 0
+    )
+
+    public fun setBaseCost(value :ScalingInt){
+        this.cost = ScalingCost(value, this.cost.scalingFactor);
+    }
+    public fun doAllActionsOfType(
+        original: ScalingInt,
+        type: String,
+        recipesInfo: Map<Int, Long> = mapOf<Int, Long>()
+    ): ScalingInt {
+        var res: ScalingInt = original
+        for (i in actions.indices) { // inner precedence implicit if actions[type] is sorted
+            if (this.type[i] == type) {
+                val p = availableActions[type]?.get(actions[i])
+                var amount: Long = 0
+                if (type == "generate") {
+                    /**/ if (i == 0) {
+                        recipesInfo.forEach { (id, n) -> if (id != buildingB_ID) amount += n; }
+                    } else if (i == 3) {
+                        amount = recipesInfo[buildingB_ID]!!
+                    }
+                }
+                res = p!!.first(res, p.second(i, amount))
+            }
+        }
+        return res
+    }
 
     public fun GetNextCost(amountBought: Long = 1): ScalingInt {
         return this.cost.GetNextCost(this.level.toLong(), amountBought)
     }
 
 
-	private val availableActions: Map<String, Array<Pair<KFunction2<ScalingInt, Float, ScalingInt>, KFunction2<Int, Long, Float>>>> = mapOf(
-		"generate" to arrayOf(
-			Pair(ScalingInt::plus,  ::bARawCpsIncreaseByNumberOfOtherBuildings),
-			Pair(ScalingInt::times, ::bARawEffectiveness),
-			Pair(ScalingInt::times, ::timesX),
-			Pair(ScalingInt::times, ::bACpsPortionIncreaseByNumberOfBB)
-		),
-		"cost" to arrayOf(
-			Pair(ScalingInt::times, ::decrease),
-			Pair(ScalingInt::times, ::increase)
-		)
-	)
+    private val availableActions: Map<String, Array<Pair<KFunction2<ScalingInt, Float, ScalingInt>, KFunction2<Int, Long, Float>>>> =
+        mapOf(
+            "generate" to arrayOf(
+                Pair(ScalingInt::plus, ::bARawCpsIncreaseByNumberOfOtherBuildings),
+                Pair(ScalingInt::times, ::bARawEffectiveness),
+                Pair(ScalingInt::times, ::timesX),
+                Pair(ScalingInt::times, ::bACpsPortionIncreaseByNumberOfBB)
+            ),
+            "cost" to arrayOf(
+                Pair(ScalingInt::times, ::decrease),
+                Pair(ScalingInt::times, ::increase)
+            )
+        )
 
-	// Generate
-    private fun bARawCpsIncreaseByNumberOfOtherBuildings(i: Int, amount: Long): Float{ // To use this, set buildingB_ID, as the building with this upgrade
+    // Generate
+    private fun bARawCpsIncreaseByNumberOfOtherBuildings(
+        i: Int,
+        amount: Long
+    ): Float { // To use this, set buildingB_ID, as the building with this upgrade
         return this.x[i] * amount * this.level
     }
-    private fun bARawEffectiveness(i: Int, amount: Long): Float{
+
+    private fun bARawEffectiveness(i: Int, amount: Long): Float {
         return this.x[i] * this.level
     }
-	private fun timesX(i: Int, amount: Long): Float{
-		return this.x[i] * this.level
-	}
-	private fun bACpsPortionIncreaseByNumberOfBB(i: Int, amount: Long): Float{
-		return (1+this.x[i]) * amount * this.level
-	}
 
-	// Cost
-	private fun decrease(i: Int, amount: Long): Float{
-		return 1-this.x[i].pow(this.level)
-	}
-	private fun increase(i: Int, amount: Long): Float{
-		return 1+this.x[i].pow(this.level)
-	}
+    private fun timesX(i: Int, amount: Long): Float {
+        return this.x[i] * this.level
+    }
+
+    private fun bACpsPortionIncreaseByNumberOfBB(i: Int, amount: Long): Float {
+        return (1 + this.x[i]) * amount * this.level
+    }
+
+    // Cost
+    private fun decrease(i: Int, amount: Long): Float {
+        return 1 - this.x[i].pow(this.level)
+    }
+
+    private fun increase(i: Int, amount: Long): Float {
+        return 1 + this.x[i].pow(this.level)
+    }
 }
 
 fun doAllUpgradesOfType(
-	lst: List<Upgrade>,
-	original: ScalingInt,
-	type: String,
-	recipesInfo: Map<Int, Long> = mapOf<Int, Long>()
-): ScalingInt{
-	if(lst.isEmpty())
-		return original
-	val toRun = mutableMapOf<Int, MutableList<Upgrade>>()
-	var res: ScalingInt = original
-	for(i in lst.indices){
-		if(lst[i].level != 0 && type in lst[i].type) {
-			if(toRun[i] == null)
-				toRun[i] = mutableListOf<Upgrade>()
-			toRun[i]!!.add(lst[i])
-		}
-	}
-	if(toRun.isEmpty())
-		return original
-	toRun.forEach{(_, v) ->
-		for(u in v)
-			res = u.doAllActionsOfType(res, type, recipesInfo)
-	}
+    lst: List<Upgrade>,
+    original: ScalingInt,
+    type: String,
+    recipesInfo: Map<Int, Long> = mapOf<Int, Long>()
+): ScalingInt {
+    if (lst.isEmpty())
+        return original
+    val toRun = mutableMapOf<Int, MutableList<Upgrade>>()
+    var res: ScalingInt = original
+    for (i in lst.indices) {
+        if (lst[i].level != 0 && type in lst[i].type) {
+            if (toRun[i] == null)
+                toRun[i] = mutableListOf<Upgrade>()
+            toRun[i]!!.add(lst[i])
+        }
+    }
+    if (toRun.isEmpty())
+        return original
+    toRun.forEach { (_, v) ->
+        for (u in v)
+            res = u.doAllActionsOfType(res, type, recipesInfo)
+    }
 
-	return res
+    return res
 }
 
+public fun allUpgrades(index: Int, baseCost: ScalingInt): Upgrade {
+    var upgrade = Upgrade(allUpgrades[index])
+    //An upgrade base cost is 7 times bigger than buying the first recipe
+    upgrade.setBaseCost(baseCost*7);
+    return upgrade;
+}
 
-val allUpgrades = arrayOf(
-	Upgrade(
-		R.string.upgrade_0,
-		R.string.upgrade_description_0,
-		R.drawable.upgrade_0,
+private val allUpgrades = arrayOf(
+    Upgrade(
+        R.string.upgrade_0,
+        R.string.upgrade_description_0,
+        R.drawable.upgrade_0,
         0,
-		arrayOf(2),
-		arrayOf("generate"),
-		arrayOf(2.0f)
-	),
-	Upgrade(
-		R.string.upgrade_1,
-		R.string.upgrade_description_1,
-		R.drawable.upgrade_1,
+        arrayOf(2),
+        arrayOf("generate"),
+        arrayOf(2.0f)
+    ),
+    Upgrade(
+        R.string.upgrade_1,
+        R.string.upgrade_description_1,
+        R.drawable.upgrade_1,
         1,
-		arrayOf(0, 1),
-		arrayOf("generate", "cost"),
-		arrayOf(0.1f, 0.05f)
-	),
+        arrayOf(0, 1),
+        arrayOf("generate", "cost"),
+        arrayOf(0.1f, 0.05f)
+    ),
     Upgrade(
         R.string.upgrade_2,
         R.string.upgrade_description,

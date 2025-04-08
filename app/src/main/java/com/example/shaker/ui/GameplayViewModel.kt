@@ -16,17 +16,19 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class GameplayViewModel : ViewModel() {
 
-    private val _moneyState = MutableStateFlow(MoneyState())
+    private val _moneyState = MutableStateFlow<MoneyState>(MoneyState(15))
     val moneyState: StateFlow<MoneyState> = _moneyState.asStateFlow()
     private val _recipes = MutableStateFlow(RecipeState())
     val recipes: StateFlow<RecipeState> = _recipes.asStateFlow()
-//    private val _upgradeLevels = MutableStateFlow<MutableMap<Pair<Int, Int>, Int>>(mutableMapOf<Pair<Int, Int>, Int>())
+
+    //    private val _upgradeLevels = MutableStateFlow<MutableMap<Pair<Int, Int>, Int>>(mutableMapOf<Pair<Int, Int>, Int>())
 //    val upgradeLevels: StateFlow<Map<Pair<Int, Int>, Int>> = _upgradeLevels.asStateFlow()
     private val _upgradeLevels = MutableStateFlow(UpgradeState())
     val upgradeLevels: StateFlow<UpgradeState> = _upgradeLevels.asStateFlow()
     var accumalated: Float = 0f
     private var _showSideBar = MutableStateFlow(false)
     var showSideBar = _showSideBar.asStateFlow()
+
 
     public fun Sell(recipe: Recipe, amount: Long) {
         ForceBuy(recipe, -amount)
@@ -37,7 +39,11 @@ class GameplayViewModel : ViewModel() {
         val id = recipe.id
         _moneyState.value = _moneyState.value.copy(
             previous = _moneyState.value.current,
-            current = _moneyState.value.current - recipe.GetNextCost(_recipes.value.GetRecipeAmount(recipe), amount)
+            current = _moneyState.value.current - recipe.GetNextCost(
+                _recipes.value.GetRecipeAmount(
+                    recipe
+                ), amount
+            )
         )
         //We increment the recipe count after we effectively bought it, other ways, we'd pay one level ahead
         _recipes.value = _recipes.value.copy(
@@ -45,7 +51,8 @@ class GameplayViewModel : ViewModel() {
         )
         this.updatePerSecond()
     }
-    public fun ForceBuy(recipe: Recipe, upgrade: Upgrade, amount: Long = 1){
+
+    public fun ForceBuy(recipe: Recipe, upgrade: Upgrade, amount: Long = 1) {
         _moneyState.value = _moneyState.value.copy(
             previous = _moneyState.value.current,
             current = _moneyState.value.current - upgrade.GetNextCost(amount)
@@ -62,14 +69,19 @@ class GameplayViewModel : ViewModel() {
             previous = _moneyState.value.current,
             current = _moneyState.value.current + value
         )
-        if(!_showSideBar.value && _recipes.value.canBuy(allRecipes[0], 1, _moneyState.value.current))
+        if (!_showSideBar.value && _recipes.value.canBuy(
+                allRecipes[0],
+                1,
+                _moneyState.value.current
+            )
+        )
             _showSideBar.value = true
     }
 
     public fun Increment(numberOfCycle: Float) {
         val incr = numberOfCycle * _moneyState.value.perSecond.toFloat()
         //If the value is directly above the minimal value, we increment it directly, using the ScalingInt Multiplication
-        if(incr>10000f)
+        if (incr > 10000f)
             Increment(incr)
         else {
             //Else, mostly in the beggining when incr is less than 1 per update rate, we acucumlate it in a float value
@@ -99,10 +111,15 @@ class GameplayViewModel : ViewModel() {
         )
     }
 
-    public fun updatePerSecond(){
+    public fun updatePerSecond() {
         var perSecond = ScalingInt(0)
-        for(r in allRecipes)
-            perSecond += doAllUpgradesOfType(r.upgrades, r.generating, "generate", _recipes.value.map) * _recipes.value.GetRecipeAmount(r)
+        for (r in allRecipes)
+            perSecond += doAllUpgradesOfType(
+                r.upgrades,
+                r.generating,
+                "generate",
+                _recipes.value.map
+            ) * _recipes.value.GetRecipeAmount(r)
         // TODO: add raw cps
         _moneyState.value = _moneyState.value.copy(
             perSecond = perSecond
