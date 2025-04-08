@@ -1,5 +1,6 @@
 package com.example.shaker.ui
 
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import com.example.shaker.data.Recipe
 import com.example.shaker.data.ScalingInt
@@ -24,6 +25,8 @@ class GameplayViewModel : ViewModel() {
     private val _upgradeLevels = MutableStateFlow(UpgradeState())
     val upgradeLevels: StateFlow<UpgradeState> = _upgradeLevels.asStateFlow()
     var accumalated: Float = 0f
+    private var _showSideBar = MutableStateFlow(false)
+    var showSideBar = _showSideBar.asStateFlow()
 
     public fun Sell(recipe: Recipe, amount: Long) {
         ForceBuy(recipe, -amount)
@@ -59,6 +62,8 @@ class GameplayViewModel : ViewModel() {
             previous = _moneyState.value.current,
             current = _moneyState.value.current + value
         )
+        if(!_showSideBar.value && _recipes.value.canBuy(allRecipes[0], 1, _moneyState.value.current))
+            _showSideBar.value = true
     }
 
     public fun Increment(numberOfCycle: Float) {

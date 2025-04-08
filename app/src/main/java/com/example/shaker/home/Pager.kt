@@ -72,19 +72,21 @@ fun CurrentPage(
     pagerState_V: PagerState
 ) {
     var selectedTabItem: Int by remember { mutableStateOf(0) }
+    var showSideBar = gameplayState.showSideBar.collectAsState()
 
     val bgColor = MaterialTheme.colorScheme.surfaceContainerLowest
     HorizontalPager(
         state = pagerState_H,
         beyondViewportPageCount = 1,
         key = { page -> page },
+        userScrollEnabled = showSideBar.value,
         modifier = Modifier
             .fillMaxSize()
     ) { page ->
         selectedTabItem = page
         when (page) {
             0 -> HomePage(
-                    Modifier.fillMaxWidth(0.8f),
+                    Modifier.fillMaxWidth(if(showSideBar.value) 0.8f else 1f),
                     //.background(bgColor),
                 gameplayState
             )

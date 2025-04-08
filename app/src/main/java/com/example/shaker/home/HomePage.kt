@@ -97,16 +97,6 @@ fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
 //					.weight(1f)
 //					.padding(top = 50.dp)
 //            )
-            TextButton(
-                //modifier = modifier.width(50.dp)
-                text = "x10",
-                colors = ButtonDefaults.textButtonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
-                ),
-                onClick = { gameplayState.TimesTen() },
-                enable = true,
-            )
         }
     }
 }

@@ -62,8 +62,9 @@ fun MovingSideBar(
     var sidebarWidthPx by remember { mutableStateOf(0) }
     val sidebarWidthDp = with(density) { sidebarWidthPx.toDp() }
     val cutCorner = remember { Animatable(0f) }
+    var showSideBar = gameState.showSideBar.collectAsState()
 
-    val offset =
+    val offset = if(!showSideBar.value) sidebarWidthDp else
         -(configuration.screenWidthDp.dp - sidebarWidthDp) * (pagerState_H.currentPage + pagerState_H.currentPageOffsetFraction)
 
     val coroutineScope = rememberCoroutineScope() // scroll to page
