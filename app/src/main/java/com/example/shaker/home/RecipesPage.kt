@@ -166,7 +166,9 @@ fun CurrentRecipe(
             ) {
                 val buttonColor = ButtonDefaults.textButtonColors(
                     containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                    disabledContainerColor = MaterialTheme.colorScheme.surface,
+                    disabledContentColor = MaterialTheme.colorScheme.onSurface,
                 )
                 RecipeBuyButton(recipe, 1, gameState, buttonColor)
                 RecipeBuyButton(recipe, 10, gameState, buttonColor)
