@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.PagerState
@@ -34,19 +35,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.example.shaker.R
 import com.example.shaker.data.Recipe
 import com.example.shaker.data.Upgrade
 import com.example.shaker.data.allRecipes
 import com.example.shaker.ui.GameplayViewModel
+import kotlin.random.Random
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -81,19 +87,41 @@ fun CurrentRecipe(
 ) {
     val recipe = allRecipes[recipeID]
     val colorBG = MaterialTheme.colorScheme.background
-    //val colorOnBg = MaterialTheme.colorScheme.onBackground
-    val colorOnBg = Color.White
+    val colorOnBg = MaterialTheme.colorScheme.onBackground
     val colorBGStacked = MaterialTheme.colorScheme.surfaceDim
     val colorOnBgStacked = MaterialTheme.colorScheme.onSurface
     Box(
-        modifier = with(Modifier) {
-            fillMaxSize()
-                .paint(
-                    painterResource(id = R.drawable.bg2),
-                    contentScale = ContentScale.FillBounds
-                )
-        }
+        contentAlignment = Alignment.CenterEnd,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colorBG)
     ) {
+        Column(
+            verticalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxHeight().fillMaxWidth(0.8f).zIndex(-1f)
+        ) {
+            val height = LocalConfiguration.current.screenHeightDp.dp
+            for(i in 0 ..< 2){
+                Row(modifier = with(Modifier){
+                    height(height*0.4f)
+                        .paint(
+                            painterResource(R.drawable.shelf),
+                            contentScale = ContentScale.Crop
+                        )
+                }){
+                    val bottles: List<Int> = getRandomList(Random(2*recipeID + i))
+                    for(r in bottles){
+                        val drawableId = LocalContext.current.resources.getIdentifier("bottle_$r", "drawable", LocalContext.current.packageName)
+                        Image(
+                            painter = painterResource(drawableId),
+                            contentDescription = "bottle n°$r",
+                            modifier = Modifier.fillMaxHeight(),
+                            contentScale = ContentScale.FillHeight
+                        )
+                    }
+                }
+            }
+        }
         val selectedUpgrade = viewModel.selectedUpgrade.collectAsState().value
         Column(
             verticalArrangement = Arrangement.Center,
@@ -355,6 +383,9 @@ fun TitledElement(
     }
     content()
 }
+
+fun getRandomList(random: Random): List<Int> =
+    List(3) {random.nextInt(1, 19)}
 
 @Preview(widthDp = 800, heightDp = 2400)
 @Composable

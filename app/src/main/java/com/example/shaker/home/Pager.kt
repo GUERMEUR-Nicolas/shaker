@@ -45,7 +45,14 @@ public fun CenterSidebarPager(viewModel: MainViewModel, gameplayState: GameplayV
         initialPage = viewModel.selectedRecipeId.value
     ) { allRecipes.size } // Vertical pages
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = with(Modifier) {
+        fillMaxSize()
+            .paint(
+                painter = painterResource(R.drawable.wood),
+                contentScale = ContentScale.Crop
+            )
+    }
+    ) {
         CurrentPage(viewModel, gameplayState,pagerState_H, pagerState_V)
         MovingSideBar(
             viewModel,
