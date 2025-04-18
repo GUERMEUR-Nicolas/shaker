@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -51,7 +52,8 @@ import kotlin.math.pow
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
-    val st = if (gameplayState.moneyState.collectAsState().value.current.getExponent() >= 3) 1 else 0
+    val st =
+        if (gameplayState.moneyState.collectAsState().value.current.getExponent() >= 3) 1 else 0
     val bgs = when {
         /*isSystemInDarkTheme()*/false -> arrayOf(
             R.drawable.p0n,
@@ -165,10 +167,13 @@ fun TopBar(gameplayState: GameplayViewModel, modifier: Modifier) {
 
 @Composable
 fun PerSecondText(perSecond: ScalingInt, color: Color, sp: TextUnit, modifier: Modifier) {
+    val coef = integerResource(R.integer.CycleDurationMultiplier)
+    val mult = 1f / coef;
     MoneyText(
         str = R.string.money_per_cycle,
         color,
-        value = perSecond.ValueAsString(),
+        //Ensures we have correct potential floating point string displayed or floored exponential value
+        value = if (perSecond.toInt() < coef) String.format("%.1f", perSecond.toFloat() * mult) else (perSecond * mult).toString(),
         size = sp,
         modifier = modifier
     )

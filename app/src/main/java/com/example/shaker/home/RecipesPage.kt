@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -323,7 +324,7 @@ fun RecipeInfo(
         if (!inSidebar) stringResource(
             R.string.RecipeCountAndTotal, recipeAmount.toString(), stringResource(
                 R.string.money_per_cycle,
-                recipe.generating * recipeAmount
+                recipe.generating * recipeAmount * (1f/ integerResource(R.integer.CycleDurationMultiplier))
             )
         ) else null,
         fontColor,
