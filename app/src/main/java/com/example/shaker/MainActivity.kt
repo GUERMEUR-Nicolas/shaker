@@ -15,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.compose.AppTheme
@@ -69,7 +70,7 @@ class MainActivity : ComponentActivity() {
                 if (adv.getAdvancement("shaking") && !adv.getAdvancement("showSideBar")) {
                     vibrator.vibrate(
                         android.os.VibrationEffect.createOneShot(
-                            delay,
+                            (integerResource(R.integer.shakeDelayMilli) / 4).toLong(),
                             android.os.VibrationEffect.DEFAULT_AMPLITUDE
                         )
                     );
