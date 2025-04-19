@@ -17,28 +17,38 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class GameplayViewModel(
     private val _moneyState: MutableStateFlow<MoneyState>,
-    private val _recipes: MutableStateFlow<RecipeState>
+    private val _recipes: MutableStateFlow<RecipeState>,
+    private val _upgradeLevels: MutableStateFlow<UpgradeState>,
+    private var _advancementState: MutableStateFlow<AdvancementState>
+
+
 ) : ViewModel() {
 
     constructor(
         moneyState: MoneyState,
-        recipeState: RecipeState
-    ) : this(MutableStateFlow<MoneyState>(moneyState), MutableStateFlow(recipeState)) {
-
+        recipeState: RecipeState,
+        upgradeState: UpgradeState,
+        advancementState: AdvancementState
+    ) : this(
+        MutableStateFlow<MoneyState>(moneyState),
+        MutableStateFlow(recipeState),
+        MutableStateFlow(upgradeState),
+        MutableStateFlow(advancementState)
+    ) {
     }
 
     constructor(init: Int = 10) : this(
         MoneyState(ScalingInt(init)),
-        RecipeState()
+        RecipeState(),
+        UpgradeState(),
+        AdvancementState()
     )
 
     val moneyState: StateFlow<MoneyState> = _moneyState.asStateFlow()
     val recipes: StateFlow<RecipeState> = _recipes.asStateFlow()
 
-    private val _upgradeLevels = MutableStateFlow(UpgradeState())
     val upgradeLevels: StateFlow<UpgradeState> = _upgradeLevels.asStateFlow()
     var accumalated: Float = 0f
-    private var _advancementState = MutableStateFlow(AdvancementState())
     val advancementState: StateFlow<AdvancementState> = _advancementState.asStateFlow()
 
 

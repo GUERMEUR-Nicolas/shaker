@@ -4,4 +4,6 @@
     <string name="perShake">perShake</string>
     <string name="perSecond">perSecond</string>
     <string name="recipe">Recipe_%d</string>
+    <string name="upgrade">Upgrade_%d_%d</string>
+    <string name="advancement">Advancement_%s</string>
 </resources>
