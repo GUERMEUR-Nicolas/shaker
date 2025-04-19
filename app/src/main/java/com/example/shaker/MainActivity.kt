@@ -2,30 +2,21 @@ package com.example.shaker
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.VibratorManager
 import androidx.activity.ComponentActivity
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.integerResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import com.example.compose.AppTheme
 import com.example.shaker.data.ScalingInt
 import com.example.shaker.data.allRecipes
-import com.example.shaker.data.allUpgrades
 import com.example.shaker.home.Accelerometer
 import com.example.shaker.home.CenterSidebarPager
 import com.example.shaker.home.MainViewModel
@@ -36,7 +27,6 @@ import com.example.shaker.ui.GameplayStates.RecipeState
 import com.example.shaker.ui.GameplayStates.UpgradeState
 import com.example.shaker.ui.GameplayViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.map
 
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
@@ -73,7 +63,7 @@ class MainActivity : ComponentActivity() {
             AppTheme(darkTheme = false, dynamicColor = false) {
                 CenterSidebarPager(viewModel, gameplayState, 0)
                 LaunchedEffect(Unit) {
-                    val valueIncrement = resources.getInteger(R.integer.ValueIncrementPerS)
+                    val valueIncrement = resources.getInteger(R.integer.NumberOfValueIncrementsPerS)
                     val duration: Float =
                         resources.getInteger(R.integer.CycleDurationMultiplier).toFloat()
                     val cycleDuration = 1000L / valueIncrement
@@ -149,6 +139,10 @@ class MainActivity : ComponentActivity() {
             }
             apply()
         }
+
+        with(sharedPref.edit()) {
+            putLong(getString(R.string.lastTime), System.currentTimeMillis())
+        }
     }
 
     fun loadPreferences() {
@@ -191,6 +185,14 @@ class MainActivity : ComponentActivity() {
             upgradeState,
             advancementState
         )
+
+        val lastTime = sharedPref.getLong(getString(R.string.lastTime), System.currentTimeMillis())
+        val currentTime = System.currentTimeMillis()
+        gameplayState.Increment(
+            ((currentTime - lastTime) / resources.getInteger(R.integer.CycleDurationMultiplier)
+                .toFloat() * resources.getInteger(R.integer.NumberOfValueIncrementsPerS))
+        )
+
     }
 
 }
