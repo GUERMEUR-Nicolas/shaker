@@ -83,14 +83,16 @@ class MainActivity : ComponentActivity() {
                     }
                 }
                 val adv = gameplayState.advancementState.collectAsState().value
-                if (adv.getAdvancement("shaking") && !adv.getAdvancement("showSideBar")) {
-                    vibrator.vibrate(
-                        android.os.VibrationEffect.createOneShot(
-                            (integerResource(R.integer.shakeDelayMilli) / 4).toLong(),
-                            android.os.VibrationEffect.DEFAULT_AMPLITUDE
-                        )
-                    );
+                if (adv.getAdvancement("shaking")) {
                     gameplayState.toggleAdvancement("shaking")
+                    if (!adv.getAdvancement("showSideBar")) {
+                        vibrator.vibrate(
+                            android.os.VibrationEffect.createOneShot(
+                                (integerResource(R.integer.shakeDelayMilli) / 4).toLong(),
+                                android.os.VibrationEffect.DEFAULT_AMPLITUDE
+                            )
+                        );
+                    }
                 }
             }
         }
