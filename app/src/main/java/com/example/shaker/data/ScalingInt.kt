@@ -57,6 +57,10 @@ class ScalingInt {
     constructor(value: Float) : this(BigDecimal(value.toDouble())) {
     }
 
+    constructor(current: String) {
+        this.value = BigDecimal(current)
+    }
+
     operator fun plus(other: ScalingInt): ScalingInt {
         return ScalingInt(this.value + other.value)
     }

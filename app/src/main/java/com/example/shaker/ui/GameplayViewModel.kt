@@ -15,11 +15,24 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class GameplayViewModel : ViewModel() {
+class GameplayViewModel(
+    private val _moneyState: MutableStateFlow<MoneyState>,
+    private val _recipes: MutableStateFlow<RecipeState>
+) : ViewModel() {
 
-    private val _moneyState = MutableStateFlow<MoneyState>(MoneyState(10))
+    constructor(
+        moneyState: MoneyState,
+        recipeState: RecipeState
+    ) : this(MutableStateFlow<MoneyState>(moneyState), MutableStateFlow(recipeState)) {
+
+    }
+
+    constructor(init: Int = 10) : this(
+        MoneyState(ScalingInt(init)),
+        RecipeState()
+    )
+
     val moneyState: StateFlow<MoneyState> = _moneyState.asStateFlow()
-    private val _recipes = MutableStateFlow(RecipeState())
     val recipes: StateFlow<RecipeState> = _recipes.asStateFlow()
 
     private val _upgradeLevels = MutableStateFlow(UpgradeState())
@@ -69,7 +82,7 @@ class GameplayViewModel : ViewModel() {
             current = _moneyState.value.current + value
         )
         if (!_advancementState.value.getAdvancement("showSideBar")
-            && _recipes.value.canBuy(allRecipes[0],1,_moneyState.value.current)
+            && _recipes.value.canBuy(allRecipes[0], 1, _moneyState.value.current)
         ) {
             toggleAdvancement("showSideBar")
         }
@@ -124,7 +137,7 @@ class GameplayViewModel : ViewModel() {
         )
     }
 
-    fun toggleAdvancement(id: String){
+    fun toggleAdvancement(id: String) {
         _advancementState.value = _advancementState.value.copy(
             map = _advancementState.value.toggleAdvancement(id)
         )

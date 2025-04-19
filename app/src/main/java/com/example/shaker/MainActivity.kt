@@ -2,6 +2,7 @@ package com.example.shaker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.VibratorManager
@@ -16,25 +17,36 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.integerResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.example.compose.AppTheme
+import com.example.shaker.data.ScalingInt
 import com.example.shaker.data.allRecipes
 import com.example.shaker.home.Accelerometer
 import com.example.shaker.home.CenterSidebarPager
 import com.example.shaker.home.MainViewModel
 import com.example.shaker.home.ShakeListener
+import com.example.shaker.ui.GameplayStates.MoneyState
+import com.example.shaker.ui.GameplayStates.RecipeState
 import com.example.shaker.ui.GameplayViewModel
 import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
-    private val gameplayState: GameplayViewModel by viewModels()
+    private var gameplayState: GameplayViewModel = GameplayViewModel(10)//Overriden by what's stored in the preferences and the default loard, just uused in case of reset
     private val sensor: Accelerometer = Accelerometer()
 
     @SuppressLint("SourceLockedOrientationActivity", "NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val restart = true;
+        if(restart) {
+            savePreferencees()
+        }
+        loadPreferences();
         val shakeDelay: Long = resources.getInteger(R.integer.shakeDelayMilli).toLong()
         sensor.Initialize(
             context = this,
@@ -88,6 +100,49 @@ class MainActivity : ComponentActivity() {
     override fun onPause() {
         super.onPause()
         sensor.unSubscribe()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        savePreferencees()
+    }
+    fun savePreferencees(){
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
+        //Money
+        val money = gameplayState!!.moneyState.value
+        with(sharedPref.edit()) {
+            putString(getString(R.string.current), money.current.value.toString())
+            putString(getString(R.string.perShake), money.perShake.value.toString())
+            putString(getString(R.string.perSecond), money.perSecond.value.toString())
+            apply()
+        }
+        val recipes: RecipeState = gameplayState!!.recipes.value
+        val map: Map<Int, Long> = recipes.map
+        with(sharedPref.edit()) {
+            for (entry in map) {
+                putLong(getString(R.string.recipe, entry.key), entry.value)
+            }
+            apply()
+        }
+    }
+    fun loadPreferences() {
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
+        val current = sharedPref.getString(getString(R.string.current), "10")!!
+        val perShake = sharedPref.getString(getString(R.string.perShake), "1")!!
+        val perSecond = sharedPref.getString(getString(R.string.perSecond), "0")!!
+        val moneyState =
+            MoneyState(ScalingInt(current), ScalingInt(perSecond), ScalingInt(perShake))
+
+        val map: Map<Int, Long> =
+            allRecipes.associate { rec ->
+                rec.id to sharedPref.getLong(getString(R.string.recipe, rec.id), 0L)
+            }
+        val recipeState = RecipeState(map);
+
+        gameplayState = GameplayViewModel(
+            moneyState,
+            recipeState
+        )
     }
 
 }
