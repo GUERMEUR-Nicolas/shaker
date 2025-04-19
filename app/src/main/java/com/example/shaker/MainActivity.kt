@@ -142,6 +142,7 @@ class MainActivity : ComponentActivity() {
 
         with(sharedPref.edit()) {
             putLong(getString(R.string.lastTime), System.currentTimeMillis())
+            apply()
         }
     }
 
@@ -187,11 +188,13 @@ class MainActivity : ComponentActivity() {
         )
 
         val lastTime = sharedPref.getLong(getString(R.string.lastTime), System.currentTimeMillis())
-        val currentTime = System.currentTimeMillis()
-        gameplayState.Increment(
-            ((currentTime - lastTime) / resources.getInteger(R.integer.CycleDurationMultiplier)
-                .toFloat() * resources.getInteger(R.integer.NumberOfValueIncrementsPerS))
-        )
+        val elapsed = System.currentTimeMillis() - lastTime
+        if (elapsed > 1000L) {
+            gameplayState.Increment(
+                (elapsed / (resources.getInteger(R.integer.CycleDurationMultiplier)
+                    .toFloat() * resources.getInteger(R.integer.NumberOfValueIncrementsPerS)))
+            )
+        }
 
     }
 
