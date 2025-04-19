@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class GameplayViewModel : ViewModel() {
 
-    private val _moneyState = MutableStateFlow<MoneyState>(MoneyState(15))
+    private val _moneyState = MutableStateFlow<MoneyState>(MoneyState(10))
     val moneyState: StateFlow<MoneyState> = _moneyState.asStateFlow()
     private val _recipes = MutableStateFlow(RecipeState())
     val recipes: StateFlow<RecipeState> = _recipes.asStateFlow()
