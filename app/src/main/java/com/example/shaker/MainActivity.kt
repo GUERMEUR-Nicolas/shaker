@@ -190,10 +190,7 @@ class MainActivity : ComponentActivity() {
         val lastTime = sharedPref.getLong(getString(R.string.lastTime), System.currentTimeMillis())
         val elapsed = System.currentTimeMillis() - lastTime
         if (elapsed > 1000L) {
-            gameplayState.Increment(
-                (elapsed / (resources.getInteger(R.integer.CycleDurationMultiplier)
-                    .toFloat() * resources.getInteger(R.integer.NumberOfValueIncrementsPerS)))
-            )
+            gameplayState.Increment(elapsed / (1000f * resources.getInteger(R.integer.CycleDurationMultiplier)))
         }
 
     }
