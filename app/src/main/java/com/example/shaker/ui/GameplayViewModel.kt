@@ -96,6 +96,7 @@ class GameplayViewModel : ViewModel() {
     public fun OnShaked(delay: Long) {
         val current = System.currentTimeMillis()
         if ((current - lastShake) > delay) {
+            this.toggleAdvancement("shaking")
             lastShake = current
             Increment(_moneyState.value.perShake)
         }
