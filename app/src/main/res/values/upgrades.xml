@@ -1,6 +1,0 @@
-<resources>
-	<string name="upgrade_name_0">Double</string>
-	<string name="upgrade_description_0">Tiered upgrade that doubles the output</string>
-	<string name="upgrade_name_1">Fancy upgrade</string>
-	<string name="upgrade_description_1">Gives: +0.1CPS for every other building owned, and reduces the cost of this building by 5%</string>
-</resources>

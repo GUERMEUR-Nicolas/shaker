@@ -15,17 +15,40 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class GameplayViewModel : ViewModel() {
+class GameplayViewModel(
+    private val _moneyState: MutableStateFlow<MoneyState>,
+    private val _recipes: MutableStateFlow<RecipeState>,
+    private val _upgradeLevels: MutableStateFlow<UpgradeState>,
+    private var _advancementState: MutableStateFlow<AdvancementState>
 
-    private val _moneyState = MutableStateFlow<MoneyState>(MoneyState(15))
+
+) : ViewModel() {
+
+    constructor(
+        moneyState: MoneyState,
+        recipeState: RecipeState,
+        upgradeState: UpgradeState,
+        advancementState: AdvancementState
+    ) : this(
+        MutableStateFlow<MoneyState>(moneyState),
+        MutableStateFlow(recipeState),
+        MutableStateFlow(upgradeState),
+        MutableStateFlow(advancementState)
+    ) {
+    }
+
+    constructor(init: Int = 10) : this(
+        MoneyState(ScalingInt(init)),
+        RecipeState(),
+        UpgradeState(),
+        AdvancementState()
+    )
+
     val moneyState: StateFlow<MoneyState> = _moneyState.asStateFlow()
-    private val _recipes = MutableStateFlow(RecipeState())
     val recipes: StateFlow<RecipeState> = _recipes.asStateFlow()
 
-    private val _upgradeLevels = MutableStateFlow(UpgradeState())
     val upgradeLevels: StateFlow<UpgradeState> = _upgradeLevels.asStateFlow()
     var accumalated: Float = 0f
-    private var _advancementState = MutableStateFlow(AdvancementState())
     val advancementState: StateFlow<AdvancementState> = _advancementState.asStateFlow()
 
 
@@ -69,7 +92,7 @@ class GameplayViewModel : ViewModel() {
             current = _moneyState.value.current + value
         )
         if (!_advancementState.value.getAdvancement("showSideBar")
-            && _recipes.value.canBuy(allRecipes[0],1,_moneyState.value.current)
+            && _recipes.value.canBuy(allRecipes[0], 1, _moneyState.value.current)
         ) {
             toggleAdvancement("showSideBar")
         }
@@ -96,6 +119,7 @@ class GameplayViewModel : ViewModel() {
     public fun OnShaked(delay: Long) {
         val current = System.currentTimeMillis()
         if ((current - lastShake) > delay) {
+            this.toggleAdvancement("shaking")
             lastShake = current
             Increment(_moneyState.value.perShake)
         }
@@ -123,7 +147,7 @@ class GameplayViewModel : ViewModel() {
         )
     }
 
-    fun toggleAdvancement(id: String){
+    fun toggleAdvancement(id: String) {
         _advancementState.value = _advancementState.value.copy(
             map = _advancementState.value.toggleAdvancement(id)
         )

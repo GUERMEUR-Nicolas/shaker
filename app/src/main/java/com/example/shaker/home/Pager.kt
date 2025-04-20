@@ -2,6 +2,8 @@
 
 package com.example.shaker.home
 
+import android.content.Context
+import android.os.VibratorManager
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -23,7 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import com.example.shaker.R
 import com.example.shaker.TabItem
@@ -32,7 +36,11 @@ import com.example.shaker.ui.GameplayViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-public fun CenterSidebarPager(viewModel: MainViewModel, gameplayState: GameplayViewModel, startPage: Int = 0) {
+public fun CenterSidebarPager(
+    viewModel: MainViewModel,
+    gameplayState: GameplayViewModel,
+    startPage: Int = 0
+) {
 
     val listTabItem = listOf(
         TabItem("home", "screen_0"),
@@ -53,7 +61,7 @@ public fun CenterSidebarPager(viewModel: MainViewModel, gameplayState: GameplayV
             )
     }
     ) {
-        CurrentPage(viewModel, gameplayState,pagerState_H, pagerState_V)
+        CurrentPage(viewModel, gameplayState, pagerState_H, pagerState_V)
         MovingSideBar(
             viewModel,
             gameplayState,
@@ -69,11 +77,10 @@ fun CurrentPage(
     viewModel: MainViewModel,
     gameplayState: GameplayViewModel,
     pagerState_H: PagerState,
-    pagerState_V: PagerState
+    pagerState_V: PagerState,
 ) {
     var selectedTabItem: Int by remember { mutableStateOf(0) }
     var advancement = gameplayState.advancementState.collectAsState()
-
     val bgColor = MaterialTheme.colorScheme.surfaceContainerLowest
     HorizontalPager(
         state = pagerState_H,
@@ -81,15 +88,15 @@ fun CurrentPage(
         key = { page -> page },
         userScrollEnabled =
             advancement.value.getAdvancement("showSideBar")
-            && !advancement.value.getAdvancement("shaking"),
+                    && !advancement.value.getAdvancement("shaking"),
         modifier = Modifier
             .fillMaxSize()
     ) { page ->
         selectedTabItem = page
         when (page) {
             0 -> HomePage(
-                    Modifier.fillMaxWidth(if(advancement.value.getAdvancement("showSideBar")) 0.8f else 1f),
-                    //.background(bgColor),
+                Modifier.fillMaxWidth(if (advancement.value.getAdvancement("showSideBar")) 0.8f else 1f),
+                //.background(bgColor),
                 gameplayState
             )
 

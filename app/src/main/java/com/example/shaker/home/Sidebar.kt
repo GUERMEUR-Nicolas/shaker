@@ -1,5 +1,6 @@
 package com.example.shaker.home
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -20,6 +21,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.shaker.data.Recipe
 import com.example.shaker.data.allRecipes
+import com.example.shaker.ui.GameplayStates.AdvancementState
 import com.example.shaker.ui.GameplayViewModel
 import kotlinx.coroutines.launch
 
@@ -64,7 +67,7 @@ fun MovingSideBar(
     val cutCorner = remember { Animatable(0f) }
     var advancement = gameState.advancementState.collectAsState()
 
-    val offset = if(!advancement.value.getAdvancement("showSideBar")) sidebarWidthDp else
+    val offset = if (!advancement.value.getAdvancement("showSideBar")) sidebarWidthDp else
         -(configuration.screenWidthDp.dp - sidebarWidthDp) * (pagerState_H.currentPage + pagerState_H.currentPageOffsetFraction)
 
     val coroutineScope = rememberCoroutineScope() // scroll to page
@@ -83,20 +86,20 @@ fun MovingSideBar(
         selectedRecipeId = selectedRecipeId,
         gameState,
         onRecipeClick = { recipeId ->
+            val initial = viewModel.selectedRecipeId.value;
+            val isFirst = advancement.value.getAdvancement("firstBuy");
             viewModel.selectRecipe(recipeId)
             coroutineScope.launch {
-                if(!advancement.value.getAdvancement("shaking")) {
+                if (!advancement.value.getAdvancement("shaking")) {
                     if (pagerState_H.currentPage == 0) {
                         pagerState_V.scrollToPage(recipeId)
-                        pagerState_H.animateScrollToPage(
-                            page = 1,
-                            animationSpec = tween(
-                                durationMillis = if(advancement.value.getAdvancement("firstBuy")) 100 else 200,
-                                easing = LinearEasing
-                            )
-                        )
+                        animateHScroll(pagerState_H, isFirst, 1)
                     } else {
                         pagerState_V.animateScrollToPage(recipeId)
+                        //We go back to the shaker page if we clicked "back" on the currently selected recipe
+                        if (initial == recipeId) {
+                            animateHScroll(pagerState_H, isFirst, 0)
+                        }
                     }
                 }
             }
@@ -125,6 +128,27 @@ fun MovingSideBar(
                     false
                 )
             )
+    )
+
+    BackHandler {
+        coroutineScope.launch {
+            animateHScroll(pagerState_H, advancement.value.getAdvancement("firstBuy"), 0)
+        }
+    }
+}
+
+
+public suspend fun animateHScroll(
+    pagerState: PagerState,
+    faster: Boolean,
+    page: Int
+) {
+    pagerState.animateScrollToPage(
+        page = page,
+        animationSpec = tween(
+            durationMillis = if (faster) 100 else 200,
+            easing = LinearEasing
+        )
     )
 }
 

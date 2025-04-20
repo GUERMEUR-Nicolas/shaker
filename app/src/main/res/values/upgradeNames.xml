@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="upgrade_0">Ice Ball</string>
+    <string name="upgrade_description_0">Add 100% $/s per level</string>
     <string name="upgrade_1">Crystal Glass</string>
+    <string name="upgrade_description_1">ADD 0.1 $/s for every other recipes, and reduces the cost of this recipe by 5% per level</string>
     <string name="upgrade_2">Golden Leaf</string>
+    <string name="upgrade_description_2">ADD 2% $/s for every $s, and reduces the cost of this recipe by 5% per level</string>
     <string name="upgrade_3">Smoke Infuser</string>
     <string name="upgrade_4">Tiki Mug</string>
     <string name="upgrade_5">Aged Liquor</string>
