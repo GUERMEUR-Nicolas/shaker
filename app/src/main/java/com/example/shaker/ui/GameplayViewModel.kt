@@ -78,9 +78,9 @@ class GameplayViewModel : ViewModel() {
     public fun Increment(numberOfCycle: Float) {
         val incr = numberOfCycle * _moneyState.value.perSecond.toFloat()
         //If the value is directly above the minimal value, we increment it directly, using the ScalingInt Multiplication
-        if (incr > 10000f)
-            Increment(incr)
-        else {
+        if (incr > 1000f) {
+            Increment(ScalingInt(incr))
+        } else {
             //Else, mostly in the beggining when incr is less than 1 per update rate, we acucumlate it in a float value
             accumalated += incr;
             if (accumalated > 1f) {

@@ -91,6 +91,16 @@ fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
                     .weight(3f)
                     .padding(5.dp)
             )
+            TextButton(
+            //modifier = modifier.width(50.dp)
+                text = "x10",
+                colors = ButtonDefaults.textButtonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                ),
+                onClick = { gameplayState.TimesTen() },
+                enable = true,
+            )
 //            MoneyOnShake(
 //                str = R.string.money_on_shake,
 //                gameplayState,
@@ -158,7 +168,7 @@ fun TopBar(gameplayState: GameplayViewModel, modifier: Modifier) {
         )
         PerSecondText(
             state.value.perSecond,
-            MaterialTheme.colorScheme.onBackground,
+            Color.White,
             20.sp,
             Modifier
         )

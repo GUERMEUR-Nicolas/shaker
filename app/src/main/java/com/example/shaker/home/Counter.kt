@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.zIndex
 import com.example.compose.AppTheme
 import com.example.shaker.R
+import com.example.shaker.data.conwayGuyName
 import com.example.shaker.ui.GameplayStates.MoneyState
 import com.example.ui.theme.bodyFontFamily
 import com.example.ui.theme.displayFontFamily
@@ -85,8 +86,8 @@ fun FlipClockCounter(
     val newNumber = state.value.current
     val oldNumber = state.value.previous
     val exponent = newNumber.getExponent()
-    val formattedNewNumber = String.format("%03d", shiftNumber(newNumber, exponent))
-    val formattedOldNumber = String.format("%03d", shiftNumber(oldNumber, oldNumber.getExponent()))
+    val formattedNewNumber = String.format("%03d", newNumber.shiftNumber())
+    val formattedOldNumber = String.format("%03d", oldNumber.shiftNumber())
 
     val numberName = conwayGuyName(exponent).replaceFirstChar {
         if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
@@ -236,82 +237,6 @@ fun Digit(
             }
             .zIndex(z)
     )
-}
-
-fun shiftNumber(number: ScalingInt, exponent: Int): Int {
-    return number.value.movePointLeft(exponent - exponent % 3).abs().toInt()
-}
-
-fun conwayGuyName(exponent: Int, isFinal: Boolean = true): String {
-    // TODO: add long scale
-    val firstNames = arrayOf(
-        "m", "b", "tr", "quadr", "quint", "sext", "sept", "oct", "non", "dec"
-    )
-    val genericNames = arrayOf(
-        arrayOf("un", "duo", "tre", "quattuor", /*"quinqua"*/"quin", "se", "septe", "octo", "nove"),
-        arrayOf("deci", "viginti", "triginta", "quadraginta", "quinquaginta", "sexaginta", "septuaginta", "octoginta", "nonaginta"),
-        arrayOf("centi", "ducenti", "trecenti", "quadringenti", "quingenti", "sescenti", "septigenti", "octingenti", "nongenti")
-    )
-    val connections = arrayOf(
-        arrayOf("n", "ms", "ns", "ns", "ns", "n", "n", "mx", ""),
-        arrayOf("nx", "n", "ns", "ns", "ns", "n", "n", "mx", "")
-    )
-    val end = if(isFinal) "illion" else "illi"
-    val n: Int = if(isFinal) floor((exponent-3)/3.0).toInt() else exponent
-    if(n >= 11){
-        val strponent = n.toString()
-        var rep: String = ""
-        if(n >= 1000){
-            var i = 0
-            var length = 3
-            var cur: Int
-            while(i < strponent.length){
-                if(i == 0 && strponent.length % 3 != 0){
-                    length = strponent.length % 3
-                }else{
-                    length = 3
-                }
-                cur = strponent.substring(i, length).toInt()
-                if(cur == 0){
-                    rep += "n$end"
-                }else{
-                    rep += conwayGuyName(cur, false)
-                }
-            }
-        }else{
-            var nextNonZero: Int = -1
-            for(i in 0..<strponent.lastIndex){
-                if(strponent[i] != '0')
-                    nextNonZero = i
-            }
-            for(i in strponent.lastIndex downTo 0){
-                val c: Int = strponent[i].code-'0'.code
-                if(c != 0) {
-                    rep += genericNames[strponent.lastIndex-i][c-1]
-                    if (i == strponent.lastIndex && nextNonZero != -1) {
-                        var connect: String = connections[nextNonZero][strponent[nextNonZero].code-'0'.code -1]
-                        connect = if(c in setOf(3, 6) && ("x" in connect || "s" in connect)) {
-                            connect[1].toString()
-                        }else if(c in setOf(7, 9) && ("n" in connect || "m" in connect)){
-                            connect[0].toString()
-                        } else {
-                            ""
-                        }
-                        rep += connect
-                    }
-                }
-            }
-            if(rep[rep.lastIndex] in setOf('a', 'i'))
-                rep = rep.dropLast(1)
-            rep += end
-        }
-        return rep
-    } else if(n >= 1 || !isFinal) {
-        return firstNames[n - 1] + end
-    } else if(n == 0) {
-        return "Thousand"
-    }
-    return ""
 }
 
 

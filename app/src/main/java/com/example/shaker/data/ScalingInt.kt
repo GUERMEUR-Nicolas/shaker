@@ -2,11 +2,11 @@ package com.example.shaker.data
 
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.util.Locale
+import kotlin.math.floor
 
-//(currently not scaling at all) wrapper class with overloaded operators instead we change implementation from a simple long to work with powers of 10,255, or other stuff like that
 class ScalingInt {
 
-    //TODO only these 3 methods should be enough to reimplement if we change the backup strucutres, all the others depends on it and never onf the value (type nor value)
     var value: BigDecimal = BigDecimal("0")
     fun ValueAsLong(): Long {
         return value.toLong();
@@ -40,22 +40,21 @@ class ScalingInt {
     }
 
     fun ValueAsString(): String {
-        return if (this.value % BigDecimal(1) == BigDecimal(0)) this.value.toBigIntegerExact()
-            .toString() else this.value.setScale(1, RoundingMode.FLOOR).toPlainString()
+        return if (this.value % BigDecimal(1) == BigDecimal(0)) this.shiftNumber().toString() + conwayGuyName(this.getExponent(), true)
+            else this.value.setScale(1, RoundingMode.FLOOR).toPlainString()
     }
 
     fun getExponent(): Int {
         return this.value.precision() - this.value.scale() - 1
     }
 
-    constructor(value: Int) : this(BigDecimal(value)) {
+    fun shiftNumber(): Int {
+        return this.value.movePointLeft(this.getExponent() - this.getExponent() % 3).abs().toInt()
     }
 
-    constructor(double: Double) : this(BigDecimal(double)) {
-    }
-
-    constructor(value: Float) : this(BigDecimal(value.toDouble())) {
-    }
+    constructor(value: Int) : this(BigDecimal(value)){}
+    constructor(double: Double) : this(BigDecimal(double)) {}
+    constructor(value: Float) : this(BigDecimal(value.toDouble())) {}
 
     operator fun plus(other: ScalingInt): ScalingInt {
         return ScalingInt(this.value + other.value)
@@ -99,4 +98,93 @@ class ScalingInt {
     override fun toString(): String {
         return ValueAsString()
     }
+}
+
+fun shortName(name: String, n: Int): String{
+    return name[0].titlecase(Locale.ROOT).toString() + if(n == 5 || n == 6) name[1].toString() else ""
+}
+
+fun conwayGuyName(exponent: Int, getFirstLetter: Boolean = false, isFinal: Boolean = true): String {
+    // TODO: add long scale
+    val firstNames = arrayOf(
+        "m", "b", "tr", "quadr", "quint", "sext", "sept", "oct", "non", "dec"
+    )
+    val genericNames = arrayOf(
+        arrayOf("un", "duo", "tre", "quattuor", /*"quinqua"*/"quin", "se", "septe", "octo", "nove"),
+        arrayOf("deci", "viginti", "triginta", "quadraginta", "quinquaginta", "sexaginta", "septuaginta", "octoginta", "nonaginta"),
+        arrayOf("centi", "ducenti", "trecenti", "quadringenti", "quingenti", "sescenti", "septigenti", "octingenti", "nongenti")
+    )
+    val connections = arrayOf(
+        arrayOf("n", "ms", "ns", "ns", "ns", "n", "n", "mx", ""),
+        arrayOf("nx", "n", "ns", "ns", "ns", "n", "n", "mx", "")
+    )
+    val end = if(isFinal) "illion" else "illi"
+    val n: Int = if(isFinal) floor((exponent-3)/3.0).toInt() else exponent
+    if(n >= 11){
+        val strponent = n.toString()
+        var rep: String = ""
+        if(n >= 1000){
+            var i = 0
+            var length = 3
+            var cur: Int
+            while(i < strponent.length){
+                if(i == 0 && strponent.length % 3 != 0){
+                    length = strponent.length % 3
+                }else{
+                    length = 3
+                }
+                cur = strponent.substring(i, length).toInt()
+                if(cur == 0){
+                    if(getFirstLetter){
+                        rep += "n"
+                    } else {
+                        rep += "n$end"
+                    }
+                }else{
+                    rep += conwayGuyName(cur, getFirstLetter, false)
+                }
+            }
+        }else{
+            var nextNonZero: Int = -1
+            for(i in 0..<strponent.lastIndex){
+                if(strponent[i] != '0')
+                    nextNonZero = i
+            }
+            for(i in strponent.lastIndex downTo 0){
+                val c: Int = strponent[i].code-'0'.code
+                if(c != 0) {
+                    if(getFirstLetter) {
+                        rep += shortName(genericNames[strponent.lastIndex - i][c - 1], n)
+                    } else {
+                        rep += genericNames[strponent.lastIndex - i][c - 1]
+                        if (i == strponent.lastIndex && nextNonZero != -1) {
+                            var connect: String =
+                                connections[nextNonZero][strponent[nextNonZero].code - '0'.code - 1]
+                            connect = if (c in setOf(3, 6) && ("x" in connect || "s" in connect)) {
+                                connect[1].toString()
+                            } else if (c in setOf(7, 9) && ("n" in connect || "m" in connect)) {
+                                connect[0].toString()
+                            } else {
+                                ""
+                            }
+                            rep += connect
+                        }
+                    }
+                }
+            }
+            if(rep[rep.lastIndex] in setOf('a', 'i'))
+                rep = rep.dropLast(1)
+            rep += end
+        }
+        return rep
+    } else if(n >= 1 || !isFinal) {
+        if(getFirstLetter)
+            return shortName(firstNames[n - 1], n)
+        return firstNames[n - 1] + end
+    } else if(n == 0) {
+        if(getFirstLetter)
+            return "k"
+        return "Thousand"
+    }
+    return ""
 }
