@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.shaker.R
 import com.example.shaker.data.Recipe
 import com.example.shaker.data.allRecipes
 import com.example.shaker.ui.GameplayStates.AdvancementState
@@ -146,7 +147,7 @@ public suspend fun animateHScroll(
     pagerState.animateScrollToPage(
         page = page,
         animationSpec = tween(
-            durationMillis = if (faster) 100 else 200,
+            durationMillis = if (faster) 150 else 250,
             easing = LinearEasing
         )
     )
@@ -162,12 +163,15 @@ fun Sidebar(
     val sidebarBg = MaterialTheme.colorScheme.surfaceDim
     val fontOnSidebarBg = MaterialTheme.colorScheme.onSurface
     Column(
-        modifier = modifier
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
         Box(
-            Modifier
+            modifier = Modifier
                 .fillMaxSize()
-                .background(sidebarBg)
+                .background(sidebarBg),
+            contentAlignment = Alignment.Center
         ) {
             val recipeState by gameState.recipes.collectAsState()//To ensure recomposition on the recipes changes
             LazyColumn(
@@ -176,6 +180,7 @@ fun Sidebar(
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier
                     .background(sidebarBg)
+                    .fillMaxWidth(0.95f)
             ) {
                 items(allRecipes) { recipe ->
                     val isSelected = recipe.id == selectedRecipeId
@@ -188,8 +193,7 @@ fun Sidebar(
                         gameState = gameState,
                         onRecipeClick = onRecipeClick,
                         modifier = Modifier
-                            .padding(vertical = 1.dp)
-                            .fillMaxWidth(),
+                            .padding(vertical = 1.dp),
                         true,
                         textColor = textColor,
                         bgColor = bgColor,
@@ -220,7 +224,7 @@ fun RecipeItem(
     ) {
         RecipeInfo(recipe, gameState, 12.sp, showName, true, Modifier, textColor, bgColor) {
             CenteredImage(
-                recipe.imageResourceId,
+                if(recipe.isDiscovered) recipe.imageResourceId else R.drawable.placeholder_0,
                 5.dp,
             )
         }

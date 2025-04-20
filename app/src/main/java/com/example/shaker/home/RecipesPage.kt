@@ -162,7 +162,7 @@ fun CurrentRecipe(
                     )
                     //Spacer(modifier.height(15.dp))
                 } else {
-                    CenteredImage(recipe.imageResourceId, 50.dp)
+                    CenteredImage(if(recipe.isDiscovered) recipe.imageResourceId else R.drawable.placeholder_0, 50.dp)
                 }
             }
             Row(
@@ -319,6 +319,8 @@ fun RecipeInfo(
     if (inSidebar) {
         name += " ($recipeAmount)"
     }
+    if(!recipe.isDiscovered)
+        name = "???"
     TitledElement(
         name,
         if (!inSidebar) stringResource(
@@ -384,9 +386,10 @@ fun TitledElement(
         text = title,
         color = textColor,
         textAlign = TextAlign.Center,
-        modifier = Modifier.fillMaxWidth(),
+        //modifier = Modifier.fillMaxWidth(),
         overflow = TextOverflow.Visible,
-        softWrap = false
+        softWrap = true,
+        maxLines = 2
     )
     if (subTitle is String && !subTitle.isNullOrEmpty()) {
         Text(

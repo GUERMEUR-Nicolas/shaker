@@ -28,7 +28,8 @@ class Recipe(
     val id: Int,
     var generating: ScalingInt = ScalingInt(0),
     var cost: ScalingCost,
-    var upgrades: MutableList<Upgrade> = mutableListOf<Upgrade>()
+    var upgrades: MutableList<Upgrade> = mutableListOf<Upgrade>(),
+    var isDiscovered: Boolean = false
 ) {
     public fun GetNextCost(amountOwned: Long = 0, amountBought: Long = 1): ScalingInt {
         return doAllUpgradesOfType(
@@ -43,7 +44,8 @@ class Recipe(
         generating10th: Double,
         name: Int,
         id: Int,
-        upgradesIndex: List<Int> = listOf(0, 1, 2, 3)
+        upgradesIndex: List<Int> = listOf(0, 1, 2, 3),
+        isDiscovered: Boolean = false
     ) : this(
         //When no cost is specified we use a cost based on the ID scaled by 11 on each increment
         imageResourceId = imageResourceId,
@@ -51,7 +53,8 @@ class Recipe(
         name = name,
         id = id,
         cost = ScalingCost(ScalingInt(100.0 * 11.0.pow(id - 1.0)), 1.15),
-        upgradesIndex = upgradesIndex
+        upgradesIndex = upgradesIndex,
+        isDiscovered = isDiscovered
     )
 
     constructor(
@@ -60,14 +63,16 @@ class Recipe(
         name: Int,
         id: Int,
         cost: ScalingCost,
-        upgradesIndex: List<Int>
+        upgradesIndex: List<Int>,
+        isDiscovered: Boolean = false
     ) : this(
         cost = cost,
         imageResourceId = imageResourceId,
         generating = ScalingInt(generating10th * 10),
         name = name,
         id = id,
-        upgrades = upgradesIndex.map { allUpgrades(it, cost.basePrice) }.toMutableList<Upgrade>()
+        upgrades = upgradesIndex.map { allUpgrades(it, cost.basePrice) }.toMutableList<Upgrade>(),
+        isDiscovered = isDiscovered
     )
 }
 
@@ -80,7 +85,8 @@ val allRecipes = listOf(
         generating10th = 0.1,
         name = R.string.cocktail_0,
         id = 0,
-        upgradesIndex = listOf(0, 1, 2, 3)
+        upgradesIndex = listOf(0, 1, 2, 3),
+        isDiscovered = true
     ),
     //From Second Recipe cost is based on the ID with a scaling factor
     Recipe(

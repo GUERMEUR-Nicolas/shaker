@@ -96,6 +96,16 @@ class GameplayViewModel(
         ) {
             toggleAdvancement("showSideBar")
         }
+        if(_recipes.value.amountDiscovered < allRecipes.size){
+            for(i in allRecipes.indices){
+                if(!allRecipes[i].isDiscovered && (_moneyState.value.current >= allRecipes[i].cost.basePrice * 0.5)){
+                    allRecipes[i].isDiscovered = true
+                    _recipes.value = _recipes.value.copy(
+                        amountDiscovered = _recipes.value.incrementDiscovered()
+                    )
+                }
+            }
+        }
     }
 
     public fun Increment(numberOfCycle: Float) {
