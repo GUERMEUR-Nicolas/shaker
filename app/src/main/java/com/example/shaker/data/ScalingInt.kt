@@ -39,9 +39,13 @@ class ScalingInt {
         return this.value.toFloat()
     }
 
-    fun ValueAsString(): String {
-        return if (this.value % BigDecimal(1) == BigDecimal(0)) this.shiftNumber().toString() + conwayGuyName(this.getExponent(), true)
-            else this.value.setScale(1, RoundingMode.FLOOR).toPlainString()
+    fun ValueAsString(ignoreFloat: Boolean = false): String {
+        return if (ignoreFloat || (this.value % BigDecimal(1) == BigDecimal(0))) {
+            this.value.setScale(1, RoundingMode.FLOOR)
+            this.shiftNumber().toString() + conwayGuyName(this.getExponent(), true)
+        } else {
+            this.value.setScale(1, RoundingMode.FLOOR).toPlainString()
+        }
     }
 
     fun getExponent(): Int {
