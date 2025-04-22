@@ -43,7 +43,8 @@ class Recipe(
         generating10th: Double,
         name: Int,
         id: Int,
-        upgradesIndex: List<Int> = listOf(0, 1, 2, 3)
+        upgradesIndex: List<Int> = listOf(0, 1, 2, 3),
+        relatedRecipes: List<Int?>
     ) : this(
         //When no cost is specified we use a cost based on the ID scaled by 11 on each increment
         imageResourceId = imageResourceId,
@@ -51,7 +52,8 @@ class Recipe(
         name = name,
         id = id,
         cost = ScalingCost(ScalingInt(100.0 * 11.0.pow(id - 1.0)), 1.15),
-        upgradesIndex = upgradesIndex
+        upgradesIndex = upgradesIndex,
+        relatedRecipes = relatedRecipes
     )
 
     constructor(
@@ -60,14 +62,21 @@ class Recipe(
         name: Int,
         id: Int,
         cost: ScalingCost,
-        upgradesIndex: List<Int>
+        upgradesIndex: List<Int>,
+        relatedRecipes: List<Int?>
     ) : this(
         cost = cost,
         imageResourceId = imageResourceId,
         generating = ScalingInt(generating10th * 10),
         name = name,
         id = id,
-        upgrades = upgradesIndex.map { allUpgrades(it, cost.basePrice) }.toMutableList<Upgrade>()
+        upgrades = upgradesIndex.map {
+            val upg = allUpgrades(it, cost.basePrice * 5)
+            if (relatedRecipes[it] != null)
+                upg.SetRelative(relatedRecipes[it]!!)
+            upg
+        }.toMutableList<Upgrade>()
+
     )
 }
 
@@ -80,7 +89,8 @@ val allRecipes = listOf(
         generating10th = 0.1,
         name = R.string.cocktail_0,
         id = 0,
-        upgradesIndex = listOf(0, 1, 2, 3)
+        upgradesIndex = listOf(0, 1, 2, 3),
+        relatedRecipes = listOf(null, null, 1, null)
     ),
     //From Second Recipe cost is based on the ID with a scaling factor
     Recipe(
@@ -88,7 +98,8 @@ val allRecipes = listOf(
         generating10th = 1.0,
         name = R.string.cocktail_7,
         id = 1,
-        upgradesIndex = listOf(0, 1, 2, 3)
+        upgradesIndex = listOf(0, 1, 2, 3),
+        relatedRecipes = listOf(null, null, 0, null)
 
     ),
     Recipe(
@@ -96,7 +107,8 @@ val allRecipes = listOf(
         generating10th = 8.0,
         name = R.string.cocktail_1,
         id = 2,
-        upgradesIndex = listOf(0, 1, 2, 3)
+        upgradesIndex = listOf(0, 1, 2, 3),
+        relatedRecipes = listOf(null, null, 1, null)
 
     ),
     Recipe(
@@ -104,7 +116,8 @@ val allRecipes = listOf(
         generating10th = 47.0,
         name = R.string.cocktail_5,
         id = 3,
-        upgradesIndex = listOf(0, 1, 2, 3)
+        upgradesIndex = listOf(0, 1, 2, 3),
+        relatedRecipes = listOf(null, null, 1, null)
 
     ),
     Recipe(
@@ -112,7 +125,8 @@ val allRecipes = listOf(
         generating10th = 260.0,
         name = R.string.cocktail_4,
         id = 4,
-        upgradesIndex = listOf(3, 7, 8, 6)
+        upgradesIndex = listOf(0, 1, 2, 3),
+        relatedRecipes = listOf(null, null, 1, null)
 
     ),
     Recipe(
@@ -120,35 +134,25 @@ val allRecipes = listOf(
         generating10th = 1400.0,
         name = R.string.cocktail_3,
         id = 5,
-        upgradesIndex = listOf(
-            3,
-            1,
-            2,
-            4
-        )
+        upgradesIndex = listOf(0, 1, 2, 3),
+        relatedRecipes = listOf(null, null, 1, null)
+
     ),
     Recipe(
         imageResourceId = R.drawable.cocktail_2,
         generating10th = 7800.0,
         name = R.string.cocktail_2,
         id = 6,
-        upgradesIndex = listOf(
-            7,
-            2,
-            6,
-            5
-        )
+        upgradesIndex = listOf(0, 1, 2, 3),
+        relatedRecipes = listOf(null, null, 1, null)
+
     ),
     Recipe(
         imageResourceId = R.drawable.cocktail_6,
         generating10th = 44 * 1000.0,
         name = R.string.cocktail_6,
         id = 7,
-        upgradesIndex = listOf(
-            1,
-            4,
-            3,
-            8
-        )
+        upgradesIndex = listOf(0, 1, 2, 3),
+        relatedRecipes = listOf(null, null, 1, null)
     )
 )

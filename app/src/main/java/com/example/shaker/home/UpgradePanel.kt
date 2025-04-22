@@ -39,8 +39,8 @@ fun UpgradePanel(
     upg: Upgrade,
     onExit: () -> Unit,
     modifier: Modifier = Modifier,
-    backColor : Color, // val colorBGStacked = MaterialTheme.colorScheme.surfaceDim
-    textColor : Color,//val colorOnBgStacked = MaterialTheme.colorScheme.onSurface
+    backColor: Color, // val colorBGStacked = MaterialTheme.colorScheme.surfaceDim
+    textColor: Color,//val colorOnBgStacked = MaterialTheme.colorScheme.onSurface
     gameState: GameplayViewModel
 ) {
     val upgradeLevels by gameState.upgradeLevels.collectAsState()
@@ -51,14 +51,17 @@ fun UpgradePanel(
         modifier = modifier
             .fillMaxWidth(1f)
             .background(backColor)
-            //align(Alignment.CenterEnd),
+        //align(Alignment.CenterEnd),
     ) {
         Spacer(
             modifier = Modifier.height(20.dp)
         )
         TitledImage(
-            title = stringResource(upg.name) + "\n" +stringResource(R.string.tier_name,upgradeLevels.getUpgradeLevel(recipe.id, upg.id)),
-            subTitle = stringResource(upg.description),
+            title = stringResource(upg.name) + "\n" + stringResource(
+                R.string.tier_name,
+                upgradeLevels.getUpgradeLevel(recipe.id, upg.id)
+            ),
+            subTitle = upg.getDynamicDescription(),
             textColor = textColor,
             titleSize = 30.sp,
             imageId = upg.image,
@@ -80,7 +83,12 @@ fun UpgradePanel(
 }
 
 @Composable
-fun UpgradeIcon(recipe: Recipe, upg: Upgrade, gameState: GameplayViewModel, modifier: Modifier = Modifier) {
+fun UpgradeIcon(
+    recipe: Recipe,
+    upg: Upgrade,
+    gameState: GameplayViewModel,
+    modifier: Modifier = Modifier
+) {
     val upgradeLevels by gameState.upgradeLevels.collectAsState()
     //val upgradeLevel = gameState.getUpgradeLevel(recipe.id, upg.id)
     Box(modifier = modifier) {
@@ -158,7 +166,16 @@ fun UpgradePanelPreview() {
             .fillMaxHeight()
             .background(MaterialTheme.colorScheme.tertiaryContainer)
     ) {
-        RecipeInfo(allRecipes[0], GameplayViewModel(), 12.sp, true, false, Modifier,MaterialTheme.colorScheme.onTertiaryContainer, MaterialTheme.colorScheme.tertiaryContainer) {
+        RecipeInfo(
+            allRecipes[0],
+            GameplayViewModel(),
+            12.sp,
+            true,
+            false,
+            Modifier,
+            MaterialTheme.colorScheme.onTertiaryContainer,
+            MaterialTheme.colorScheme.tertiaryContainer
+        ) {
             //UpgradePanel(
             //    allRecipes[0],
             //    allUpgrades[0],
