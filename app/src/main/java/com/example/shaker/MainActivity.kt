@@ -32,8 +32,8 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private var gameplayState: GameplayViewModel =
         GameplayViewModel(
-            10,
-            true
+            0,
+            false
         )//Overriden by what's stored in the preferences and the default loard, just uused in case of reset
     private val sensor: Accelerometer = Accelerometer()
 
@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
                 val adv = gameplayState.advancementState.collectAsState().value
                 if (adv.getAdvancement("shaking")) {
                     gameplayState.toggleAdvancement("shaking")
-                    if (!adv.getAdvancement("showSideBar")) {
+                    if (!adv.getAdvancement("showSideBar") && gameplayState.moneyState.value.current == ScalingInt(15)) {
                         vibrator.vibrate(
                             android.os.VibrationEffect.createOneShot(
                                 (integerResource(R.integer.shakeDelayMilli) / 4).toLong(),

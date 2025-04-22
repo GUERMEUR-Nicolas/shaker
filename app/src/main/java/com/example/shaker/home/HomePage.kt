@@ -91,16 +91,16 @@ fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
                     .weight(3f)
                     .padding(5.dp)
             )
-            TextButton(
-            //modifier = modifier.width(50.dp)
-                text = "x10",
-                colors = ButtonDefaults.textButtonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
-                ),
-                onClick = { gameplayState.TimesTen() },
-                enable = true,
-            )
+//            TextButton(
+//            //modifier = modifier.width(50.dp)
+//                text = "x10",
+//                colors = ButtonDefaults.textButtonColors(
+//                    containerColor = MaterialTheme.colorScheme.secondary,
+//                    contentColor = MaterialTheme.colorScheme.onSecondary,
+//                ),
+//                onClick = { gameplayState.TimesTen() },
+//                enable = true,
+//            )
 //            MoneyOnShake(
 //                str = R.string.money_on_shake,
 //                gameplayState,

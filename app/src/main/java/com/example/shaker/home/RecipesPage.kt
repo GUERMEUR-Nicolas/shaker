@@ -101,32 +101,32 @@ fun CurrentRecipe(
                 )
         }
     ) {
-        Column(
-            verticalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.fillMaxHeight().fillMaxWidth(0.8f).zIndex(-1f)
-        ) {
-            val height = LocalConfiguration.current.screenHeightDp.dp
-            for(i in 0 ..< 2){
-                Row(modifier = with(Modifier){
-                    height(height*0.4f)
-                        .paint(
-                            painterResource(R.drawable.shelf),
-                            contentScale = ContentScale.Crop
-                        )
-                }){
-                    val bottles: List<Int> = getRandomList(Random(2*recipeID + i))
-                    for(r in bottles){
-                        val drawableId = LocalContext.current.resources.getIdentifier("bottle_$r", "drawable", LocalContext.current.packageName)
-                        Image(
-                            painter = painterResource(drawableId),
-                            contentDescription = "bottle n°$r",
-                            modifier = Modifier.fillMaxHeight(),
-                            contentScale = ContentScale.FillHeight
-                        )
-                    }
-                }
-            }
-        }
+//        Column(
+//            verticalArrangement = Arrangement.SpaceEvenly,
+//            modifier = Modifier.fillMaxHeight().fillMaxWidth(0.8f).zIndex(-1f)
+//        ) {
+//            val height = LocalConfiguration.current.screenHeightDp.dp
+//            for(i in 0 ..< 2){
+//                Row(modifier = with(Modifier){
+//                    height(height*0.4f)
+//                        .paint(
+//                            painterResource(R.drawable.shelf),
+//                            contentScale = ContentScale.Crop
+//                        )
+//                }){
+//                    val bottles: List<Int> = getRandomList(Random(2*recipeID + i))
+//                    for(r in bottles){
+//                        val drawableId = LocalContext.current.resources.getIdentifier("bottle_$r", "drawable", LocalContext.current.packageName)
+//                        Image(
+//                            painter = painterResource(drawableId),
+//                            contentDescription = "bottle n°$r",
+//                            modifier = Modifier.fillMaxHeight(),
+//                            contentScale = ContentScale.FillHeight
+//                        )
+//                    }
+//                }
+//            }
+//        }
         val selectedUpgrade = viewModel.selectedUpgrade.collectAsState().value
         Column(
             verticalArrangement = Arrangement.Center,
