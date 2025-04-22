@@ -1,12 +1,13 @@
 package com.example.shaker.ui.GameplayStates
 
 data class AdvancementState(
-    val map : Map<String, Boolean> = mapOf<String, Boolean>(
+    val map: Map<String, Boolean> = mapOf<String, Boolean>(
         "showSideBar" to false,
         "firstBuy" to false,
         "shaking" to false
     )
 ) {
+
     fun getAdvancement(str: String): Boolean {
         return map[str] ?: false
     }
