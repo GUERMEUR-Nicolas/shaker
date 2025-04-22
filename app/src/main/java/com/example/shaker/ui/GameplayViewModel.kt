@@ -37,12 +37,15 @@ class GameplayViewModel(
     ) {
     }
 
-    constructor(init: Int = 10) : this(
+    constructor(init: Int = 10, sidebar: Boolean = false) : this(
         MoneyState(ScalingInt(init)),
         RecipeState(),
         UpgradeState(),
         AdvancementState()
-    )
+    ) {
+        if (sidebar)
+            toggleAdvancement("showSideBar")
+    }
 
     val moneyState: StateFlow<MoneyState> = _moneyState.asStateFlow()
     val recipes: StateFlow<RecipeState> = _recipes.asStateFlow()

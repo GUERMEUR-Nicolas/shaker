@@ -2,6 +2,8 @@ package com.example.shaker.data
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import com.example.shaker.R
 import kotlin.math.pow
 import kotlin.reflect.KFunction2
@@ -15,7 +17,7 @@ class Upgrade(
     private val actions: Array<Int>,
     val type: Array<String>,
     private val x: Array<Float>,
-    var buildingB_ID: Int? = null,
+    var recipeB_ID: Int? = null,
     private var cost: ScalingCost = ScalingCost(ScalingInt(1), 2.0),
     var level: Int = 0
 ) {
@@ -27,14 +29,19 @@ class Upgrade(
         actions = upgrade.actions.clone(),
         type = upgrade.type.clone(),
         x = upgrade.x.clone(),
-        buildingB_ID = upgrade.buildingB_ID,
+        recipeB_ID = upgrade.recipeB_ID,
         cost = ScalingCost(upgrade.cost.basePrice, upgrade.cost.scalingFactor),
         level = 0
     )
 
-    public fun setBaseCost(value :ScalingInt){
+    public fun SetRelative(index: Int) {
+        recipeB_ID = index
+    }
+
+    public fun setBaseCost(value: ScalingInt) {
         this.cost = ScalingCost(value, this.cost.scalingFactor);
     }
+
     public fun doAllActionsOfType(
         original: ScalingInt,
         type: String,
@@ -47,9 +54,9 @@ class Upgrade(
                 var amount: Long = 0
                 if (type == "generate") {
                     /**/ if (i == 0) {
-                        recipesInfo.forEach { (id, n) -> if (id != buildingB_ID) amount += n; }
+                        recipesInfo.forEach { (id, n) -> if (id != recipeB_ID) amount += n; }
                     } else if (i == 3) {
-                        amount = recipesInfo[buildingB_ID]!!
+                        amount = recipesInfo[recipeB_ID]!!
                     }
                 }
                 res = p!!.first(res, p.second(i, amount))
@@ -61,7 +68,6 @@ class Upgrade(
     public fun GetNextCost(amountBought: Long = 1): ScalingInt {
         return this.cost.GetNextCost(this.level.toLong(), amountBought)
     }
-
 
     private val availableActions: Map<String, Array<Pair<KFunction2<ScalingInt, Float, ScalingInt>, KFunction2<Int, Long, Float>>>> =
         mapOf(
@@ -105,6 +111,14 @@ class Upgrade(
     private fun increase(i: Int, amount: Long): Float {
         return 1 + this.x[i].pow(this.level)
     }
+
+    @Composable
+    fun getDynamicDescription(): String {
+        return if (this.recipeB_ID != null)
+            stringResource(this.description, stringResource(allRecipes[this.recipeB_ID!!].name))
+        else
+            stringResource(this.description, "")
+    }
 }
 
 fun doAllUpgradesOfType(
@@ -137,7 +151,7 @@ fun doAllUpgradesOfType(
 public fun allUpgrades(index: Int, baseCost: ScalingInt): Upgrade {
     var upgrade = Upgrade(allUpgrades[index])
     //An upgrade base cost is 3 times bigger than buying the first recipe
-    upgrade.setBaseCost(baseCost*3);
+    upgrade.setBaseCost(baseCost * 3);
     return upgrade;
 }
 
@@ -152,75 +166,40 @@ private val allUpgrades = arrayOf(
         arrayOf(2.0f)
     ),
     Upgrade(
-        R.string.upgrade_1,
+        R.string.upgrade_6,
         R.string.upgrade_description_1,
-        R.drawable.upgrade_1,
+        R.drawable.upgrade_6,
         1,
         arrayOf(0, 1),
         arrayOf("generate", "cost"),
         arrayOf(0.1f, 0.05f)
     ),
     Upgrade(
-        R.string.upgrade_2,
-        R.string.upgrade_description,
-        R.drawable.upgrade_2,
+        R.string.upgrade_3,
+        R.string.upgrade_description_2,
+        R.drawable.upgrade_3,
         2,
         arrayOf(3),
         arrayOf("generate"),
         arrayOf(0.2f)
     ),
     Upgrade(
-        R.string.upgrade_3,
-        R.string.upgrade_description,
-        R.drawable.upgrade_3,
+        R.string.upgrade_8,
+        R.string.upgrade_description_3,
+        R.drawable.upgrade_8,
+        3,
+        //TODO make upgrade that increases the shake
+        arrayOf(2),
+        arrayOf("generate"),
+        arrayOf(1.5f)
+    ),
+    Upgrade(
+        R.string.upgrade_2,
+        R.string.upgrade_description_4,
+        R.drawable.upgrade_2,
         3,
         arrayOf(2, 1),
         arrayOf("generate", "generate"),
         arrayOf(1.5f, 1.2f)
     ),
-    Upgrade(
-        R.string.upgrade_4,
-        R.string.upgrade_description,
-        R.drawable.upgrade_4,
-        4,
-        arrayOf(3),
-        arrayOf("generate"),
-        arrayOf(0.2f)
-    ),
-    Upgrade(
-        R.string.upgrade_5,
-        R.string.upgrade_description,
-        R.drawable.upgrade_5,
-        5,
-        arrayOf(3),
-        arrayOf("generate"),
-        arrayOf(0.2f)
-    ),
-    Upgrade(
-        R.string.upgrade_6,
-        R.string.upgrade_description,
-        R.drawable.upgrade_6,
-        6,
-        arrayOf(3),
-        arrayOf("generate"),
-        arrayOf(0.2f)
-    ),
-    Upgrade(
-        R.string.upgrade_7,
-        R.string.upgrade_description,
-        R.drawable.upgrade_7,
-        7,
-        arrayOf(3),
-        arrayOf("generate"),
-        arrayOf(0.2f)
-    ),
-    Upgrade(
-        R.string.upgrade_8,
-        R.string.upgrade_description,
-        R.drawable.upgrade_8,
-        8,
-        arrayOf(3),
-        arrayOf("generate"),
-        arrayOf(0.2f)
-    )
 )

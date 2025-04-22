@@ -31,14 +31,17 @@ import kotlinx.coroutines.delay
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private var gameplayState: GameplayViewModel =
-        GameplayViewModel(15)//Overriden by what's stored in the preferences and the default loard, just uused in case of reset
+        GameplayViewModel(
+            10,
+            true
+        )//Overriden by what's stored in the preferences and the default loard, just uused in case of reset
     private val sensor: Accelerometer = Accelerometer()
 
     @SuppressLint("SourceLockedOrientationActivity", "NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val restart = false;
-        if (restart) {
+        val freshSave = true;
+        if (freshSave) {
             savePreferencees()
         }
         loadPreferences();
