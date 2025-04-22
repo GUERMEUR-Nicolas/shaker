@@ -72,10 +72,13 @@ class Upgrade(
     private val availableActions: Map<String, Array<Pair<KFunction2<ScalingInt, Float, ScalingInt>, KFunction2<Int, Long, Float>>>> =
         mapOf(
             "generate" to arrayOf(
-                Pair(ScalingInt::plus, ::bARawCpsIncreaseByNumberOfOtherBuildings),
+                Pair(ScalingInt::plus,  ::bARawCpsIncreaseByNumberOfOtherBuildings),
                 Pair(ScalingInt::times, ::bARawEffectiveness),
                 Pair(ScalingInt::times, ::timesX),
                 Pair(ScalingInt::times, ::bACpsPortionIncreaseByNumberOfBB)
+            ),
+            "shake" to arrayOf(
+                Pair(ScalingInt::times, ::increase)
             ),
             "cost" to arrayOf(
                 Pair(ScalingInt::times, ::decrease),
@@ -189,9 +192,9 @@ private val allUpgrades = arrayOf(
         R.drawable.upgrade_8,
         3,
         //TODO make upgrade that increases the shake
-        arrayOf(2),
-        arrayOf("generate"),
-        arrayOf(1.5f)
+        arrayOf(0),
+        arrayOf("shake"),
+        arrayOf(1.1f)
     ),
     Upgrade(
         R.string.upgrade_2,

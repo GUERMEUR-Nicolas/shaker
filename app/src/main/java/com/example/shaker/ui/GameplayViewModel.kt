@@ -87,6 +87,7 @@ class GameplayViewModel(
         )
         upgrade.level += amount.toInt()
         this.updatePerSecond()
+        this.updatePerShake()
     }
 
     public fun Increment(value: ScalingInt) {
@@ -157,6 +158,20 @@ class GameplayViewModel(
         // TODO: add raw cps
         _moneyState.value = _moneyState.value.copy(
             perSecond = perSecond
+        )
+    }
+
+    public fun updatePerShake() {
+        var perShake = ScalingInt(1)
+        for (r in allRecipes)
+            perShake *= doAllUpgradesOfType(
+                r.upgrades,
+                ScalingInt(1),
+                "shake",
+                _recipes.value.map
+            )
+        _moneyState.value = _moneyState.value.copy(
+            perShake = perShake
         )
     }
 
