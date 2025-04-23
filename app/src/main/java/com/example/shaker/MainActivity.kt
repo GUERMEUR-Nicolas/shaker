@@ -40,10 +40,6 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("SourceLockedOrientationActivity", "NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val freshSave = false;
-        if (freshSave) {
-            savePreferencees()
-        }
         loadPreferences();
         val shakeDelay: Long = resources.getInteger(R.integer.shakeDelayMilli).toLong()
         sensor.Initialize(
@@ -155,11 +151,15 @@ class MainActivity : ComponentActivity() {
 
     fun loadPreferences() {
         val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
-        val current = sharedPref.getString(getString(R.string.current), "10")!!
-        val perShake = sharedPref.getString(getString(R.string.perShake), "1")!!
-        val perSecond = sharedPref.getString(getString(R.string.perSecond), "0")!!
+        val current = sharedPref.getString(getString(R.string.current), null)
+        val perShake = sharedPref.getString(getString(R.string.perShake), null)
+        val perSecond = sharedPref.getString(getString(R.string.perSecond), null)
+        if (current == null || perShake == null || perSecond == null) {
+            return
+        }
         val moneyState =
-            MoneyState(ScalingInt(current), ScalingInt(perSecond), ScalingInt(perShake))
+            MoneyState(ScalingInt(current!!), ScalingInt(perSecond!!), ScalingInt(perShake!!))
+
 
         val map: Map<Int, Long> =
             allRecipes.associate { rec ->
