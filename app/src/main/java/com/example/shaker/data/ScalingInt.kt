@@ -52,11 +52,13 @@ class ScalingInt {
         return this.value.precision() - this.value.scale() - 1
     }
 
-    fun shiftNumber(): Int {
-        return this.value.movePointLeft(this.getExponent() - this.getExponent() % 3).abs().toInt()
+
+    fun shiftNumber(shift: Int = 3): Int {
+        return this.value.movePointLeft(this.getExponent() - this.getExponent() % shift).abs()
+            .toInt()
     }
 
-    constructor(value: Int) : this(BigDecimal(value)){}
+    constructor(value: Int) : this(BigDecimal(value)) {}
     constructor(double: Double) : this(BigDecimal(double)) {}
     constructor(value: Float) : this(BigDecimal(value.toDouble())) {}
 
@@ -108,8 +110,9 @@ class ScalingInt {
     }
 }
 
-fun shortName(name: String, n: Int): String{
-    return name[0].titlecase(Locale.ROOT).toString() + if(n == 5 || n == 6) name[1].toString() else ""
+fun shortName(name: String, n: Int): String {
+    return name[0].titlecase(Locale.ROOT)
+        .toString() + if (n == 5 || n == 6) name[1].toString() else ""
 }
 
 fun conwayGuyName(exponent: Int, getFirstLetter: Boolean = false, isFinal: Boolean = true): String {
@@ -119,49 +122,69 @@ fun conwayGuyName(exponent: Int, getFirstLetter: Boolean = false, isFinal: Boole
     )
     val genericNames = arrayOf(
         arrayOf("un", "duo", "tre", "quattuor", /*"quinqua"*/"quin", "se", "septe", "octo", "nove"),
-        arrayOf("deci", "viginti", "triginta", "quadraginta", "quinquaginta", "sexaginta", "septuaginta", "octoginta", "nonaginta"),
-        arrayOf("centi", "ducenti", "trecenti", "quadringenti", "quingenti", "sescenti", "septigenti", "octingenti", "nongenti")
+        arrayOf(
+            "deci",
+            "viginti",
+            "triginta",
+            "quadraginta",
+            "quinquaginta",
+            "sexaginta",
+            "septuaginta",
+            "octoginta",
+            "nonaginta"
+        ),
+        arrayOf(
+            "centi",
+            "ducenti",
+            "trecenti",
+            "quadringenti",
+            "quingenti",
+            "sescenti",
+            "septigenti",
+            "octingenti",
+            "nongenti"
+        )
     )
     val connections = arrayOf(
         arrayOf("n", "ms", "ns", "ns", "ns", "n", "n", "mx", ""),
         arrayOf("nx", "n", "ns", "ns", "ns", "n", "n", "mx", "")
     )
-    val end = if(isFinal) "illion" else "illi"
-    val n: Int = if(isFinal) floor((exponent-3)/3.0).toInt() else exponent
-    if(n >= 11){
+    val end = if (isFinal) "illion" else "illi"
+    val n: Int = if (isFinal) floor((exponent - 3) / 3.0).toInt() else exponent
+    if (n >= 11) {
         val strponent = n.toString()
         var rep: String = ""
-        if(n >= 1000){
+        if (n >= 1000) {
             var i = 0
             var length = 3
             var cur: Int
-            while(i < strponent.length){
-                if(i == 0 && strponent.length % 3 != 0){
+            while (i < strponent.length) {
+                if (i == 0 && strponent.length % 3 != 0) {
                     length = strponent.length % 3
-                }else{
+                } else {
                     length = 3
                 }
                 cur = strponent.substring(i, length).toInt()
-                if(cur == 0){
-                    if(getFirstLetter){
+                if (cur == 0) {
+                    if (getFirstLetter) {
                         rep += "n"
                     } else {
                         rep += "n$end"
                     }
-                }else{
+                } else {
                     rep += conwayGuyName(cur, getFirstLetter, false)
                 }
             }
-        }else{
+        } else {
             var nextNonZero: Int = -1
-            for(i in 0..<strponent.lastIndex){
-                if(strponent[i] != '0')
+            for (i in 0..<strponent.lastIndex) {
+                if (strponent[i] != '0')
                     nextNonZero = i
             }
-            for(i in strponent.lastIndex downTo 0){
-                val c: Int = strponent[i].code-'0'.code
-                if(c != 0) {
-                    if(getFirstLetter) {
+            for (i in strponent.lastIndex downTo 0) {
+                val c: Int = strponent[i].code - '0'.code
+                if (c != 0) {
+                    if (getFirstLetter) {
                         rep += shortName(genericNames[strponent.lastIndex - i][c - 1], n)
                     } else {
                         rep += genericNames[strponent.lastIndex - i][c - 1]
@@ -180,17 +203,17 @@ fun conwayGuyName(exponent: Int, getFirstLetter: Boolean = false, isFinal: Boole
                     }
                 }
             }
-            if(rep[rep.lastIndex] in setOf('a', 'i'))
+            if (rep[rep.lastIndex] in setOf('a', 'i'))
                 rep = rep.dropLast(1)
             rep += end
         }
         return rep
-    } else if(n >= 1 || !isFinal) {
-        if(getFirstLetter)
+    } else if (n >= 1 || !isFinal) {
+        if (getFirstLetter)
             return shortName(firstNames[n - 1], n)
         return firstNames[n - 1] + end
-    } else if(n == 0) {
-        if(getFirstLetter)
+    } else if (n == 0) {
+        if (getFirstLetter)
             return "k"
         return "Thousand"
     }

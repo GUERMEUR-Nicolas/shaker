@@ -85,9 +85,10 @@ fun FlipClockCounter(
 ) {
     val newNumber = state.value.current
     val oldNumber = state.value.previous
-    val exponent = newNumber.getExponent()
-    val formattedNewNumber = String.format("%03d", newNumber.shiftNumber())
-    val formattedOldNumber = String.format("%03d", oldNumber.shiftNumber())
+    var exponent = newNumber.getExponent()
+    exponent -= exponent % 6
+    val formattedNewNumber = String.format("%06d", newNumber.shiftNumber(6))
+    val formattedOldNumber = String.format("%06d", oldNumber.shiftNumber(6))
 
     val numberName = conwayGuyName(exponent).replaceFirstChar {
         if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
@@ -112,11 +113,12 @@ fun FlipClockCounter(
         ) {
             Text(
                 text = numberName,
+                textAlign = TextAlign.Center,
                 style = TextStyle(
                     fontSize = 30.sp,
                     color = color,
                     fontFamily = bodyFontFamily,
-                    background = if (exponent >= 3) backColor else Color.Transparent
+                    background = if (exponent >= 6) backColor else Color.Transparent
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -160,22 +162,23 @@ fun FlipDigit(
         }
     }
 
-    Column(modifier = modifier
-        .onGloballyPositioned {
-            size = it.size
-        }
-        //.background(backColor)
-        .clipToBounds()
+    Column(
+        modifier = modifier
+            .onGloballyPositioned {
+                size = it.size
+            }
+            //.background(backColor)
+            .clipToBounds()
     ) {
         Box(
             modifier = Modifier
                 .height(70.dp)
                 .border(12.dp, backColor, sh)
         ) {
-            Digit(newDigit, backColor,color, size, rotationAnimatable, true, 0f)
-            Digit(oldDigit, backColor,color, size, rotationAnimatable, true, 1f)
-            Digit(oldDigit, backColor,color, size, rotationAnimatable, false, 0f)
-            Digit(newDigit, backColor,color, size, rotationAnimatable, false, 1f)
+            Digit(newDigit, backColor, color, size, rotationAnimatable, true, 0f)
+            Digit(oldDigit, backColor, color, size, rotationAnimatable, true, 1f)
+            Digit(oldDigit, backColor, color, size, rotationAnimatable, false, 0f)
+            Digit(newDigit, backColor, color, size, rotationAnimatable, false, 1f)
         }
     }
 }
@@ -190,7 +193,7 @@ fun Digit(
     isTop: Boolean,
     z: Float
 ) {
-    val h = 70.sp
+    val h = 60.sp
     val tmp = sz.height.toFloat()
     var grad = listOf(backColor, backColor)
     var tp = 0.5f * tmp // TODO: remove tp / bt
@@ -244,6 +247,11 @@ fun Digit(
 @Composable
 fun FlipDigit_P() {
     AppTheme(darkTheme = false) {
-        FlipDigit('1', '1', MaterialTheme.colorScheme.onSecondaryContainer, MaterialTheme.colorScheme.secondaryContainer)
+        FlipDigit(
+            '1',
+            '1',
+            MaterialTheme.colorScheme.onSecondaryContainer,
+            MaterialTheme.colorScheme.secondaryContainer
+        )
     }
 }
