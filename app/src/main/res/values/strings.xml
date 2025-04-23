@@ -3,11 +3,11 @@
     <string name="money_value">%s $</string>
     <string name="money_per_cycle">%s $/s</string>
     <string name="RecipeCountAndTotal">%s shakers for %s</string>
-    <string name="money_on_shake">(+ %s$/shake)</string>
+    <string name="money_on_shake">%s$/shake</string>
     <string name="recipe_name">Recipe</string>
-	<string name="tier_name">Tier : %s</string>
-	<string name="upgrade_name">Upgrade</string>
-	<string name="upgrade_description">Upgrade Description</string>
+    <string name="tier_name">Tier : %s</string>
+    <string name="upgrade_name">Upgrade</string>
+    <string name="upgrade_description">Upgrade Description</string>
     <string name="empty" />
     <string name="buy_upgrade">Upgrade for %s</string>
     <string name="buy_recipee">Buy %s for %s</string>
