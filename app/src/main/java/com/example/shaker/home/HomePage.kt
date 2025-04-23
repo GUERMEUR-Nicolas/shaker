@@ -101,14 +101,15 @@ fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
 //                onClick = { gameplayState.TimesTen() },
 //                enable = true,
 //            )
-//            MoneyOnShake(
-//                str = R.string.money_on_shake,
-//                gameplayState,
-//                size = 16.sp,
-//                modifier = Modifier
-//					.weight(1f)
-//					.padding(top = 50.dp)
-//            )
+            MoneyOnShake(
+                str = R.string.money_on_shake,
+                Color.White,
+                gameplayState,
+                size = 16.sp,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(top = 50.dp)
+            )
         }
     }
 }
@@ -183,7 +184,10 @@ fun PerSecondText(perSecond: ScalingInt, color: Color, sp: TextUnit, modifier: M
         str = R.string.money_per_cycle,
         color,
         //Ensures we have correct potential floating point string displayed or floored exponential value
-        value = if (perSecond.toInt() < coef) String.format("%.1f", perSecond.toFloat() * mult) else (perSecond * mult).toString(),
+        value = if (perSecond.toInt() < coef) String.format(
+            "%.1f",
+            perSecond.toFloat() * mult
+        ) else (perSecond * mult).toString(),
         size = sp,
         modifier = modifier
     )

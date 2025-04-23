@@ -75,6 +75,7 @@ class Recipe(
         name = name,
         id = id,
         upgrades = upgradesIndex.map {
+            //An upgrade base cost is 5 times bigger than buying the first recipe
             val upg = allUpgrades(it, cost.basePrice * 5)
             if (relatedRecipes[it] != null)
                 upg.SetRelative(relatedRecipes[it]!!)
