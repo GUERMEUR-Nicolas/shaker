@@ -34,13 +34,13 @@ class MainActivity : ComponentActivity() {
         GameplayViewModel(
             0,
             false
-        )//Overriden by what's stored in the preferences and the default loard, just uused in case of reset
+        )//Overriden by what's stored in the preferences and the default load, just used in case of reset
     private val sensor: Accelerometer = Accelerometer()
 
     @SuppressLint("SourceLockedOrientationActivity", "NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val freshSave = true;
+        val freshSave = false;
         if (freshSave) {
             savePreferencees()
         }
@@ -78,13 +78,17 @@ class MainActivity : ComponentActivity() {
                 val adv = gameplayState.advancementState.collectAsState().value
                 if (adv.getAdvancement("shaking")) {
                     gameplayState.toggleAdvancement("shaking")
-                    if (!adv.getAdvancement("showSideBar") && gameplayState.moneyState.value.current == ScalingInt(15)) {
-                        vibrator.vibrate(
-                            android.os.VibrationEffect.createOneShot(
-                                (integerResource(R.integer.shakeDelayMilli) / 4).toLong(),
-                                android.os.VibrationEffect.DEFAULT_AMPLITUDE
-                            )
-                        );
+                    if (!adv.getAdvancement("firstBuy")) {
+                        val money = gameplayState.moneyState.collectAsState().value
+                        val mon = money.current.toInt();
+                        if (mon <= 15) {
+                            vibrator.vibrate(
+                                android.os.VibrationEffect.createOneShot(
+                                    (integerResource(R.integer.shakeDelayMilli) / 2).toLong(),
+                                    if (mon == 15) 255 else android.os.VibrationEffect.EFFECT_TICK
+                                )
+                            );
+                        }
                     }
                 }
             }

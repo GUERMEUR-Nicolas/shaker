@@ -153,8 +153,7 @@ fun doAllUpgradesOfType(
 
 public fun allUpgrades(index: Int, baseCost: ScalingInt): Upgrade {
     var upgrade = Upgrade(allUpgrades[index])
-    //An upgrade base cost is 3 times bigger than buying the first recipe
-    upgrade.setBaseCost(baseCost * 3);
+    upgrade.setBaseCost(baseCost );
     return upgrade;
 }
 
@@ -169,18 +168,18 @@ private val allUpgrades = arrayOf(
         arrayOf(2.0f)
     ),
     Upgrade(
-        R.string.upgrade_6,
+        R.string.upgrade_3,
         R.string.upgrade_description_1,
-        R.drawable.upgrade_6,
+        R.drawable.upgrade_3,
         1,
         arrayOf(0, 1),
         arrayOf("generate", "cost"),
         arrayOf(0.1f, 0.05f)
     ),
     Upgrade(
-        R.string.upgrade_3,
+        R.string.upgrade_6,
         R.string.upgrade_description_2,
-        R.drawable.upgrade_3,
+        R.drawable.upgrade_6,
         2,
         arrayOf(3),
         arrayOf("generate"),
@@ -191,7 +190,6 @@ private val allUpgrades = arrayOf(
         R.string.upgrade_description_3,
         R.drawable.upgrade_8,
         3,
-        //TODO make upgrade that increases the shake
         arrayOf(0),
         arrayOf("shake"),
         arrayOf(1.1f)
