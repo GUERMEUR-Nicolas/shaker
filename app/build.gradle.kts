@@ -9,7 +9,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.shaker"
+        applicationId = "com.game.shaker"
         minSdk = 21
         targetSdk = 35
         versionCode = 1
