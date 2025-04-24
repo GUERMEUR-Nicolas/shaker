@@ -52,14 +52,12 @@ class Upgrade(
             if (this.type[i] == type) {
                 val p = availableActions[type]?.get(actions[i])
                 var amount: Long = 0
-                if (type == "generate") {
-                    /**/ if (i == 0) {
-                        recipesInfo.forEach { (id, n) -> if (id != recipeB_ID) amount += n; }
-                    } else if (i == 3) {
-                        amount = recipesInfo[recipeB_ID]!!
-                    }
+                if (p!!.second == ::bARawCpsIncreaseByNumberOfOtherBuildings) {
+                    recipesInfo.forEach { (id, n) -> if (id != recipeB_ID) amount += n; }
+                } else if (p.second == ::bACpsPortionIncreaseByNumberOfBB) {
+                    amount = recipesInfo[recipeB_ID]!!
                 }
-                res = p!!.first(res, p.second(i, amount))
+                res = p.first(res, p.second(i, amount))
             }
         }
         return res
@@ -151,9 +149,9 @@ fun doAllUpgradesOfType(
     return res
 }
 
-public fun allUpgrades(index: Int, baseCost: ScalingInt): Upgrade {
+fun allUpgrades(index: Int, baseCost: ScalingInt): Upgrade {
     var upgrade = Upgrade(allUpgrades[index])
-    upgrade.setBaseCost(baseCost );
+    upgrade.setBaseCost(baseCost);
     return upgrade;
 }
 
