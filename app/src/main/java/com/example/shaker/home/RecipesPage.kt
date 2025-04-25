@@ -284,7 +284,7 @@ fun RecipeBuyButton(
 ) {
     var recipes = gameplayViewModel.recipes.collectAsState()
     var money = gameplayViewModel.moneyState.collectAsState()
-    val cost = recipes.value.GetNextCost(recipe, amountToBuy).ValueAsString(true)
+    val cost = recipes.value.GetNextCost(recipe, amountToBuy).ValueAsString()
     TextButton(
         onClick = {
             if(!gameplayViewModel.advancementState.value.getAdvancement("firstBuy"))

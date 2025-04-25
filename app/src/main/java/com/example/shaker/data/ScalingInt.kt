@@ -39,13 +39,10 @@ class ScalingInt {
         return this.value.toFloat()
     }
 
-    fun ValueAsString(ignoreFloat: Boolean = false): String {
-        return if (ignoreFloat || (this.value % BigDecimal(1) == BigDecimal(0))) {
-            this.value.setScale(1, RoundingMode.FLOOR)
-            this.shiftNumber().toString() + conwayGuyName(this.getExponent(), true)
-        } else {
-            this.value.setScale(1, RoundingMode.FLOOR).toPlainString()
-        }
+    fun ValueAsString(ignoreFloat: Boolean = false, scale: Int = 1): String {
+        return this.softShiftNumber()
+            .setScale(if(ignoreFloat) 0 else scale, RoundingMode.HALF_UP)
+            .toString() + conwayGuyName(this.getExponent(), true)
     }
 
     fun getExponent(): Int {
@@ -56,6 +53,10 @@ class ScalingInt {
     fun shiftNumber(shift: Int = 3): Int {
         return this.value.movePointLeft(this.getExponent() - this.getExponent() % shift).abs()
             .toInt()
+    }
+
+    fun softShiftNumber(shift: Int = 3): BigDecimal {
+        return this.value.movePointLeft(this.getExponent() - this.getExponent() % shift).abs()
     }
 
     constructor(value: Int) : this(BigDecimal(value)) {}
