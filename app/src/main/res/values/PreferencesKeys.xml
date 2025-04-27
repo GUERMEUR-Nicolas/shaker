@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="current">current</string>
-    <string name="perShake">perShake</string>
-    <string name="perSecond">perSecond</string>
-    <string name="recipe">Recipe_%d</string>
-    <string name="upgrade">Upgrade_%d_%d</string>
-    <string name="advancement">Advancement_%s</string>
-    <string name="lastTime">Last_time</string>
+	<string name="current">current</string>
+	<string name="perShake">perShake</string>
+	<string name="perSecond">perSecond</string>
+	<string name="recipe">Recipe_%d</string>
+	<string name="upgrade">Upgrade_%d_%d</string>
+	<string name="advancement">Advancement_%s</string>
+	<string name="lastTime">Last_time</string>
 
 </resources>

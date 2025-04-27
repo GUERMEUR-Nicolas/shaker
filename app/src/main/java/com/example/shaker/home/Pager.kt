@@ -27,81 +27,81 @@ import com.example.shaker.ui.MainViewModel
 
 @Composable
 fun CenterSidebarPager(
-    viewModel: MainViewModel,
-    gameplayState: GameplayViewModel,
-    startPage: Int = 0
+	viewModel: MainViewModel,
+	gameplayState: GameplayViewModel,
+	startPage: Int = 0
 ) {
 
-    val listTabItem = listOf(
-        TabItem("home", "screen_0"),
-        TabItem("recipe", "screen_1")
-    )
-    val pagerState_H: PagerState = rememberPagerState(
-        initialPage = startPage
-    ) { listTabItem.size } // Horizontal pages
-    val pagerState_V: PagerState = rememberPagerState(
-        initialPage = viewModel.selectedRecipeId.value
-    ) { allRecipes.size } // Vertical pages
+	val listTabItem = listOf(
+		TabItem("home", "screen_0"),
+		TabItem("recipe", "screen_1")
+	)
+	val pagerState_H: PagerState = rememberPagerState(
+		initialPage = startPage
+	) { listTabItem.size } // Horizontal pages
+	val pagerState_V: PagerState = rememberPagerState(
+		initialPage = viewModel.selectedRecipeId.value
+	) { allRecipes.size } // Vertical pages
 
-    Box(modifier = with(Modifier) {
-        fillMaxSize()
-            .paint(
-                painter = painterResource(R.drawable.wood),
-                contentScale = ContentScale.Crop
-            )
-    }
-    ) {
-        CurrentPage(viewModel, gameplayState, pagerState_H, pagerState_V)
-        MovingSideBar(
-            viewModel,
-            gameplayState,
-            pagerState_H,
-            pagerState_V,
-            Modifier.align(Alignment.CenterEnd)
-        )
-    }
+	Box(modifier = with(Modifier) {
+		fillMaxSize()
+			.paint(
+				painter = painterResource(R.drawable.wood),
+				contentScale = ContentScale.Crop
+			)
+	}
+	) {
+		CurrentPage(viewModel, gameplayState, pagerState_H, pagerState_V)
+		MovingSideBar(
+			viewModel,
+			gameplayState,
+			pagerState_H,
+			pagerState_V,
+			Modifier.align(Alignment.CenterEnd)
+		)
+	}
 }
 
 @Composable
 fun CurrentPage(
-    viewModel: MainViewModel,
-    gameplayState: GameplayViewModel,
-    pagerState_H: PagerState,
-    pagerState_V: PagerState,
+	viewModel: MainViewModel,
+	gameplayState: GameplayViewModel,
+	pagerState_H: PagerState,
+	pagerState_V: PagerState,
 ) {
-    var selectedTabItem: Int by remember { mutableStateOf(0) }
-    val advancement = gameplayState.advancementState.collectAsState()
-    val bgColor = MaterialTheme.colorScheme.surfaceContainerLowest
-    HorizontalPager(
-        state = pagerState_H,
-        beyondViewportPageCount = 1,
-        key = { page -> page },
-        userScrollEnabled =
-        advancement.value.getAdvancement("showSideBar")
-                && !advancement.value.getAdvancement("shaking"),
-        modifier = Modifier
-            .fillMaxSize()
-    ) { page ->
-        selectedTabItem = page
-        when (page) {
-            0 -> HomePage(
-                Modifier.fillMaxWidth(if (advancement.value.getAdvancement("showSideBar")) 0.8f else 1f),
-                gameplayState
-            )
+	var selectedTabItem: Int by remember { mutableStateOf(0) }
+	val advancement = gameplayState.advancementState.collectAsState()
+	val bgColor = MaterialTheme.colorScheme.surfaceContainerLowest
+	HorizontalPager(
+		state = pagerState_H,
+		beyondViewportPageCount = 1,
+		key = { page -> page },
+		userScrollEnabled =
+		advancement.value.getAdvancement("showSideBar")
+				&& !advancement.value.getAdvancement("shaking"),
+		modifier = Modifier
+			.fillMaxSize()
+	) { page ->
+		selectedTabItem = page
+		when (page) {
+			0 -> HomePage(
+				Modifier.fillMaxWidth(if (advancement.value.getAdvancement("showSideBar")) 0.8f else 1f),
+				gameplayState
+			)
 
-            1 -> RecipesPage(
-                pagerState_V,
-                { recipeId ->
-                    viewModel.selectRecipe(recipeId)
-                    viewModel.selectUpgrade(null)
-                },
-                gameplayState,
-                Modifier,
-                viewModel
-            )
+			1 -> RecipesPage(
+				pagerState_V,
+				{ recipeId ->
+					viewModel.selectRecipe(recipeId)
+					viewModel.selectUpgrade(null)
+				},
+				gameplayState,
+				Modifier,
+				viewModel
+			)
 
-            else -> Text("\uD83E\uDD86\uFE0F")
-        }
-    }
+			else -> Text("\uD83E\uDD86\uFE0F")
+		}
+	}
 
 }

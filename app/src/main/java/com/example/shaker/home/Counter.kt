@@ -53,176 +53,176 @@ import kotlin.math.min
 
 @Composable
 fun FlipClockCounter(
-    state: State<MoneyState>, modifier: Modifier = Modifier, backColor: Color, color: Color
+	state: State<MoneyState>, modifier: Modifier = Modifier, backColor: Color, color: Color
 ) {
-    val newNumber = state.value.current
-    val oldNumber = state.value.previous
-    var exponent = newNumber.getExponent()
-    exponent -= exponent % 6
-    val formattedNewNumber = String.format("%06d", newNumber.shiftNumber(6))
-    val formattedOldNumber = String.format("%06d", oldNumber.shiftNumber(6))
+	val newNumber = state.value.current
+	val oldNumber = state.value.previous
+	var exponent = newNumber.getExponent()
+	exponent -= exponent % 6
+	val formattedNewNumber = String.format("%06d", newNumber.shiftNumber(6))
+	val formattedOldNumber = String.format("%06d", oldNumber.shiftNumber(6))
 
-    val numberName = conwayGuyName(exponent).replaceFirstChar {
-        if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
-    }
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(modifier = Modifier) {
-            Row(modifier = Modifier) {
-                formattedNewNumber.forEachIndexed { index, newDigitChar ->
-                    val oldDigit = formattedOldNumber[index]
-                    FlipDigit(
-                        oldDigit = oldDigit,
-                        newDigit = newDigitChar,
-                        backColor = backColor,
-                        color = color,
-                    )
-                }
-            }
-        }
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-        ) {
-            Text(
-                text = numberName,
-                textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontSize = 30.sp,
-                    color = color,
-                    fontFamily = bodyFontFamily,
-                    background = if (exponent >= 6) backColor else Color.Transparent
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    }
+	val numberName = conwayGuyName(exponent).replaceFirstChar {
+		if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
+	}
+	Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+		Box(modifier = Modifier) {
+			Row(modifier = Modifier) {
+				formattedNewNumber.forEachIndexed { index, newDigitChar ->
+					val oldDigit = formattedOldNumber[index]
+					FlipDigit(
+						oldDigit = oldDigit,
+						newDigit = newDigitChar,
+						backColor = backColor,
+						color = color,
+					)
+				}
+			}
+		}
+		Box(
+			contentAlignment = Alignment.Center,
+			modifier = Modifier
+		) {
+			Text(
+				text = numberName,
+				textAlign = TextAlign.Center,
+				style = TextStyle(
+					fontSize = 30.sp,
+					color = color,
+					fontFamily = bodyFontFamily,
+					background = if (exponent >= 6) backColor else Color.Transparent
+				),
+				modifier = Modifier.fillMaxWidth()
+			)
+		}
+	}
 }
 
 @Composable
 fun FlipDigit(
-    oldDigit: Char,
-    newDigit: Char,
-    color: Color,
-    backColor: Color,
-    modifier: Modifier = Modifier
+	oldDigit: Char,
+	newDigit: Char,
+	color: Color,
+	backColor: Color,
+	modifier: Modifier = Modifier
 ) {
-    val rotationAnimatable = remember { Animatable(0f) }
-    var size by remember { mutableStateOf(IntSize.Zero) }
+	val rotationAnimatable = remember { Animatable(0f) }
+	var size by remember { mutableStateOf(IntSize.Zero) }
 
-    LaunchedEffect(newDigit) {
-        rotationAnimatable.snapTo(0f)
-        rotationAnimatable.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(durationMillis = 200, easing = LinearEasing)
-        )
-    }
-    val sh = object : Shape {
-        override fun createOutline(
-            size: Size,
-            layoutDirection: androidx.compose.ui.unit.LayoutDirection,
-            density: Density
-        ): Outline {
-            return Outline.Generic(
-                path = Path().apply {
-                    reset()
-                    moveTo(0f, size.height / 2f)
-                    lineTo(size.width, size.height / 2f)
-                    lineTo(size.width, size.height / 2f + 10f)
-                    lineTo(0f, size.height / 2f + 10f)
-                }
-            )
-        }
-    }
+	LaunchedEffect(newDigit) {
+		rotationAnimatable.snapTo(0f)
+		rotationAnimatable.animateTo(
+			targetValue = 1f,
+			animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+		)
+	}
+	val sh = object : Shape {
+		override fun createOutline(
+			size: Size,
+			layoutDirection: androidx.compose.ui.unit.LayoutDirection,
+			density: Density
+		): Outline {
+			return Outline.Generic(
+				path = Path().apply {
+					reset()
+					moveTo(0f, size.height / 2f)
+					lineTo(size.width, size.height / 2f)
+					lineTo(size.width, size.height / 2f + 10f)
+					lineTo(0f, size.height / 2f + 10f)
+				}
+			)
+		}
+	}
 
-    Column(
-        modifier = modifier
-            .onGloballyPositioned {
-                size = it.size
-            }
-            .clipToBounds()
-    ) {
-        Box(
-            modifier = Modifier
-                .height(70.dp)
-                .border(12.dp, backColor, sh)
-        ) {
-            Digit(newDigit, backColor, color, size, rotationAnimatable, true, 0f)
-            Digit(oldDigit, backColor, color, size, rotationAnimatable, true, 1f)
-            Digit(oldDigit, backColor, color, size, rotationAnimatable, false, 0f)
-            Digit(newDigit, backColor, color, size, rotationAnimatable, false, 1f)
-        }
-    }
+	Column(
+		modifier = modifier
+			.onGloballyPositioned {
+				size = it.size
+			}
+			.clipToBounds()
+	) {
+		Box(
+			modifier = Modifier
+				.height(70.dp)
+				.border(12.dp, backColor, sh)
+		) {
+			Digit(newDigit, backColor, color, size, rotationAnimatable, true, 0f)
+			Digit(oldDigit, backColor, color, size, rotationAnimatable, true, 1f)
+			Digit(oldDigit, backColor, color, size, rotationAnimatable, false, 0f)
+			Digit(newDigit, backColor, color, size, rotationAnimatable, false, 1f)
+		}
+	}
 }
 
 @Composable
 fun Digit(
-    digit: Char,
-    backColor: Color,
-    color: Color,
-    sz: IntSize,
-    rotationAnimatable: Animatable<Float, AnimationVector1D>,
-    isTop: Boolean,
-    z: Float
+	digit: Char,
+	backColor: Color,
+	color: Color,
+	sz: IntSize,
+	rotationAnimatable: Animatable<Float, AnimationVector1D>,
+	isTop: Boolean,
+	z: Float
 ) {
-    val h = 60.sp
-    val tmp = sz.height.toFloat()
-    var grad = listOf(backColor, backColor)
-    var tp = 0.5f * tmp
-    var bt = tmp * max(0.5f, rotationAnimatable.value)
-    var rt = 0f
-    if (isTop) {
-        grad = grad.reversed()
-        if (z == 1f) {
-            rt = 180 * min(0.5f, rotationAnimatable.value)
-            tp = tmp * min(0.5f, rotationAnimatable.value)
-        } else {
-            tp = 0f
-        }
-        bt = 0.5f * tmp
-    } else if (z != 1f) {
-        bt = tmp
-        rt = 180f
-    } else {
-        rt = -180 * max(0.5f, rotationAnimatable.value)
-    }
-    Text(
-        text = digit.toString(),
-        style = TextStyle(fontSize = h, color = color, fontFamily = displayFontFamily),
-        textAlign = TextAlign.Center,
-        modifier = Modifier
-            .drawWithContent {
-                clipRect(
-                    top = tp,
-                    bottom = bt
-                ) {
-                    this@drawWithContent.drawContent()
-                }
-            }
-            .background(
-                Brush.verticalGradient(
-                    grad,
-                    startY = tp,
-                    endY = bt
-                )
-            )
-            .width(h.value.dp)
-            .graphicsLayer {
-                rotationX = rt - if (!isTop) 180f else 0f
-            }
-            .zIndex(z)
-    )
+	val h = 60.sp
+	val tmp = sz.height.toFloat()
+	var grad = listOf(backColor, backColor)
+	var tp = 0.5f * tmp
+	var bt = tmp * max(0.5f, rotationAnimatable.value)
+	var rt = 0f
+	if (isTop) {
+		grad = grad.reversed()
+		if (z == 1f) {
+			rt = 180 * min(0.5f, rotationAnimatable.value)
+			tp = tmp * min(0.5f, rotationAnimatable.value)
+		} else {
+			tp = 0f
+		}
+		bt = 0.5f * tmp
+	} else if (z != 1f) {
+		bt = tmp
+		rt = 180f
+	} else {
+		rt = -180 * max(0.5f, rotationAnimatable.value)
+	}
+	Text(
+		text = digit.toString(),
+		style = TextStyle(fontSize = h, color = color, fontFamily = displayFontFamily),
+		textAlign = TextAlign.Center,
+		modifier = Modifier
+			.drawWithContent {
+				clipRect(
+					top = tp,
+					bottom = bt
+				) {
+					this@drawWithContent.drawContent()
+				}
+			}
+			.background(
+				Brush.verticalGradient(
+					grad,
+					startY = tp,
+					endY = bt
+				)
+			)
+			.width(h.value.dp)
+			.graphicsLayer {
+				rotationX = rt - if (!isTop) 180f else 0f
+			}
+			.zIndex(z)
+	)
 }
 
 
 @Preview
 @Composable
 fun FlipDigit_P() {
-    AppTheme(darkTheme = false) {
-        FlipDigit(
-            '1',
-            '1',
-            MaterialTheme.colorScheme.onSecondaryContainer,
-            MaterialTheme.colorScheme.secondaryContainer
-        )
-    }
+	AppTheme(darkTheme = false) {
+		FlipDigit(
+			'1',
+			'1',
+			MaterialTheme.colorScheme.onSecondaryContainer,
+			MaterialTheme.colorScheme.secondaryContainer
+		)
+	}
 }
