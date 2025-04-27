@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="cocktail_0">Cuba Libre</string>
-    <string name="cocktail_7">Mojito</string>
-    <string name="cocktail_1">Pina Colada</string>
-    <string name="cocktail_5">Vodka Sunrise</string>
-    <string name="cocktail_4">Margarita</string>
-    <string name="cocktail_3">Manzana Verde</string>
-    <string name="cocktail_2">Blue Lagoon</string>
-    <string name="cocktail_6">Peach Proseco Punch</string>
+	<string name="cocktail_0">Cuba Libre</string>
+	<string name="cocktail_7">Mojito</string>
+	<string name="cocktail_1">Pina Colada</string>
+	<string name="cocktail_5">Vodka Sunrise</string>
+	<string name="cocktail_4">Margarita</string>
+	<string name="cocktail_3">Manzana Verde</string>
+	<string name="cocktail_2">Blue Lagoon</string>
+	<string name="cocktail_6">Peach Proseco Punch</string>
 </resources>

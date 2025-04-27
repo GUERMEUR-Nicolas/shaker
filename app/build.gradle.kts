@@ -19,13 +19,14 @@ android {
     }
 
     buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
+		getByName("debug") {
+			buildConfigField("Boolean", "IS_DEBUG_MODE", "true")
+		}
+		getByName("release") {
+			buildConfigField("Boolean", "IS_DEBUG_MODE", "false")
+			isMinifyEnabled = true
+			proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+		}
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -36,6 +37,7 @@ android {
     }
     buildFeatures {
         compose = true
+		buildConfig = true
     }
 }
 

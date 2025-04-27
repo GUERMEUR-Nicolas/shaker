@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="characterPerCent">%% if called with a format, of % only if not</string>
-    <string name="upgrade_0">Ice Ball</string>
-    <string name="upgrade_description_0">ADD 100%% generated $/s per tier%s</string>
+	<string name="characterPerCent">%% if called with a format, of % only if not</string>
+	<string name="upgrade_0">Ice Ball</string>
+	<string name="upgrade_description_0">ADD 100%% generated $/s per tier%s</string>
 	<string name="upgrade_1">Crystal Glass</string>
-    <string name="upgrade_description_1">ADD 1%% generated $/s for every other recipes, and reduces the cost of this recipe by 5%% per tier%s</string>
+	<string name="upgrade_description_1">ADD 1%% generated $/s for every other recipes, and reduces the cost of this recipe by 5%% per tier%s</string>
 	<string name="upgrade_2">Golden Leaf</string>
-    <string name="upgrade_description_2">ADD 2%% generated $/s for every %s, and reduces the cost of this recipe by 5%% per tier</string>
+	<string name="upgrade_description_2">ADD 2%% generated $/s for every %s, and reduces the cost of this recipe by 5%% per tier</string>
 	<string name="upgrade_3">Smoke Infuser</string>
-    <string name="upgrade_description_3">ADD 10%% generated $/s on shake per tier%s</string>
+	<string name="upgrade_description_3">ADD 10%% generated $/s on shake per tier%s</string>
 	<string name="upgrade_4">Tiki Mug</string>
-    <string name="upgrade_description_4">ADD 150%% generated $/s per tier and add 20%% generated $/s%s</string>
-    <string name="upgrade_5">Aged Liquor</string>
+	<string name="upgrade_description_4">ADD 150%% generated $/s per tier and add 20%% generated $/s%s</string>
+	<string name="upgrade_5">Aged Liquor</string>
 	<string name="upgrade_6">Extra Shot</string>
-    <string name="upgrade_7">Rose Petal</string>
+	<string name="upgrade_7">Rose Petal</string>
 	<string name="upgrade_8">Fresh Fruits</string>
 </resources>

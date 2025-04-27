@@ -6,25 +6,25 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 
 //Inspired from https://www.geeksforgeeks.org/how-to-detect-shake-event-in-android/
-class Accelerometer() {
-    private var sensorManager: SensorManager? = null
-    private var sensorListener: SensorEventListener? = null
+class Accelerometer {
+	private var sensorManager: SensorManager? = null
+	private var sensorListener: SensorEventListener? = null
 
-    fun Initialize(context: Context, listener: SensorEventListener) {
-        sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        sensorListener = listener
-        subscribe()
-    }
+	fun initialize(context: Context, listener: SensorEventListener) {
+		sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+		sensorListener = listener
+		subscribe()
+	}
 
-    fun subscribe() {
-        sensorManager?.registerListener(
-            sensorListener, sensorManager!!
-                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL
-        )
-    }
+	fun subscribe() {
+		sensorManager?.registerListener(
+			sensorListener, sensorManager!!
+				.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL
+		)
+	}
 
-    fun unSubscribe() {
-        sensorManager!!.unregisterListener(sensorListener)
-    }
+	fun unSubscribe() {
+		sensorManager!!.unregisterListener(sensorListener)
+	}
 }
 
