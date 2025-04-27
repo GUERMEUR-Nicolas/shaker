@@ -39,19 +39,17 @@ fun UpgradePanel(
     upg: Upgrade,
     onExit: () -> Unit,
     modifier: Modifier = Modifier,
-    backColor: Color, // val colorBGStacked = MaterialTheme.colorScheme.surfaceDim
-    textColor: Color,//val colorOnBgStacked = MaterialTheme.colorScheme.onSurface
+    backColor: Color,
+    textColor: Color,
     gameState: GameplayViewModel
 ) {
     val upgradeLevels by gameState.upgradeLevels.collectAsState()
-    //val upgradeLevel = gameState.getUpgradeLevel(recipe.id, upg.id)
     Column(
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxWidth(1f)
             .background(backColor)
-        //align(Alignment.CenterEnd),
     ) {
         Spacer(
             modifier = Modifier.height(20.dp)
@@ -68,8 +66,8 @@ fun UpgradePanel(
             imagePadding = 50.dp,
         )
         UpgradeBuyButton(
-            recipe, upg, { gameState.ForceBuy(recipe, upg, 1) },
-            gameState, modifier, ButtonDefaults.textButtonColors(
+            upg, { gameState.forceBuy(recipe, upg, 1) }, gameState,
+            ButtonDefaults.textButtonColors(
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary,
                 disabledContainerColor = MaterialTheme.colorScheme.surface,
@@ -90,7 +88,6 @@ fun UpgradeIcon(
     modifier: Modifier = Modifier
 ) {
     val upgradeLevels by gameState.upgradeLevels.collectAsState()
-    //val upgradeLevel = gameState.getUpgradeLevel(recipe.id, upg.id)
     Box(modifier = modifier) {
         Box(
             modifier = modifier
@@ -105,7 +102,7 @@ fun UpgradeIcon(
                 contentScale = androidx.compose.ui.layout.ContentScale.FillHeight
             )
         }
-        var inner = modifier
+        val inner = modifier
             .align(Alignment.Center)
         Text(
             text = upgradeLevels.getUpgradeLevel(recipe.id, upg.id).toString(),
@@ -123,27 +120,20 @@ fun UpgradeIcon(
             textAlign = TextAlign.Center,
             modifier = inner
                 .padding(top = 53.dp)
-            //.background(Color.Blue)
-            //.fillMaxWidth()
-            //.background(
-            //    colorResource(R.color.textBg)
-            //)
         )
     }
 }
 
 @Composable
 fun UpgradeBuyButton(
-    recipe: Recipe,
     upgrade: Upgrade,
     onClick: () -> Unit,
     gameplayViewModel: GameplayViewModel,
-    modifier: Modifier,
     colors: ButtonColors
 ) {
-    var recipes = gameplayViewModel.recipes.collectAsState()
-    var money = gameplayViewModel.moneyState.collectAsState()
-    val cost = recipes.value.GetNextCost(upgrade, 1)
+    val recipes = gameplayViewModel.recipes.collectAsState()
+    val money = gameplayViewModel.moneyState.collectAsState()
+    val cost = recipes.value.getNextCost(upgrade, 1)
     TextButton(
         onClick = onClick,
         enable = recipes.value.canBuy(upgrade, 1, money.value.current),
@@ -167,28 +157,14 @@ fun UpgradePanelPreview() {
             .background(MaterialTheme.colorScheme.tertiaryContainer)
     ) {
         RecipeInfo(
-            allRecipes[0],
-            GameplayViewModel(),
-            12.sp,
-            true,
-            false,
-            Modifier,
-            MaterialTheme.colorScheme.onTertiaryContainer,
-            MaterialTheme.colorScheme.tertiaryContainer
-        ) {
-            //UpgradePanel(
-            //    allRecipes[0],
-            //    allUpgrades[0],
-            //    {},
-            //    Modifier.fillMaxSize(),
-            //    GameplayViewModel()
-            //)
-        }
+            recipe = allRecipes[0],
+            gameState = GameplayViewModel(),
+            spBase = 12.sp,
+            showName = true,
+            inSidebar = false,
+            modifier = Modifier,
+            fontColor = MaterialTheme.colorScheme.onTertiaryContainer,
+            backColor = MaterialTheme.colorScheme.tertiaryContainer
+        ) { }
     }
 }
-
-//@Composable
-//@Preview(widthDp = 100, heightDp = 1000)
-//fun UpgradePreview() {
-//    UpgradeIcon(allRecipes[0], allUpgrades[0], Modifier.size(75.dp))
-//}

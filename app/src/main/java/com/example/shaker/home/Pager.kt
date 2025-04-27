@@ -1,12 +1,5 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.example.shaker.home
 
-import android.content.Context
-import android.os.VibratorManager
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,19 +17,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import com.example.shaker.R
 import com.example.shaker.TabItem
 import com.example.shaker.data.allRecipes
 import com.example.shaker.ui.GameplayViewModel
+import com.example.shaker.ui.MainViewModel
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-public fun CenterSidebarPager(
+fun CenterSidebarPager(
     viewModel: MainViewModel,
     gameplayState: GameplayViewModel,
     startPage: Int = 0
@@ -80,15 +70,15 @@ fun CurrentPage(
     pagerState_V: PagerState,
 ) {
     var selectedTabItem: Int by remember { mutableStateOf(0) }
-    var advancement = gameplayState.advancementState.collectAsState()
+    val advancement = gameplayState.advancementState.collectAsState()
     val bgColor = MaterialTheme.colorScheme.surfaceContainerLowest
     HorizontalPager(
         state = pagerState_H,
         beyondViewportPageCount = 1,
         key = { page -> page },
         userScrollEnabled =
-            advancement.value.getAdvancement("showSideBar")
-                    && !advancement.value.getAdvancement("shaking"),
+        advancement.value.getAdvancement("showSideBar")
+                && !advancement.value.getAdvancement("shaking"),
         modifier = Modifier
             .fillMaxSize()
     ) { page ->
@@ -96,7 +86,6 @@ fun CurrentPage(
         when (page) {
             0 -> HomePage(
                 Modifier.fillMaxWidth(if (advancement.value.getAdvancement("showSideBar")) 0.8f else 1f),
-                //.background(bgColor),
                 gameplayState
             )
 
@@ -107,7 +96,7 @@ fun CurrentPage(
                     viewModel.selectUpgrade(null)
                 },
                 gameplayState,
-                Modifier,//.background(bgColor),
+                Modifier,
                 viewModel
             )
 

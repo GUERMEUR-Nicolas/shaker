@@ -8,13 +8,12 @@ import kotlin.math.floor
 class ScalingInt {
 
     var value: BigDecimal = BigDecimal("0")
-    fun ValueAsLong(): Long {
-        return value.toLong();
+    fun valueAsLong(): Long {
+        return value.toLong()
     }
 
     operator fun times(factor: Double): ScalingInt {
-        //TODO be careful with rounding errors
-        val mult = this.ValueAsLong().toDouble() * factor
+        val mult = this.valueAsLong().toDouble() * factor
         return ScalingInt(mult.toULong())
     }
 
@@ -26,7 +25,6 @@ class ScalingInt {
         this.value = value
     }
 
-    //Forwarder converion overload
     fun toLong(): Long {
         return this.value.toLong()
     }
@@ -39,9 +37,9 @@ class ScalingInt {
         return this.value.toFloat()
     }
 
-    fun ValueAsString(ignoreFloat: Boolean = false, scale: Int = 1): String {
+    fun valueAsString(ignoreFloat: Boolean = false, scale: Int = 1): String {
         return this.softShiftNumber()
-            .setScale(if(ignoreFloat) 0 else scale, RoundingMode.HALF_UP)
+            .setScale(if (ignoreFloat) 0 else scale, RoundingMode.HALF_UP)
             .toString() + conwayGuyName(this.getExponent(), true)
     }
 
@@ -59,9 +57,9 @@ class ScalingInt {
         return this.value.movePointLeft(this.getExponent() - this.getExponent() % shift).abs()
     }
 
-    constructor(value: Int) : this(BigDecimal(value)) {}
-    constructor(double: Double) : this(BigDecimal(double)) {}
-    constructor(value: Float) : this(BigDecimal(value.toDouble())) {}
+    constructor(value: Int) : this(BigDecimal(value))
+    constructor(double: Double) : this(BigDecimal(double))
+    constructor(value: Float) : this(BigDecimal(value.toDouble()))
 
     constructor(current: String) {
         this.value = BigDecimal(current)
@@ -107,17 +105,15 @@ class ScalingInt {
     }
 
     override fun toString(): String {
-        return ValueAsString()
+        return valueAsString()
     }
 }
 
 fun shortName(name: String, n: Int): String {
-    return name[0].titlecase(Locale.ROOT)
-        .toString() + if (n == 5 || n == 6) name[1].toString() else ""
+    return name[0].titlecase(Locale.ROOT) + if (n == 5 || n == 6) name[1].toString() else ""
 }
 
 fun conwayGuyName(exponent: Int, getFirstLetter: Boolean = false, isFinal: Boolean = true): String {
-    // TODO: add long scale
     val firstNames = arrayOf(
         "m", "b", "tr", "quadr", "quint", "sext", "sept", "oct", "non", "dec"
     )
@@ -154,26 +150,26 @@ fun conwayGuyName(exponent: Int, getFirstLetter: Boolean = false, isFinal: Boole
     val n: Int = if (isFinal) floor((exponent - 3) / 3.0).toInt() else exponent
     if (n >= 11) {
         val strponent = n.toString()
-        var rep: String = ""
+        var rep = ""
         if (n >= 1000) {
             var i = 0
-            var length = 3
+            var length: Int
             var cur: Int
             while (i < strponent.length) {
-                if (i == 0 && strponent.length % 3 != 0) {
-                    length = strponent.length % 3
+                length = if (i == 0 && strponent.length % 3 != 0) {
+                    strponent.length % 3
                 } else {
-                    length = 3
+                    3
                 }
                 cur = strponent.substring(i, length).toInt()
-                if (cur == 0) {
+                rep += if (cur == 0) {
                     if (getFirstLetter) {
-                        rep += "n"
+                        "n"
                     } else {
-                        rep += "n$end"
+                        "n$end"
                     }
                 } else {
-                    rep += conwayGuyName(cur, getFirstLetter, false)
+                    conwayGuyName(cur, getFirstLetter, false)
                 }
             }
         } else {

@@ -1,7 +1,7 @@
-package com.example.shaker.ui.GameplayStates
+package com.example.shaker.ui.gameplayStates
 
 data class AdvancementState(
-    val map : Map<String, Boolean> = mapOf<String, Boolean>(
+    val map: Map<String, Boolean> = mapOf<String, Boolean>(
         "showSideBar" to false,
         "firstBuy" to false,
         "shaking" to false

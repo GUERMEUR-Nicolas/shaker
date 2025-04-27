@@ -19,12 +19,12 @@ import com.example.shaker.data.ScalingInt
 import com.example.shaker.data.allRecipes
 import com.example.shaker.home.Accelerometer
 import com.example.shaker.home.CenterSidebarPager
-import com.example.shaker.home.MainViewModel
+import com.example.shaker.ui.MainViewModel
 import com.example.shaker.home.ShakeListener
-import com.example.shaker.ui.GameplayStates.AdvancementState
-import com.example.shaker.ui.GameplayStates.MoneyState
-import com.example.shaker.ui.GameplayStates.RecipeState
-import com.example.shaker.ui.GameplayStates.UpgradeState
+import com.example.shaker.ui.gameplayStates.AdvancementState
+import com.example.shaker.ui.gameplayStates.MoneyState
+import com.example.shaker.ui.gameplayStates.RecipeState
+import com.example.shaker.ui.gameplayStates.UpgradeState
 import com.example.shaker.ui.GameplayViewModel
 import kotlinx.coroutines.delay
 
@@ -32,9 +32,9 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private var gameplayState: GameplayViewModel =
         GameplayViewModel(
-            15,
-            true
-        )//Overriden by what's stored in the preferences and the default load, just used in case of reset
+            0,
+            false
+        ) //Overriden by what's stored in the preferences and the default load, just used in case of reset
     private val sensor: Accelerometer = Accelerometer()
 
     @SuppressLint("SourceLockedOrientationActivity", "NewApi")
@@ -42,19 +42,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         loadPreferences();
         val shakeDelay: Long = resources.getInteger(R.integer.shakeDelayMilli).toLong()
-        sensor.Initialize(
+        sensor.initialize(
             context = this,
             listener = ShakeListener(
                 shakeMin = resources.getInteger(R.integer.minShakeIntensity).toFloat()
             ) { intensity ->
-                //TODO integrate intensity
-                gameplayState.OnShaked(shakeDelay)
+                gameplayState.onShaked(shakeDelay)
             })
         //Check haptic enabled
         val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
         val vibrator = vibratorManager.defaultVibrator
-        //Settings.System.getInt(requireContext().contentResolver, Settings.System.HAPTIC_FEEDBACK_ENABLED) == 1
-        //enableEdgeToEdge()
         val delay: Long = resources.getInteger(R.integer.shakeDelayMilli).toLong()
         setContent {
             LocalActivity.current?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -68,7 +65,7 @@ class MainActivity : ComponentActivity() {
                     val cycleDuration = 1000L / valueIncrement
                     while (true) {
                         delay(cycleDuration)
-                        gameplayState.Increment(1.0f / (duration * valueIncrement))
+                        gameplayState.increment(1.0f / (duration * valueIncrement))
                     }
                 }
                 val adv = gameplayState.advancementState.collectAsState().value
@@ -96,7 +93,6 @@ class MainActivity : ComponentActivity() {
         sensor.subscribe()
     }
 
-    //TODO, don't we ACTUALLY want to also detect shake when apply is paused/out of focus ????
     override fun onPause() {
         super.onPause()
         sensor.unSubscribe()
@@ -104,10 +100,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onStop() {
         super.onStop()
-        savePreferencees()
+        savePreferences()
     }
 
-    fun savePreferencees() {
+    fun savePreferences() {
         val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
         //Money
         val money = gameplayState.moneyState.value
@@ -158,7 +154,7 @@ class MainActivity : ComponentActivity() {
             return
         }
         val moneyState =
-            MoneyState(ScalingInt(current!!), ScalingInt(perSecond!!), ScalingInt(perShake!!))
+            MoneyState(ScalingInt(current), ScalingInt(perSecond), ScalingInt(perShake))
 
 
         val map: Map<Int, Long> =
@@ -197,7 +193,7 @@ class MainActivity : ComponentActivity() {
         val lastTime = sharedPref.getLong(getString(R.string.lastTime), System.currentTimeMillis())
         val elapsed = System.currentTimeMillis() - lastTime
         if (elapsed > 1000L) {
-            gameplayState.Increment(elapsed / (1000f * resources.getInteger(R.integer.CycleDurationMultiplier)))
+            gameplayState.increment(elapsed / (1000f * resources.getInteger(R.integer.CycleDurationMultiplier)))
         }
 
     }
@@ -209,8 +205,8 @@ class MainActivity : ComponentActivity() {
 fun AppPreviewLight() {
     val viewModel = MainViewModel()
     val gameplayState = GameplayViewModel()
-    gameplayState.Increment(999f)
-    gameplayState.Increment(2f)
+    gameplayState.increment(999f)
+    gameplayState.increment(2f)
     AppTheme(darkTheme = false, dynamicColor = false) {
         CenterSidebarPager(viewModel, gameplayState)
     }
@@ -221,8 +217,8 @@ fun AppPreviewLight() {
 fun AppPreviewRecipesLight() {
     val viewModel = MainViewModel()
     val gameplayState = GameplayViewModel()
-    gameplayState.Increment(999f)
-    gameplayState.Increment(2f)
+    gameplayState.increment(999f)
+    gameplayState.increment(2f)
     AppTheme(darkTheme = false, dynamicColor = false) {
         CenterSidebarPager(viewModel, gameplayState, 1)
     }
@@ -234,8 +230,8 @@ fun AppPreviewClickedUpgradeLight() {
     val viewModel = MainViewModel()
     viewModel.selectUpgrade(allRecipes[0].upgrades[0])
     val gameplayState = GameplayViewModel()
-    gameplayState.Increment(999f)
-    gameplayState.Increment(2f)
+    gameplayState.increment(999f)
+    gameplayState.increment(2f)
     AppTheme(darkTheme = false, dynamicColor = false) {
         CenterSidebarPager(viewModel, gameplayState, 1)
     }
@@ -247,8 +243,8 @@ fun AppPreviewClickedUpgradeLight() {
 fun AppPreviewDark() {
     val viewModel = MainViewModel()
     val gameplayState = GameplayViewModel()
-    gameplayState.Increment(999f)
-    gameplayState.Increment(2f)
+    gameplayState.increment(999f)
+    gameplayState.increment(2f)
     AppTheme(darkTheme = true, dynamicColor = false) {
         CenterSidebarPager(viewModel, gameplayState)
     }

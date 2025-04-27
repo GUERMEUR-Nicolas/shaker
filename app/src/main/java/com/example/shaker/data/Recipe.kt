@@ -9,14 +9,14 @@ class ScalingCost(
     val basePrice: ScalingInt = ScalingInt(1),
     val scalingFactor: Double = 1.15
 ) {
-    public fun GetCost(level: Long): ScalingInt {
+    fun getCost(level: Long): ScalingInt {
         return this.basePrice * (this.scalingFactor).pow(level.toDouble())
     }
 
-    public fun GetNextCost(amountOwned: Long = 0, amountBought: Long = 1): ScalingInt {
+    fun getNextCost(amountOwned: Long = 0, amountBought: Long = 1): ScalingInt {
         var sum = ScalingInt(0)
         for (i in 0 until amountBought) {
-            sum += this.GetCost(amountOwned + i)
+            sum += this.getCost(amountOwned + i)
         }
         return sum
     }
@@ -28,13 +28,13 @@ class Recipe(
     val id: Int,
     var generating: ScalingInt = ScalingInt(0),
     var cost: ScalingCost,
-    var upgrades: MutableList<Upgrade> = mutableListOf<Upgrade>(),
+    var upgrades: MutableList<Upgrade> = mutableListOf(),
     var isDiscovered: Boolean = false
 ) {
-    public fun GetNextCost(amountOwned: Long = 0, amountBought: Long = 1): ScalingInt {
+    fun getNextCost(amountOwned: Long = 0, amountBought: Long = 1): ScalingInt {
         return doAllUpgradesOfType(
             this.upgrades,
-            this.cost.GetNextCost(amountOwned, amountBought),
+            this.cost.getNextCost(amountOwned, amountBought),
             "cost"
         )
     }
@@ -78,16 +78,15 @@ class Recipe(
             //An upgrade base cost is 5 times bigger than buying the first recipe
             val upg = allUpgrades(it, cost.basePrice * 5)
             if (upg.id == 0)
-                upg.SetRelative(id)
+                upg.setRelative(id)
             if (relatedRecipes[it] != null)
-                upg.SetRelative(relatedRecipes[it]!!)
+                upg.setRelative(relatedRecipes[it]!!)
             upg
         }.toMutableList<Upgrade>(),
         isDiscovered = isDiscovered
     )
 }
 
-//TODO move this to the viewmodel
 val allRecipes = listOf(
     Recipe(
         imageResourceId = R.drawable.cocktail_0,

@@ -1,4 +1,4 @@
-package com.example.shaker.home
+package com.example.shaker.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,18 +9,20 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
-	private val _selectedRecipeId = MutableStateFlow(0) // Default to the first item
-	val selectedRecipeId: StateFlow<Int> = _selectedRecipeId.asStateFlow()
-	private val _selectedUpgrade: MutableStateFlow<Upgrade?> = MutableStateFlow(null) // Default to the first item
-	val selectedUpgrade: StateFlow<Upgrade?> = _selectedUpgrade.asStateFlow()
-	fun selectRecipe(recipeId: Int) {
-		viewModelScope.launch {
-			_selectedRecipeId.emit(recipeId)
-		}
-	}
-	fun selectUpgrade(upgrade: Upgrade?) {
-		viewModelScope.launch {
-			_selectedUpgrade.emit(upgrade)
-		}
-	}
+    private val _selectedRecipeId = MutableStateFlow(0) // Default to the first item
+    val selectedRecipeId: StateFlow<Int> = _selectedRecipeId.asStateFlow()
+    private val _selectedUpgrade: MutableStateFlow<Upgrade?> =
+        MutableStateFlow(null) // Default to the first item
+    val selectedUpgrade: StateFlow<Upgrade?> = _selectedUpgrade.asStateFlow()
+    fun selectRecipe(recipeId: Int) {
+        viewModelScope.launch {
+            _selectedRecipeId.emit(recipeId)
+        }
+    }
+
+    fun selectUpgrade(upgrade: Upgrade?) {
+        viewModelScope.launch {
+            _selectedUpgrade.emit(upgrade)
+        }
+    }
 }

@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,10 +20,9 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -48,11 +46,10 @@ import androidx.compose.ui.unit.sp
 import com.example.shaker.R
 import com.example.shaker.data.Recipe
 import com.example.shaker.data.allRecipes
-import com.example.shaker.ui.GameplayStates.AdvancementState
 import com.example.shaker.ui.GameplayViewModel
+import com.example.shaker.ui.MainViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MovingSideBar(
     viewModel: MainViewModel,
@@ -63,10 +60,10 @@ fun MovingSideBar(
 ) {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
-    var sidebarWidthPx by remember { mutableStateOf(0) }
+    var sidebarWidthPx by remember { mutableIntStateOf(0) }
     val sidebarWidthDp = with(density) { sidebarWidthPx.toDp() }
     val cutCorner = remember { Animatable(0f) }
-    var advancement = gameState.advancementState.collectAsState()
+    val advancement = gameState.advancementState.collectAsState()
 
     val offset = if (!advancement.value.getAdvancement("showSideBar")) sidebarWidthDp else
         -(configuration.screenWidthDp.dp - sidebarWidthDp) * (pagerState_H.currentPage + pagerState_H.currentPageOffsetFraction)
@@ -87,8 +84,8 @@ fun MovingSideBar(
         selectedRecipeId = selectedRecipeId,
         gameState,
         onRecipeClick = { recipeId ->
-            val initial = viewModel.selectedRecipeId.value;
-            val isFirst = advancement.value.getAdvancement("firstBuy");
+            val initial = viewModel.selectedRecipeId.value
+            val isFirst = advancement.value.getAdvancement("firstBuy")
             viewModel.selectRecipe(recipeId)
             coroutineScope.launch {
                 if (!advancement.value.getAdvancement("shaking")) {
@@ -111,7 +108,6 @@ fun MovingSideBar(
                 sidebarWidthPx = coordinates.size.width
             }
             .offset { IntOffset(offset.roundToPx(), 0) }
-            //.background(Color(0xFF454078))
             .clip(
                 SidebarShape(
                     cutLength,
@@ -139,7 +135,7 @@ fun MovingSideBar(
 }
 
 
-public suspend fun animateHScroll(
+suspend fun animateHScroll(
     pagerState: PagerState,
     faster: Boolean,
     page: Int
@@ -173,7 +169,7 @@ fun Sidebar(
                 .background(sidebarBg),
             contentAlignment = Alignment.Center
         ) {
-            val recipeState by gameState.recipes.collectAsState()//To ensure recomposition on the recipes changes
+            val recipeState by gameState.recipes.collectAsState() // To ensure recomposition on the recipes changes
             LazyColumn(
                 userScrollEnabled = true,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -224,7 +220,7 @@ fun RecipeItem(
     ) {
         RecipeInfo(recipe, gameState, 12.sp, showName, true, Modifier, textColor, bgColor) {
             CenteredImage(
-                if(recipe.isDiscovered) recipe.imageResourceId else R.drawable.placeholder_0,
+                if (recipe.isDiscovered) recipe.imageResourceId else R.drawable.placeholder_0,
                 5.dp,
             )
         }
@@ -241,7 +237,7 @@ class SidebarShape(
         size: Size,
         layoutDirection: androidx.compose.ui.unit.LayoutDirection,
         density: Density
-    ): androidx.compose.ui.graphics.Outline {
+    ): Outline {
         return Outline.Generic(
             path = drawSidebarPath(
                 size = size,
@@ -314,9 +310,3 @@ fun drawSidebarPath(
         }
     }
 }
-
-/*@Preview(widthDp = 70)
-@Composable
-private fun SidebarPreview() {
-	Sidebar({}, 0, Modifier.fillMaxHeight())
-}*/

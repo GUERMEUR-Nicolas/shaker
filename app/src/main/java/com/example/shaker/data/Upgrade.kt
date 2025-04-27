@@ -17,7 +17,7 @@ class Upgrade(
     private val actions: Array<Int>,
     val type: Array<String>,
     private val x: Array<Float>,
-    var recipeB_ID: Int? = null,
+    private var recipeB_ID: Int? = null,
     private var cost: ScalingCost = ScalingCost(ScalingInt(1), 2.0),
     var level: Int = 0
 ) {
@@ -34,18 +34,18 @@ class Upgrade(
         level = 0
     )
 
-    public fun SetRelative(index: Int) {
+    fun setRelative(index: Int) {
         recipeB_ID = index
     }
 
-    public fun setBaseCost(value: ScalingInt) {
-        this.cost = ScalingCost(value, this.cost.scalingFactor);
+    fun setBaseCost(value: ScalingInt) {
+        this.cost = ScalingCost(value, this.cost.scalingFactor)
     }
 
-    public fun doAllActionsOfType(
+    fun doAllActionsOfType(
         original: ScalingInt,
         type: String,
-        recipesInfo: Map<Int, Long> = mapOf<Int, Long>()
+        recipesInfo: Map<Int, Long> = mapOf()
     ): ScalingInt {
         var res: ScalingInt = original
         for (i in actions.indices) { // inner precedence implicit if actions[type] is sorted
@@ -63,14 +63,14 @@ class Upgrade(
         return res
     }
 
-    public fun GetNextCost(amountBought: Long = 1): ScalingInt {
-        return this.cost.GetNextCost(this.level.toLong(), amountBought)
+    fun getNextCost(amountBought: Long = 1): ScalingInt {
+        return this.cost.getNextCost(this.level.toLong(), amountBought)
     }
 
     private val availableActions: Map<String, Array<Pair<KFunction2<ScalingInt, Float, ScalingInt>, KFunction2<Int, Long, Float>>>> =
         mapOf(
             "generate" to arrayOf(
-                Pair(ScalingInt::plus,  ::bARawCpsIncreaseByNumberOfOtherBuildings),
+                Pair(ScalingInt::plus, ::bARawCpsIncreaseByNumberOfOtherBuildings),
                 Pair(ScalingInt::times, ::bARawEffectiveness),
                 Pair(ScalingInt::times, ::timesX),
                 Pair(ScalingInt::times, ::bACpsPortionIncreaseByNumberOfBB)
@@ -126,7 +126,7 @@ fun doAllUpgradesOfType(
     lst: List<Upgrade>,
     original: ScalingInt,
     type: String,
-    recipesInfo: Map<Int, Long> = mapOf<Int, Long>()
+    recipesInfo: Map<Int, Long> = mapOf()
 ): ScalingInt {
     if (lst.isEmpty())
         return original
@@ -135,7 +135,7 @@ fun doAllUpgradesOfType(
     for (i in lst.indices) {
         if (lst[i].level != 0 && type in lst[i].type) {
             if (toRun[i] == null)
-                toRun[i] = mutableListOf<Upgrade>()
+                toRun[i] = mutableListOf()
             toRun[i]!!.add(lst[i])
         }
     }
@@ -150,9 +150,9 @@ fun doAllUpgradesOfType(
 }
 
 fun allUpgrades(index: Int, baseCost: ScalingInt): Upgrade {
-    var upgrade = Upgrade(allUpgrades[index])
-    upgrade.setBaseCost(baseCost);
-    return upgrade;
+    val upgrade = Upgrade(allUpgrades[index])
+    upgrade.setBaseCost(baseCost)
+    return upgrade
 }
 
 private val allUpgrades = arrayOf(

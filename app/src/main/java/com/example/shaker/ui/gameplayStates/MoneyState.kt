@@ -1,4 +1,4 @@
-package com.example.shaker.ui.GameplayStates
+package com.example.shaker.ui.gameplayStates
 
 import com.example.shaker.data.ScalingInt
 
