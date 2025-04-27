@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.compose.AppTheme
+import com.example.shaker.BuildConfig
 import com.example.shaker.R
 import com.example.shaker.data.ScalingInt
 import com.example.shaker.ui.GameplayViewModel
@@ -72,15 +73,17 @@ fun HomePage(modifier: Modifier = Modifier, gameplayState: GameplayViewModel) {
 					.weight(3f)
 					.padding(5.dp)
 			)
-			TextButton(
-				text = "x10",
-				colors = ButtonDefaults.textButtonColors(
-					containerColor = MaterialTheme.colorScheme.secondary,
-					contentColor = MaterialTheme.colorScheme.onSecondary,
-				),
-				onClick = { gameplayState.timesTen() },
-				enable = true,
-			)
+			if(BuildConfig.IS_DEBUG_MODE) {
+				TextButton(
+					text = "x10",
+					colors = ButtonDefaults.textButtonColors(
+						containerColor = MaterialTheme.colorScheme.secondary,
+						contentColor = MaterialTheme.colorScheme.onSecondary,
+					),
+					onClick = { gameplayState.timesTen() },
+					enable = true,
+				)
+			}
 			MoneyOnShake(
 				str = R.string.money_on_shake,
 				Color.White,

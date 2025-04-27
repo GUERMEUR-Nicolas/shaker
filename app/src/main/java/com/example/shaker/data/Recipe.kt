@@ -9,16 +9,13 @@ class ScalingCost(
 	val basePrice: ScalingInt = ScalingInt(1),
 	val scalingFactor: Double = 1.15
 ) {
-	fun getCost(level: Long): ScalingInt {
+	private fun getCost(level: Long): ScalingInt {
 		return this.basePrice * (this.scalingFactor).pow(level.toDouble())
 	}
 
 	fun getNextCost(amountOwned: Long = 0, amountBought: Long = 1): ScalingInt {
-		var sum = ScalingInt(0)
-		for (i in 0 until amountBought) {
-			sum += this.getCost(amountOwned + i)
-		}
-		return sum
+		val t = this.scalingFactor.pow(amountOwned.toDouble()) * (this.scalingFactor.pow(amountBought.toDouble())-1) / (this.scalingFactor-1)
+		return this.basePrice*t
 	}
 }
 

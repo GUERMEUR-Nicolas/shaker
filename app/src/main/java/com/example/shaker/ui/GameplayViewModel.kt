@@ -35,7 +35,7 @@ class GameplayViewModel(
 		MutableStateFlow(advancementState)
 	)
 
-	constructor(init: Int = 10, sidebar: Boolean = false) : this(
+	constructor(init: Int = 10, sidebar: Boolean = false, firstBuy: Boolean = false) : this(
 		MoneyState(ScalingInt(init)),
 		RecipeState(),
 		UpgradeState(),
@@ -43,6 +43,8 @@ class GameplayViewModel(
 	) {
 		if (sidebar)
 			toggleAdvancement("showSideBar")
+		if (firstBuy)
+			toggleAdvancement("firstBuy")
 	}
 
 	val moneyState: StateFlow<MoneyState> = _moneyState.asStateFlow()

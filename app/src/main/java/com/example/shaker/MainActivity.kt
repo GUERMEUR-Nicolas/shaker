@@ -31,10 +31,12 @@ import kotlinx.coroutines.delay
 class MainActivity : ComponentActivity() {
 	private val viewModel: MainViewModel by viewModels()
 	private var gameplayState: GameplayViewModel =
-		GameplayViewModel(
-			0,
-			false
-		) //Overriden by what's stored in the preferences and the default load, just used in case of reset
+		if (BuildConfig.IS_DEBUG_MODE) {
+			GameplayViewModel(15, true, true)
+		} else {
+			GameplayViewModel(0, false)
+		}
+	// Overriden by what's stored in the preferences and the default load, just used in case of reset
 	private val sensor: Accelerometer = Accelerometer()
 
 	@SuppressLint("SourceLockedOrientationActivity", "NewApi")
